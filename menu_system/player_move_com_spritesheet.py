@@ -19,7 +19,7 @@ def inicio():
 
     bg = pygame.image.load("fundo.png")
 
-    novo_sprite = SpriteSheet("omori_sprites\Download5005.png", 0, 512, 64, 64, 4,[7 for i in range(34)], (0, 0, 0))
+    novo_sprite = SpriteSheet("personagem.png", 0, 512, 64, 64, 4,[7 for i in range(34)], (0, 0, 0))
     # Cria o objeto player utilizando a classe Personagem e a imagem inicial
     player = Personagem(novo_sprite)
 

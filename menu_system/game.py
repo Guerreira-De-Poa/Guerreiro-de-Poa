@@ -1,7 +1,7 @@
 import pygame
 from menu import *
 from player_move_com_spritesheet import *
-
+fundo_historia = pygame.image.load('fundo_historia.png')
 class Game():
     def __init__(self):
         pygame.init() # acessar as "ferramentas" pyggame
@@ -10,19 +10,23 @@ class Game():
         self.DISPLAY_W, self.DISPLAY_H = 800, 600 # Largura e altura da tela uai
         self.display = pygame.Surface((self.DISPLAY_W, self.DISPLAY_H)) # A TELA EM SI, só não conhecia este surface ->
         self.window = pygame.display.set_mode((self.DISPLAY_W, self.DISPLAY_H)) # a janela...
-        self.font_file = pygame.font.get_default_font() # caso instalarmos, usa o nome do arquivo, tipo 'fonte.tif'
+        self.font_file = '8-BIT WONDER.TTF' # caso instalarmos, usa o nome do arquivo, tipo 'fonte.tif'
         self.BLACK, self.WHITE = (0, 0, 0), (255, 255, 255) # cores uai (r,g,b)
-        self.curr_menu = MainMenu(self) # isso não entendi muito bem, um self num arquivo de outra "pasta"??
+        self.main_menu = MainMenu(self) # menu principal
+        self.options = OptionsMenu(self) # menu de opções
+        self.credits = CreditsMenu(self) # menu de créditos
+        self.curr_menu = self.main_menu 
 
     def game_loop(self): # loop do jogo em si
         while self.playing: # quando estiver jogando
             self.check_events() # analisa o seventos
+            if self.BACK_KEY:
+                break
             if self.START_KEY: # quando clicamos em começar
                 self.playing = False # quebramos o loop, não o jogo em si, tipo, ainda roda, mas o loop do menu nãop
                 inicio()
 
-            self.display.fill(self.BLACK) # ATUALIZAMOS A TELA, pra que não fica tudo junto na mesma tela
-            self.draw_text('Valeu por jogar :)', 20, self.DISPLAY_W/2, self.DISPLAY_H/2 )
+            self.display.blit(fundo_historia, (0,0)) # ATUALIZAMOS A TELA, pra que não fica tudo junto na mesma tela
             self.window.blit(self.display, (0,0)) # manda o display, MANDA PRA WINDOW (0,0) É PRA ALINHA DISPLAY COM WINDOW
             pygame.display.update() # atrualiza a window (enxergamos)
             self.reset_keys()
