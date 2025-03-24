@@ -1,6 +1,7 @@
 import pygame
 from menu import *
-from player_move_com_spritesheet import *
+from nivel_1.player_move_com_spritesheet import *
+
 fundo_historia = pygame.image.load('fundo_historia.png')
 class Game():
     def __init__(self):

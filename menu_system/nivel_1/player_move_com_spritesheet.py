@@ -3,12 +3,23 @@ import sys
 
 from spritesheet_explicada import SpriteSheet
 from sprite_teste_v2 import Personagem
+from game import *
+from nivel_2.nivel_2 import *
 
+"""
+
+PARA FAZER PASSAR DE NÍVEL, É TROCAR O "PASSAR" PARA TRUE, 
+LÁ EMBAIXO TEM UMA FUNÇÃO QUE DESLIGA A FUNÇÃO DO LOOP INICIAL, E LIGA A PRÓXIMA FUNÇÃO
+
+"""
 def inicio():
     pygame.init()
 
     SCREEN_WIDTH = 800
     SCREEN_HEIGHT = 600
+
+    passou = False
+    pause = False
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
@@ -48,6 +59,10 @@ def inicio():
             player.direction = 'LEFT'
         elif keys[pygame.K_RIGHT]:
             player.direction = 'RIGHT'
+        elif keys[pygame.K_n]:
+            passou = True 
+        elif keys[pygame.K_p]:
+            pause = True   
         else:
             player.direction = None  # Nenhuma direção se nenhuma tecla for pressionada
 
@@ -103,5 +118,20 @@ def inicio():
         screen.blit(bg, (0, 0), camera)
 
         player.sheet.draw(screen, player.rect.x - camera.left , player.rect.y - camera.top)
+
+        # SISTEMA BASICO SE PASSOU DE NIVEL 
+        fonte = pygame.font.SysFont("Monospace", 15, True, True)
+        mensagem = "Você passou de nível!"
+        formatacao_texto = fonte.render(mensagem, False, (255, 255, 255))
+        if passou == True:
+            screen.fill((0,0,0))
+            screen.blit(formatacao_texto, (200, 200))
+            pygame.display.update()
+            pygame.time.wait(1000)
+            run = False
+            inicio2()
+
+        # SISTEMA BASICO DE PAUSA
+
 
         pygame.display.update()  # Atualiza a tela com as novas imagens
