@@ -138,12 +138,19 @@ def inicio():
     # Configuração da câmera
     camera = pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 
+    ###########################################
+    # PARTE DO FPS DO JOGO
+
+    # ESTAVA DANDO PROBLEMA EM RELAÇÃO AOS FPS (CONFLITO COM O SPRITE_TESTE_V2.PY)
+    # DEIXEI DE FORMA MAIS SIMPLIFICADO, MAS DAR UMA OLHADA FUTURAMENTE
+
+    ###########################################
     # Game loop
     clock = pygame.time.Clock()
     running = True
 
     while running:
-        dt = clock.tick(60) / 1000  # Delta time em segundos
+        clock.tick(30) # Delta time em segundos
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -162,6 +169,9 @@ def inicio():
         # Resetar direção
         player.direction = None
         player.nova_direcao = False
+
+                # Adicione no início do código, com outras configurações
+        DEBUG_MODE = True  # Mude para False para desativar o deb
         
         if keys[pygame.K_UP] or keys[pygame.K_w]:
             player.direction = 'UP'
@@ -175,6 +185,8 @@ def inicio():
         elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             player.direction = 'RIGHT'
             player.nova_direcao = True
+        elif keys[pygame.K_z]:
+            DEBUG_MODE = not DEBUG_MODE
         
         # Salvar a posição anterior para colisão
         old_x, old_y = player.rect.x, player.rect.y
@@ -209,12 +221,7 @@ def inicio():
                 camera.top - TILE_SIZE <= y < camera.bottom):
                 screen.blit(image, (x - camera.left, y - camera.top))
 
-        # Adicione no início do código, com outras configurações
-        DEBUG_MODE = True  # Mude para False para desativar o debug
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_F1:
-                DEBUG_MODE = not DEBUG_MODE
 
         # Dentro do game loop, na seção de renderização (após desenhar o jogador):
         if DEBUG_MODE:
@@ -245,7 +252,7 @@ def inicio():
                 f"Direção: {player.direction}",
                 f"Velocidade: {player.speed}",
                 f"Colisores: {len(walls)}",
-                "F1: Debug ON/OFF"
+                "Z: Debug ON/OFF"
             ]
             
             for i, text in enumerate(debug_info):

@@ -45,7 +45,7 @@ class SpriteSheet:
         return None
 
 # Carregar a spritesheet
-spritesheet = SpriteSheet('Tiny_Swords-certo/spritesheet.png')
+spritesheet = SpriteSheet('../spritesheet.png')
 
 # Dicionário de mapeamento de tiles (ajuste conforme sua spritesheet)
 TILE_MAPPING = {

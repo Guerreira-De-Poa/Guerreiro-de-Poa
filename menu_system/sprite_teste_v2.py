@@ -9,7 +9,7 @@ class Personagem(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()  # Obtém o retângulo da imagem para movimentação
         
 
-        self.speed = 2  # Velocidade de movimento
+        self.speed = 4  # Velocidade de movimento
         self.posX = 400  # Posição inicial
         self.posY = 300
         self.rect.topleft = (self.posX, self.posY)  # Define a posição inicial
