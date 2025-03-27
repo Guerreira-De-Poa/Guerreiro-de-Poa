@@ -5,7 +5,12 @@ import os
 from spritesheet_explicada import SpriteSheet
 from sprite_teste_v2 import Personagem
 
+
+
+pause = False
+
 def inicio():
+    global pause
     # Inicialização do Pygame
     pygame.init()
 
@@ -124,7 +129,9 @@ def inicio():
     # Criar o jogador
     try:
         player_sprite_path = os.path.join(current_dir, '../../personagem.png')
-        player_sprite = SpriteSheet(player_sprite_path, 0, 512, 64, 64, 4, [7 for i in range(34)], (0, 0, 0))
+        player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4, [7 for i in range(34)], (0, 0, 0)) 
+        #######
+        # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
         player = Personagem(player_sprite)
     except Exception as e:
         print(f"Erro ao carregar sprite do jogador: {e}")
@@ -150,6 +157,7 @@ def inicio():
     running = True
 
     while running:
+
         clock.tick(30) # Delta time em segundos
         
         for event in pygame.event.get():
@@ -162,6 +170,10 @@ def inicio():
                     player.correr()
                 if event.key == pygame.K_ESCAPE:
                     running = False
+
+                ############ ADICIONA PAUSE: ############
+                if event.key == pygame.K_p:
+                    pause = not pause
         
         # Obter teclas pressionadas
         keys = pygame.key.get_pressed()
@@ -172,7 +184,8 @@ def inicio():
 
                 # Adicione no início do código, com outras configurações
         DEBUG_MODE = True  # Mude para False para desativar o deb
-        
+       
+
         if keys[pygame.K_UP] or keys[pygame.K_w]:
             player.direction = 'UP'
             player.nova_direcao = True
@@ -188,20 +201,22 @@ def inicio():
         elif keys[pygame.K_z]:
             DEBUG_MODE = not DEBUG_MODE
         
+
+        
         # Salvar a posição anterior para colisão
         old_x, old_y = player.rect.x, player.rect.y
         
+
         # Atualizar jogador
-        player.update()
+        player.update(pause) ######## pause maroto
         
-        # Verificar colisões
-        player_rect = player.rect
+        # Verificar colisões com retângulo customizado
         for wall in walls:
-            if player_rect.colliderect(wall):
+            if player.collision_rect.colliderect(wall):
                 # Colisão detectada, voltar para a posição anterior
                 player.rect.x, player.rect.y = old_x, old_y
                 break
-        
+                
         # Atualizar câmera
         camera.center = player.rect.center
         

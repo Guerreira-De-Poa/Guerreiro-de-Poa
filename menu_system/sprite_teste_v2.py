@@ -24,7 +24,11 @@ class Personagem(pygame.sprite.Sprite):
 
         self.run = False
 
-    def update(self):
+    def update(self, pause):
+
+        ######### PAUSE #########
+        if pause:
+            return
         # Atualiza o contador de frames
         self.frame_count += 1
         self.moving = False
@@ -73,6 +77,8 @@ class Personagem(pygame.sprite.Sprite):
                 self.sheet.tile_rect = self.sheet.cells[self.sheet.action-30][0]
             else:
                 self.sheet.tile_rect = self.sheet.cells[self.sheet.action][0]
+
+        self.collision_rect = self.rect.inflate(-40, -20)
 
     def get_sprite(self):
         rect = pygame.Rect(self.sheet.tile_rect)
