@@ -5,7 +5,7 @@ class Personagem(pygame.sprite.Sprite):
     def __init__(self, sprite_sheet):
         super().__init__()  # Chama o inicializador da classe pai
         self.sheet = sprite_sheet
-        self.image = pygame.Surface((32, 32), pygame.SRCALPHA)  # A imagem inicial
+        self.image = pygame.Surface((64, 64), pygame.SRCALPHA)  # A imagem inicial (ALTERE AQUI CONFORME O TAMANHO DO TILESET!)
         self.rect = self.image.get_rect()  # Obtém o retângulo da imagem para movimentação
         
 
