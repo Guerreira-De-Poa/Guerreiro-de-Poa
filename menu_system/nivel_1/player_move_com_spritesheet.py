@@ -2,8 +2,15 @@ import pygame
 import sys
 import json
 import os
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 from spritesheet_explicada import SpriteSheet
 from sprite_teste_v2 import Personagem
+
+from npcs import * 
+from dialogo import *
+from inimigo_teste import *
 
 
 
@@ -13,6 +20,24 @@ def inicio():
     global pause
     # Inicialização do Pygame
     pygame.init()
+
+
+
+
+
+
+
+ #                           fsjkldfhjklsdfhklsjdfksdfklsdhflksjdhfkljsdklfshdjkfhlskjfdshfjklsdfsjdfkldsfhjsflsdkfsldfhlsdkjfhsdklf
+
+
+
+
+
+
+
+
+
+
 
     # Configurações da tela
     SCREEN_WIDTH = 800
@@ -125,11 +150,15 @@ def inicio():
         print("Erro: Nenhum tile foi carregado para renderização!")
         pygame.quit()
         sys.exit()
+    lista_1 = [7 for i in range(16)]
+    lista_2 = [13 for j in range(4)]
+    lista_3 = [7 for k in range(14)]
 
+    print(lista_1+lista_2+lista_3)
     # Criar o jogador
     try:
-        player_sprite_path = os.path.join(current_dir, '../../personagem.png')
-        player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4, [7 for i in range(34)], (0, 0, 0)) 
+        player_sprite_path = os.path.join(current_dir, '..', '..', 'player_com_arco.png')
+        player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0)) 
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
         player = Personagem(player_sprite)
@@ -156,9 +185,83 @@ def inicio():
     clock = pygame.time.Clock()
     running = True
 
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+
+    imagem_inimigo = pygame.image.load('Biomech Dragon Splice.png')
+
+    vida_imagem = pygame.image.load('love-always-wins(1).png')
+
+    # enemy0 = Inimigo(player.rect, player, 0,0, False,imagem_inimigo)
+    # enemy1 = Inimigo(player.rect, player, 200,0, False,imagem_inimigo)
+    # enemy2 = Inimigo(player.rect, player, 400,0, False,imagem_inimigo)
+    # enemy3 = Inimigo(player.rect, player, 800,0, False,imagem_inimigo)
+
+    inimigos = pygame.sprite.Group()
+
+    player_group = pygame.sprite.Group()
+
+    # Grupo de sprites
+    all_sprites = pygame.sprite.Group()
+    all_sprites.add(player)
+    player_group.add(player)
+
+    # all_sprites.add(enemy0, enemy1, enemy2, enemy3)
+    # inimigos.add(enemy0, enemy1, enemy2, enemy3)
+
+    contador = 0
+
+    click_hold = 0
+
+    interagir_bg = pygame.image.load("caixa_dialogo_pequena.jpg")
+
+    omori = pygame.image.load('frente.png')
+
+    npc = NPC(omori,screen)
+
+    all_sprites.add(npc)
+    npcs = pygame.sprite.Group()
+    npcs.add(npc)
+
+    dialogo_group = []
+
+    for npc in npcs:
+        dialogo_group.append(npc.dialogo)
+
+    print(dialogo_group)
+    print(f"Total de tiles carregados: {len(map_tiles)}")
+
+
+#                                           RUNNIGNINSINAOSIDSAJDSAJDOSIAdffdsfhsjkdfhsjkldfhlksdjfhsjkldf
+
+
     while running:
 
-        clock.tick(30) # Delta time em segundos
+        dialogo_a_abrir = False
+
+        screen.fill((100, 100, 100))  # Preenche o fundo com uma cor sólida
+
+        dialogo_hitbox =  pygame.sprite.groupcollide(player_group,npcs, False, False)
+
+        if dialogo_hitbox:
+            for jogador, dialogo in dialogo_hitbox.items():
+                dialogo_a_abrir = dialogo[0].dialogo
+
+        click = pygame.mouse.get_pressed()[0]
+
+        mouse_pos = pygame.mouse.get_pos()
+        
+        if click:
+            click_hold +=1
+            player.atacando = True
+            player.hold_arrow(mouse_pos)
+        else:
+            if click_hold > 0:
+                player.shoot(mouse_pos)
+                print(mouse_pos)
+            click_hold = 0
+            player.atacando = False
+
+        clock.tick(60) # Delta time em segundos
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -186,21 +289,95 @@ def inicio():
         DEBUG_MODE = True  # Mude para False para desativar o deb
        
 
-        if keys[pygame.K_UP] or keys[pygame.K_w]:
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_w]:
             player.direction = 'UP'
-            player.nova_direcao = True
-        elif keys[pygame.K_DOWN] or keys[pygame.K_s]:
+        elif keys[pygame.K_s]:
             player.direction = 'DOWN'
-            player.nova_direcao = True
-        elif keys[pygame.K_LEFT] or keys[pygame.K_a]:
+        elif keys[pygame.K_a]:
             player.direction = 'LEFT'
-            player.nova_direcao = True
-        elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+        elif keys[pygame.K_d]:
             player.direction = 'RIGHT'
-            player.nova_direcao = True
-        elif keys[pygame.K_z]:
-            DEBUG_MODE = not DEBUG_MODE
-        
+        else:
+            player.direction = None  # Nenhuma direção se nenhuma tecla for pressionada
+
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_w:
+                    player.direction = None
+                elif event.key == pygame.K_s:
+                    player.direction = None
+                elif event.key == pygame.K_a:
+                    player.direction = None
+                elif event.key == pygame.K_d:
+                    player.direction = None
+                elif event.key == pygame.K_SPACE:
+                    print("HDSJKADHk")
+                    if dialogo_a_abrir:
+                        dialogo_a_abrir.trocar_texto()
+                elif keys[pygame.K_z]:
+                    DEBUG_MODE = not DEBUG_MODE
+
+
+        contador+=1
+
+        if contador % 30 == 0:
+            for inimigo in inimigos:
+                inimigo.atacar()
+        if contador % 1000 == 0:
+            for inimigo in inimigos:
+                if inimigo.mover:
+                    inimigo.mover = False
+                else:
+                    inimigo.mover = True
+
+        player_hits =  pygame.sprite.groupcollide(player.balas,inimigos, False, False)
+        for inimigo in inimigos:
+            enemy_hits = pygame.sprite.groupcollide(inimigo.balas, player_group, False, False)
+
+            if len(enemy_hits)>0:
+                a = (enemy_hits.keys())
+                inimigo.balas.remove(a)
+                
+                player.get_hit()
+
+        if len(player_hits) > 0:
+            a = (player_hits.keys())
+            b = (player_hits.values())
+
+            player.balas.remove(a)
+            for value in b:
+                for item in inimigos:
+                    if value[0] == item:
+                        item.HP-=1
+            i = 0
+            for inimigo in inimigos:
+                i+=1
+
+        for inimigo in inimigos:
+            if inimigo.HP == 0:
+                inimigo.image = pygame.Surface((32, 32), pygame.SRCALPHA)
+                inimigo.remover_todas_balas()
+                inimigos.remove(inimigo)
+                all_sprites.remove(inimigo)
+
+        for inimigo in inimigos:
+            inimigo.draw_balas(screen,camera)
+        player.draw_balas(screen,camera)
+
+        for inimigo in inimigos:
+            screen.blit(inimigo.image, (inimigo.rect.x - camera.left, inimigo.rect.y - camera.top))
+
+        player.sheet.draw(screen, player.rect.x - camera.left , player.rect.y - camera.top)
+
+
+    
 
         
         # Salvar a posição anterior para colisão
@@ -276,7 +453,19 @@ def inicio():
 
         # Desenhar o jogador
         player.sheet.draw(screen, player.rect.x - camera.left, player.rect.y - camera.top)
-        
+        screen.blit(npc.image,(npc.rect.x - camera.left, npc.rect.y - camera.top))
+
+        for vida in range(player.HP):
+            screen.blit(vida_imagem,(18 + 32*vida,0))
+        npc.dialogo.coisa()
+
+        if dialogo_a_abrir and dialogo_a_abrir.texto_open == False:
+            
+            font = pygame.font.Font(None,48)
+            render = font.render("Interagir", True, (0,0,0))
+            screen.blit(interagir_bg,(300,450))
+            screen.blit(render,(325,457))
+            
         pygame.display.flip()
 
     pygame.quit()
@@ -284,3 +473,44 @@ def inicio():
 
 if __name__ == "__main__":
     inicio()
+#----------------------------------------------------------------------------------------------------------------------------------------------------
+# pygame.init()
+
+# while run:
+
+
+
+#     if player.rect.left <= -15:
+#         player.rect.left = -15
+
+#     if player.rect.right >= bg.get_width()-10:
+#         player.rect.right = bg.get_width()-10
+
+#     if player.rect.bottom >= bg.get_height()-28:
+#         player.rect.bottom = bg.get_height()-28
+
+#     if player.rect.top <= -15:
+#         player.rect.top = -15
+
+#     screen.blit(bg, (0, 0), camera)
+
+#     # if player.ivuln == True:
+#     #     if player.contador_iframes < player.iframes:
+#     #         player.contador_iframes += 1
+#     #     else:
+#     #         player.ivuln = False
+#     #         player.contador_iframes = 0
+#     #         player.rect.width = 64  # "Desativa" a hitbox (remove colisão)
+#     #         player.rect.height = 64
+
+
+#     # if player.ivuln: 
+#     #     camera.center = (player.rect.x+32,player.rect.y + 32)
+#     #     print(camera.center)
+#     # elif not player.ivuln:
+#     camera.center = player.rect.center
+
+
+#     #screen.blit()
+
+#     pygame.display.update()  # Atualiza a tela com as novas imagens
