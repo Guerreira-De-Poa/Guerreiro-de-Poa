@@ -152,6 +152,11 @@ class Personagem(pygame.sprite.Sprite):
 
         self.collision_rect = self.rect.inflate(-40, -20)
 
+        if self.ivuln == True:
+            self.contador_iframes +=1
+            if self.contador_iframes == self.iframes:
+                self.ivuln = False
+
     def hold_arrow(self,mouse_pos):
         #print(mouse_pos)
         self.mouse_pos = mouse_pos
@@ -211,7 +216,9 @@ class Personagem(pygame.sprite.Sprite):
     def get_hit(self):
         #print('rect center : ',self.rect.center)
         if self.ivuln == False:
+            self.contador_iframes = 0
             self.HP -= 1
+            self.ivuln = True
             # self.ivuln = True
             # #print(self.HP)
             # self.rect.width = 0  # "Desativa" a hitbox (remove colisão)
