@@ -11,8 +11,8 @@ from sprite_teste_v2 import Personagem
 from npcs import * 
 from dialogo import *
 from inimigo_teste import *
-
-
+from inventario1 import Inventario
+from boss import Boss1
 
 pause = False
 
@@ -20,24 +20,6 @@ def inicio():
     global pause
     # Inicialização do Pygame
     pygame.init()
-
-
-
-
-
-
-
- #                           fsjkldfhjklsdfhklsjdfksdfklsdhflksjdhfkljsdklfshdjkfhlskjfdshfjklsdfsjdfkldsfhjsflsdkfsldfhlsdkjfhsdklf
-
-
-
-
-
-
-
-
-
-
 
     # Configurações da tela
     SCREEN_WIDTH = 800
@@ -191,10 +173,11 @@ def inicio():
 
     vida_imagem = pygame.image.load('love-always-wins(1).png')
 
-    # enemy0 = Inimigo(player.rect, player, 0,0, False,imagem_inimigo)
-    # enemy1 = Inimigo(player.rect, player, 200,0, False,imagem_inimigo)
-    # enemy2 = Inimigo(player.rect, player, 400,0, False,imagem_inimigo)
-    # enemy3 = Inimigo(player.rect, player, 800,0, False,imagem_inimigo)
+    enemy0 = Inimigo(player.rect, player, 0,0, False,imagem_inimigo)
+    boss = Inimigo(player.rect, player, 300,600, True,imagem_inimigo)
+    enemy1 = Inimigo(player.rect, player, 200,0, False,imagem_inimigo)
+    enemy2 = Inimigo(player.rect, player, 0,800, True,imagem_inimigo)
+    enemy3 = Inimigo(player.rect, player, 800,0, False,imagem_inimigo)
 
     inimigos = pygame.sprite.Group()
 
@@ -205,8 +188,8 @@ def inicio():
     all_sprites.add(player)
     player_group.add(player)
 
-    # all_sprites.add(enemy0, enemy1, enemy2, enemy3)
-    # inimigos.add(enemy0, enemy1, enemy2, enemy3)
+    all_sprites.add(enemy0, enemy1, enemy2, enemy3,boss)
+    inimigos.add(enemy0, enemy1, enemy2, enemy3,boss)
 
     contador = 0
 
@@ -231,7 +214,23 @@ def inicio():
     print(f"Total de tiles carregados: {len(map_tiles)}")
 
 
-#                                           RUNNIGNINSINAOSIDSAJDSAJDOSIAdffdsfhsjkdfhsjkldfhlksdjfhsjkldf
+
+    #CONFIG INVENTARIO
+
+    WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
+
+    # Botão para abrir o inventário 2
+    button_rect = pygame.Rect(WIDTH - 150, HEIGHT - 100, 140, 60)
+    botao_ativo = False
+
+    # Variáveis de controle de arrastar itens
+    dragging_item = None
+    dragging_from = None
+
+    # Criar as instâncias dos inventários
+    inventario1 = Inventario((50, 50, 50), 50, ["Espada", "Poção", "Escudo"])
+    inventario2 = Inventario((0, 100, 0), 400)
+
 
 
     while running:
@@ -245,6 +244,7 @@ def inicio():
         if dialogo_hitbox:
             for jogador, dialogo in dialogo_hitbox.items():
                 dialogo_a_abrir = dialogo[0].dialogo
+                botao_ativo = True
 
         click = pygame.mouse.get_pressed()[0]
 
@@ -262,22 +262,7 @@ def inicio():
             player.atacando = False
 
         clock.tick(60) # Delta time em segundos
-        
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            
-            # Tratar eventos de teclado para o jogador
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LSHIFT:
-                    player.correr()
-                if event.key == pygame.K_ESCAPE:
-                    running = False
 
-                ############ ADICIONA PAUSE: ############
-                if event.key == pygame.K_p:
-                    pause = not pause
-        
         # Obter teclas pressionadas
         keys = pygame.key.get_pressed()
         
@@ -302,28 +287,65 @@ def inicio():
         else:
             player.direction = None  # Nenhuma direção se nenhuma tecla for pressionada
 
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
-            if event.type == pygame.KEYUP:
+            if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:
-                    player.direction = None
+                    player.nova_direcao = True
                 elif event.key == pygame.K_s:
-                    player.direction = None
+                    player.nova_direcao = True
                 elif event.key == pygame.K_a:
-                    player.direction = None
+                    player.nova_direcao = True
                 elif event.key == pygame.K_d:
-                    player.direction = None
+                    player.nova_direcao = True
+                elif event.key == pygame.K_LSHIFT:
+                    player.correr()
                 elif event.key == pygame.K_SPACE:
-                    print("HDSJKADHk")
                     if dialogo_a_abrir:
                         dialogo_a_abrir.trocar_texto()
                 elif keys[pygame.K_z]:
                     DEBUG_MODE = not DEBUG_MODE
+                elif event.key == pygame.K_p:
+                    pause = not pause
 
+
+
+                    #COMANDOS INVENTARIO
+                elif event.key in (pygame.K_LALT, pygame.K_RALT):
+                    inventario1.inventory_open = not inventario1.inventory_open
+                elif event.key == pygame.K_ESCAPE:
+                    running = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if button_rect.collidepoint(event.pos) and botao_ativo == True:
+                    inventario2.inventory_open = not inventario2.inventory_open
+
+                if inventario1.inventory_open:
+                    item = inventario1.get_item_at(event.pos)
+                    if item:
+                        dragging_item = item
+                        dragging_from = "inventory1"
+
+                if inventario2.inventory_open:
+                    item = inventario2.get_item_at(event.pos)
+                    if item:
+                        dragging_item = item
+                        dragging_from = "inventory2"
+
+            if event.type == pygame.MOUSEBUTTONUP:
+                # Handle mouse button release
+                if dragging_item:
+                    if inventario2.inventory_open and inventario2.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory1":
+                        inventario1.items.remove(dragging_item)
+                        inventario2.items.append(dragging_item)
+                    elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory2":
+                        inventario2.items.remove(dragging_item)
+                        inventario1.items.append(dragging_item)
+                    dragging_item = None
+                    dragging_from = None
 
         contador+=1
 
@@ -338,6 +360,7 @@ def inicio():
                     inimigo.mover = True
 
         player_hits =  pygame.sprite.groupcollide(player.balas,inimigos, False, False)
+        
         for inimigo in inimigos:
             enemy_hits = pygame.sprite.groupcollide(inimigo.balas, player_group, False, False)
 
@@ -367,25 +390,20 @@ def inicio():
                 inimigos.remove(inimigo)
                 all_sprites.remove(inimigo)
 
-        for inimigo in inimigos:
-            inimigo.draw_balas(screen,camera)
-        player.draw_balas(screen,camera)
-
-        for inimigo in inimigos:
-            screen.blit(inimigo.image, (inimigo.rect.x - camera.left, inimigo.rect.y - camera.top))
 
         player.sheet.draw(screen, player.rect.x - camera.left , player.rect.y - camera.top)
 
-
-    
-
-        
         # Salvar a posição anterior para colisão
         old_x, old_y = player.rect.x, player.rect.y
         
 
         # Atualizar jogador
-        player.update(pause) ######## pause maroto
+        #all_sprites.update(pause) ######## pause maroto
+
+        if dialogo_a_abrir:
+            all_sprites.update(dialogo_a_abrir.texto_open)
+        else:
+            all_sprites.update(False)
         
         # Verificar colisões com retângulo customizado
         for wall in walls:
@@ -455,6 +473,13 @@ def inicio():
         player.sheet.draw(screen, player.rect.x - camera.left, player.rect.y - camera.top)
         screen.blit(npc.image,(npc.rect.x - camera.left, npc.rect.y - camera.top))
 
+        for inimigo in inimigos:
+            inimigo.draw_balas(screen,camera)
+        player.draw_balas(screen,camera)
+
+        for inimigo in inimigos:
+            screen.blit(inimigo.image, (inimigo.rect.x - camera.left, inimigo.rect.y - camera.top))
+
         for vida in range(player.HP):
             screen.blit(vida_imagem,(18 + 32*vida,0))
         npc.dialogo.coisa()
@@ -465,6 +490,20 @@ def inicio():
             render = font.render("Interagir", True, (0,0,0))
             screen.blit(interagir_bg,(300,450))
             screen.blit(render,(325,457))
+
+        # Desenhar os inventários e o botão
+        if inventario1.inventory_open:
+            inventario1.draw_inventory(screen)
+        if inventario2.inventory_open:
+            inventario2.draw_inventory(screen)
+
+        if dialogo_a_abrir and dialogo_a_abrir.texto_open == False:
+            inventario1.draw_button(screen)  # Agora o método `draw_button` é da classe Inventario1
+
+        if dragging_item:
+            inventario1.draw_dragging_item(screen, dragging_item)  # Agora o método `draw_dragging_item` é da classe Inventario1
+
+
             
         pygame.display.flip()
 
@@ -474,12 +513,6 @@ def inicio():
 if __name__ == "__main__":
     inicio()
 #----------------------------------------------------------------------------------------------------------------------------------------------------
-# pygame.init()
-
-# while run:
-
-
-
 #     if player.rect.left <= -15:
 #         player.rect.left = -15
 
@@ -500,7 +533,7 @@ if __name__ == "__main__":
 #     #     else:
 #     #         player.ivuln = False
 #     #         player.contador_iframes = 0
-#     #         player.rect.width = 64  # "Desativa" a hitbox (remove colisão)
+#     #         player.rect.width = 64 
 #     #         player.rect.height = 64
 
 
@@ -509,8 +542,3 @@ if __name__ == "__main__":
 #     #     print(camera.center)
 #     # elif not player.ivuln:
 #     camera.center = player.rect.center
-
-
-#     #screen.blit()
-
-#     pygame.display.update()  # Atualiza a tela com as novas imagens

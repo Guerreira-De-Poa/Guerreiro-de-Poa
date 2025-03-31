@@ -19,7 +19,7 @@ class Bala(pygame.sprite.Sprite):
 
             # Verifica se a bala saiu da tela
             if self.rect.right < 0 or self.rect.left > 1037 or self.rect.bottom < 0 or self.rect.top > 723:
-                self.active = False  # Desativa a bala quando sair da tela
+                self.active = True  # Desativa a bala quando sair da tela
 
 
 # class Bala(pygame.sprite.Sprite):
