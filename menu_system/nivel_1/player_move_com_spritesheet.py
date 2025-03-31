@@ -191,10 +191,10 @@ def inicio():
 
     vida_imagem = pygame.image.load('love-always-wins(1).png')
 
-    # enemy0 = Inimigo(player.rect, player, 0,0, False,imagem_inimigo)
-    # enemy1 = Inimigo(player.rect, player, 200,0, False,imagem_inimigo)
-    # enemy2 = Inimigo(player.rect, player, 400,0, False,imagem_inimigo)
-    # enemy3 = Inimigo(player.rect, player, 800,0, False,imagem_inimigo)
+    enemy0 = Inimigo(player.rect, player, 0,0, False,imagem_inimigo)
+    enemy1 = Inimigo(player.rect, player, 200,0, False,imagem_inimigo)
+    enemy2 = Inimigo(player.rect, player, 400,0, False,imagem_inimigo)
+    enemy3 = Inimigo(player.rect, player, 800,0, False,imagem_inimigo)
 
     inimigos = pygame.sprite.Group()
 
@@ -205,8 +205,8 @@ def inicio():
     all_sprites.add(player)
     player_group.add(player)
 
-    # all_sprites.add(enemy0, enemy1, enemy2, enemy3)
-    # inimigos.add(enemy0, enemy1, enemy2, enemy3)
+    all_sprites.add(enemy0, enemy1, enemy2, enemy3)
+    inimigos.add(enemy0, enemy1, enemy2, enemy3)
 
     contador = 0
 

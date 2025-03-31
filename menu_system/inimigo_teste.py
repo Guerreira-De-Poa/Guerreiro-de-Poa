@@ -1,12 +1,17 @@
 import pygame
 from balas import Bala
 
+import sys
+import os
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+
 class Inimigo(pygame.sprite.Sprite):
     def __init__(self, player_rect, player, x, y, ataque, image):
         super().__init__()
         self.image = image
         self.rect = self.image.get_rect()
-        self.bullet_img = pygame.image.load('../../bullet.png').convert_alpha()
+        self.bullet_img = pygame.image.load('bullet.png').convert_alpha()
 
         self.HP = 10
 
