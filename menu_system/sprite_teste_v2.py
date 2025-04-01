@@ -7,7 +7,7 @@ class Personagem(pygame.sprite.Sprite):
     def __init__(self, sprite_sheet):
         super().__init__()  # Chama o inicializador da classe pai
         self.sheet = sprite_sheet
-        self.image = pygame.Surface((32, 32), pygame.SRCALPHA)  # A imagem inicial
+        self.image = pygame.Surface((64, 64), pygame.SRCALPHA)  # A imagem inicial
         self.rect = self.image.get_rect()  # Obtém o retângulo da imagem para movimentação
         
         self.bullet_img = pygame.image.load('bullet.png').convert_alpha()
@@ -36,6 +36,7 @@ class Personagem(pygame.sprite.Sprite):
         self.nova_direcao = False
 
         self.run = False
+        self.atacar = False
 
         self.ivuln = False
         self.iframes = 90
@@ -52,6 +53,7 @@ class Personagem(pygame.sprite.Sprite):
         self.center_x, self.center_y = 800 // 2, 600 // 2
 
         self.segurando = False
+        self.contador_ataque = 0
 
     def update(self, dialogo_open):
         if dialogo_open:
@@ -191,6 +193,24 @@ class Personagem(pygame.sprite.Sprite):
         # if len(self.balas) > 0:
         #     return
 
+        #TESTE
+
+        # self.atacando = False
+
+        # if not self.atacar:
+        #     self.atacar = True
+        # else:
+        #     self.contador_ataque += 1
+        #     if self.contador_ataque == 40:
+        #         self.contador_ataque = 0
+        #         self.atacar = False
+        #     return
+        
+        # self.hold_arrow(mouse_pos)
+        # self.atacando = True
+
+        #FIM TESTE
+
         self.mouse_pos = mouse_pos
 
         self.bullet_pos = pygame.math.Vector2(self.rect.center)
@@ -203,11 +223,15 @@ class Personagem(pygame.sprite.Sprite):
         new_bala = Bala(self.rect.centerx, self.rect.centery, self.direction, self.bullet_speed, self.bullet_img)
         self.balas.add(new_bala)
 
+        if self.sheet.tile_rect != self.sheet.cells[self.sheet.action][0]:
+            self.sheet.update()
+
     def draw_balas(self, screen, camera):
         for bala in self.balas:
             if bala.active:
                 # Ajuste da posição com a câmera
                 screen.blit(bala.image, (bala.rect.x - camera.left, bala.rect.y - camera.top))
+                pygame.draw.rect(screen, (255, 0, 0), bala.rect, 1)
 
     def remover_todas_balas(self):
         for bala in self.balas:
