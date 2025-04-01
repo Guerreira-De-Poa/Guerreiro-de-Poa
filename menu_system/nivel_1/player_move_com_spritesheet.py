@@ -206,9 +206,10 @@ def inicio():
     npcs = pygame.sprite.Group()
     npcs.add(npc)
 
-    bau1 = Bau(screen,400,600)
+    bau1 = Bau(screen,400,600,['Arco', 'Caveira'])
+    bau2 = Bau(screen,400,800,['Ossos','Poção'])
     baus = pygame.sprite.Group()
-    baus.add(bau1)
+    baus.add(bau1,bau2)
     print(bau1)
 
     all_sprites.add(bau1)
@@ -239,6 +240,12 @@ def inicio():
 
     while running:
 
+        bau_perto = False
+
+        for bau in baus:
+            if bau.interagir_rect.colliderect(player.rect):
+                bau_perto = bau
+
         clock.tick(60) # Delta time em segundos
 
         botao_ativo = False
@@ -257,16 +264,16 @@ def inicio():
             dialogo_a_abrir = dialogo_hitbox.dialogo
 
 
-
         for bau in baus:
-            if bau.interagir_rect.colliderect(player.rect):
-                botao_ativo = True
-            if bau.rect.colliderect(player.rect):
-                print("COLISAO BAU")
-                player.rect.x, player.rect.y = old_x, old_y
-            elif not bau.interagir_rect.colliderect(player.rect):
-                botao_ativo = False
-                inventario2.inventory_open = False
+            if bau_perto == bau:
+                if bau.interagir_rect.colliderect(player.rect):
+                    botao_ativo = True
+                if bau.rect.colliderect(player.rect):
+                    print("COLISAO BAU")
+                    player.rect.x, player.rect.y = old_x, old_y
+                elif not bau.interagir_rect.colliderect(player.rect):
+                    botao_ativo = False
+                    bau_perto.inventario.inventory_open = False
 
         # Obter teclas pressionadas
         keys = pygame.key.get_pressed()
@@ -309,7 +316,8 @@ def inicio():
                     if dialogo_a_abrir:
                         dialogo_a_abrir.trocar_texto()
                     elif botao_ativo:
-                        inventario2.inventory_open = not inventario2.inventory_open
+                        if bau_perto:
+                            bau_perto.inventario.inventory_open = not bau_perto.inventario.inventory_open
                 elif keys[pygame.K_z]:
                     DEBUG_MODE = not DEBUG_MODE
                 elif event.key == pygame.K_p:
@@ -323,7 +331,8 @@ def inicio():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if button_rect.collidepoint(event.pos) and botao_ativo == True:
-                    inventario2.inventory_open = not inventario2.inventory_open
+                    if bau_perto:
+                        bau_perto.inventario.inventory_open = not bau_perto.inventario.inventory_open
 
                 if inventario1.inventory_open:
                     item = inventario1.get_item_at(event.pos)
@@ -331,23 +340,25 @@ def inicio():
                         dragging_item = item
                         dragging_from = "inventory1"
 
-                if inventario2.inventory_open:
-                    item = inventario2.get_item_at(event.pos)
-                    if item:
-                        dragging_item = item
-                        dragging_from = "inventory2"
+                if bau_perto:
+                    if bau_perto.inventario.inventory_open:
+                        item = bau_perto.inventario.get_item_at(event.pos)
+                        if item:
+                            dragging_item = item
+                            dragging_from = "inventory2"
 
             if event.type == pygame.MOUSEBUTTONUP:
                 # Handle mouse button release
-                if dragging_item:
-                    if inventario2.inventory_open and inventario2.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory1":
-                        inventario1.items.remove(dragging_item)
-                        inventario2.items.append(dragging_item)
-                    elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory2":
-                        inventario2.items.remove(dragging_item)
-                        inventario1.items.append(dragging_item)
-                    dragging_item = None
-                    dragging_from = None
+                if bau_perto:
+                    if dragging_item:
+                        if bau_perto.inventario.inventory_open and bau_perto.inventario.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory1":
+                            inventario1.items.remove(dragging_item)
+                            bau_perto.inventario.items.append(dragging_item)
+                        elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory2":
+                            bau_perto.inventario.items.remove(dragging_item)
+                            inventario1.items.append(dragging_item)
+                        dragging_item = None
+                        dragging_from = None
 
         contador+=1
 
@@ -541,8 +552,9 @@ def inicio():
         # Desenhar os inventários e o botão
         if inventario1.inventory_open:
             inventario1.draw_inventory(screen)
-        if inventario2.inventory_open:
-            inventario2.draw_inventory(screen)
+        if bau_perto:
+            if bau_perto.inventario.inventory_open:
+                bau_perto.inventario.draw_inventory(screen)
 
         if botao_ativo:
             inventario1.draw_button(screen)  # Agora o método `draw_button` é da classe Inventario1
