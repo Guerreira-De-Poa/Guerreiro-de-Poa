@@ -1,7 +1,7 @@
 import pygame
 
 pygame.init()
-screen = pygame.display.set_mode((800, 1000))
+screen = pygame.display.set_mode((800, 1500))
 clock = pygame.time.Clock()
 
 # Carrega sua spritesheet
