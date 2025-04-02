@@ -25,6 +25,10 @@ class Dialogo():
         self.todos_textos = []
         self.qtd_textos = 0
         self.personagem_falando = ''
+        #########
+        # Uma variavel para configurar o inicio da missão
+        #########
+        self.missao_ativada = False  # <-- Adicionando a variável de missão ativada
 
         personagem = ''
         for item in self.texto.keys():
@@ -51,6 +55,12 @@ class Dialogo():
                 self.iter_texto = -1
             elif self.texto_index == self.qtd_textos-1:
                 self.texto_open = False
+
+                ##########
+                # Dai caso a missão seja true, começa, essa parte funciona!
+                ##########
+                self.missao_ativada = True  # <-- Missão ativada aqui!
+                print("Missão ativada!")  # Teste para ver se está funcionando
                 return
 
         self.iter_texto +=1
@@ -75,3 +85,5 @@ class Dialogo():
 
             self.screen.blit(frase_render, (self.texto_pos_x,480))
             self.screen.blit(personagem_render,(self.texto_pos_x,450))
+
+
