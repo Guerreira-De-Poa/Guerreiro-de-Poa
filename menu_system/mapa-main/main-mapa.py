@@ -173,7 +173,7 @@ def inicio():
     print(lista_1+lista_2+lista_3)
     # Criar o jogador
     try:
-        player_sprite_path = os.path.join(current_dir, '..', '..', 'player_com_arco.png')
+        player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha.png')
         player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
@@ -231,9 +231,23 @@ def inicio():
 
     interagir_bg = pygame.image.load("caixa_dialogo_pequena.jpg")
 
-    omori = pygame.image.load('sprite_npc.png')
+    omori = pygame.image.load('npc.png')
 
-    npc = NPC(omori,screen,100,800)
+    texto = {
+        'personagem_1':'Omori',
+        'texto_1':['Bem vindo ao Espaço em branco', 'Meu nome é Omori'],
+        'personagem_2': "Guerreiro de Poá",
+        'texto_2':['Que viagem é essa?'],
+        # 'personagem_3':"TESTE", # esta orfem para npc
+        # 'texto3': ["TEST TESTE"]
+
+        }
+    
+    ########### 
+    # de alguma forma, agora te que deixar o dicionario texto...
+    ###########
+
+    npc = NPC(omori,screen,1248,545,texto)
 
     all_sprites.add(npc)
     npcs = pygame.sprite.Group()
@@ -251,6 +265,15 @@ def inicio():
     for npc in npcs:
         if npc.dialogo:
             dialogo_group.append(npc.dialogo)
+
+    #################
+
+    # TEORICAMENTE, caso for true, começa a missão
+    # for npc in npcs:
+    #     if npc.dialogo.missao_ativada:
+    #         print("ok")
+
+    #################
 
     print(dialogo_group)
     print(f"Total de tiles carregados: {len(map_tiles)}")
