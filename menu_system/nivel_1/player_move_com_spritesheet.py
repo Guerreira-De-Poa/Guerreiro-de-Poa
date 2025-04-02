@@ -192,6 +192,10 @@ def inicio():
     # all_sprites.add(enemy0, enemy1, enemy2, enemy3,boss)
     # inimigos.add(enemy0, enemy1, enemy2, enemy3,boss)
 
+    boss2 = Boss1(player.rect,player,400,400,True,imagem_inimigo)
+    all_sprites.add(boss2)
+    inimigos.add(boss2)
+
     contador = 0
 
     click_hold = 0
@@ -200,7 +204,14 @@ def inicio():
 
     omori = pygame.image.load('sprite_npc.png')
 
-    npc = NPC(omori,screen,100,800)
+    texto = {
+        'personagem_1':'Omori',
+        'texto_1':['Bem vindo ao Espaço em branco', 'Meu nome é Omori'],
+        'personagem_2': "Guerreiro de Poá",
+        'texto_2':['Que viagem é essa?']
+        }
+
+    npc = NPC(omori,screen,100,800,texto)
 
     all_sprites.add(npc)
     npcs = pygame.sprite.Group()
@@ -445,8 +456,15 @@ def inicio():
 
         mouse_errado = pygame.mouse.get_pos()
 
-        mouse_pos = (mouse_errado[0]-camera.left, mouse_errado[1]-camera.top)
-        
+        mouse_pos =[0,0]
+
+        if camera.left > 0:
+            mouse_pos[0] = mouse_errado[0]+camera.left
+        else:
+            mouse_pos[0] = mouse_errado[0]-camera.left
+
+        mouse_pos[1] = mouse_errado[1]+camera.top
+
         # if click:
         #     player.shoot(mouse_pos)
         # else:
@@ -461,7 +479,7 @@ def inicio():
             player.atacando = True
             player.hold_arrow(mouse_pos)
         else:
-            if click_hold > 0:
+            if click_hold > 30:
                 player.shoot(mouse_pos)
                 print(mouse_pos)
             click_hold = 0
@@ -554,7 +572,10 @@ def inicio():
             inventario1.draw_inventory(screen)
         if bau_perto:
             if bau_perto.inventario.inventory_open:
+                bau_perto.image = bau_perto.bau_aberto
                 bau_perto.inventario.draw_inventory(screen)
+            else:
+                bau_perto.image = bau_perto.bau_fechado
 
         if botao_ativo:
             inventario1.draw_button(screen)  # Agora o método `draw_button` é da classe Inventario1
@@ -571,6 +592,7 @@ def inicio():
 
 if __name__ == "__main__":
     inicio()
+
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 #     if player.rect.left <= -15:
 #         player.rect.left = -15

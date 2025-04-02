@@ -1,6 +1,7 @@
 import pygame
 from inimigo_teste import Inimigo
 from balas import Bala
+from random import randint
 
 class Boss1(Inimigo):
     def __init__(self, player_rect, player, x, y, ataque, image):
@@ -13,16 +14,29 @@ class Boss1(Inimigo):
 
         self.player = player
 
-        self.rect.topleft = (x,y)
+        self.rect.center = (x,y)
 
-        self.speed = 1
+        self.speed = 2
         self.player_rect = player_rect
         self.bullet_speed = 5
 
         # Criar um grupo para gerenciar as balas
         self.balas = pygame.sprite.Group()
 
-        self.mover = True
+        self.mover = [randint(200,500),randint(200,500)]
+
+        for i in range(2):
+            if not self.mover[i] % 2 == 0:
+                self.mover[i]+=1
+        while True:
+            for i in range(2):
+                if not self.mover[i] % self.speed == 0:
+                    self.mover[i]+=1
+            if self.mover[0] % self.speed == 0 and self.mover[1] % self.speed == 0:
+                break
+            
+
+        self.mover_x, self.mover_y = self.mover
 
         self.ataque = ataque
 
@@ -47,25 +61,30 @@ class Boss1(Inimigo):
         if dialogo_open:
             return
         # Atualiza as balas
-        self.balas.update()  # Atualiza a posição de todas as balas
+        self.balas.update(dialogo_open)  # Atualiza a posição de todas as balas
 
         if self.mover:
-            if self.player_rect.centery-self.rect.centery != 0 and self.player_rect.centerx-self.rect.centerx < 200:
+            if self.mover_y-self.rect.centery != 0 and self.mover_x-self.rect.centerx < 200:
             
-                if self.player_rect.centery > self.rect.centery:
+                if self.mover_y > self.rect.centery:
                     self.rect.y +=self.speed
-                elif self.player_rect.centery < self.rect.centery:
+                elif self.mover_y < self.rect.centery:
                     self.rect.y -=self.speed
                 else:
                     pass
 
             else:
-                if self.player_rect.centerx > self.rect.centerx:
+                if self.mover_x > self.rect.centerx:
                     self.rect.x +=self.speed
-                elif self.player_rect.centerx < self.rect.centerx:
+                elif self.mover_x < self.rect.centerx:
                     self.rect.x -=self.speed
                 else:
                     pass
+            
+            if self.rect.center == self.mover:
+                self.atacar()
+            # else:
+            #     print('(',self.rect.centerx,self.rect.centery,')',self.mover)
 
         for bala in self.balas:
             if not bala.active:
