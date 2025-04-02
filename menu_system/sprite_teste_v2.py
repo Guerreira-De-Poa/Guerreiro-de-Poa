@@ -48,7 +48,7 @@ class Personagem(pygame.sprite.Sprite):
 
         self.mousex, self.mousey = self.mouse_pos
 
-        print(self.rect.left, self.rect.top)
+        #print(self.rect.left, self.rect.top)
 
         self.center_x, self.center_y = 800 // 2, 600 // 2
 

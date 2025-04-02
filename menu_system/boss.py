@@ -16,31 +16,36 @@ class Boss1(Inimigo):
 
         self.rect.center = (x,y)
 
-        self.speed = 2
+        self.speed = 4
         self.player_rect = player_rect
         self.bullet_speed = 5
 
         # Criar um grupo para gerenciar as balas
         self.balas = pygame.sprite.Group()
 
-        self.mover = [randint(200,500),randint(200,500)]
+        self.mover = True
 
-        for i in range(2):
-            if not self.mover[i] % 2 == 0:
-                self.mover[i]+=1
-        while True:
-            for i in range(2):
-                if not self.mover[i] % self.speed == 0:
-                    self.mover[i]+=1
-            if self.mover[0] % self.speed == 0 and self.mover[1] % self.speed == 0:
-                break
-            
-
-        self.mover_x, self.mover_y = self.mover
+        self.gerar_local_a_mover()
 
         self.ataque = ataque
 
         self.modo_ataque = 1
+
+    def gerar_local_a_mover(self):
+        self.local_a_mover = [randint(200,800),randint(200,800)]
+
+        for i in range(2):
+            if not self.local_a_mover[i] % 2 == 0:
+                self.local_a_mover[i]+=1
+        while True:
+            for i in range(2):
+                if not self.local_a_mover[i] % self.speed == 0:
+                    self.local_a_mover[i]+=1
+            if self.local_a_mover[0] % self.speed == 0 and self.local_a_mover[1] % self.speed == 0:
+                #print(self.local_a_mover == False,'\n\n')
+                break
+
+        self.local_a_mover_x, self.local_a_mover_y = self.local_a_mover
 
 
     def shoot(self,player_rect):
@@ -63,28 +68,30 @@ class Boss1(Inimigo):
         # Atualiza as balas
         self.balas.update(dialogo_open)  # Atualiza a posição de todas as balas
 
+
         if self.mover:
-            if self.mover_y-self.rect.centery != 0 and self.mover_x-self.rect.centerx < 200:
+            if self.local_a_mover_y-self.rect.centery != 0 and self.local_a_mover_x-self.rect.centerx < 200:
             
-                if self.mover_y > self.rect.centery:
+                if self.local_a_mover_y > self.rect.centery:
                     self.rect.y +=self.speed
-                elif self.mover_y < self.rect.centery:
+                elif self.local_a_mover_y < self.rect.centery:
                     self.rect.y -=self.speed
                 else:
                     pass
 
             else:
-                if self.mover_x > self.rect.centerx:
+                if self.local_a_mover_x > self.rect.centerx:
                     self.rect.x +=self.speed
-                elif self.mover_x < self.rect.centerx:
+                elif self.local_a_mover_x < self.rect.centerx:
                     self.rect.x -=self.speed
                 else:
                     pass
-            
-            if self.rect.center == self.mover:
-                self.atacar()
+        
+        while (self.rect.centerx,self.rect.centery)== tuple(self.local_a_mover):
+            self.gerar_local_a_mover()
+            self.atacar()
             # else:
-            #     print('(',self.rect.centerx,self.rect.centery,')',self.mover)
+            #     print('(',self.rect.centerx,self.rect.centery,')',self.local_a_mover)
 
         for bala in self.balas:
             if not bala.active:
@@ -96,7 +103,7 @@ class Boss1(Inimigo):
                 # Ajuste da posição com a câmera
                 screen.blit(bala.image, (bala.rect.x - camera.left, bala.rect.y - camera.top))
 
-    def remover_todas_balas(self):
+    def relocal_a_mover_todas_balas(self):
         #print(self.balas.sprites()[0])
         for bala in self.balas:
             self.balas.remove(bala)

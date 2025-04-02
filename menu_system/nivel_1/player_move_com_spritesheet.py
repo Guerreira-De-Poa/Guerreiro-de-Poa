@@ -18,6 +18,8 @@ from bau import Bau
 pause = False
 
 def inicio():
+    
+    boss_parado=False
     global pause
     # Inicialização do Pygame
     pygame.init()
@@ -137,7 +139,6 @@ def inicio():
     lista_2 = [13 for j in range(4)]
     lista_3 = [7 for k in range(14)]
 
-    print(lista_1+lista_2+lista_3)
     # Criar o jogador
     try:
         player_sprite_path = os.path.join(current_dir, '..', '..', 'player_com_arco.png')
@@ -207,7 +208,7 @@ def inicio():
     texto = {
         'personagem_1':'Omori',
         'texto_1':['Bem vindo ao Espaço em branco', 'Meu nome é Omori'],
-        'personagem_2': "Guerreiro de Poá",
+        'personagem_1': "Guerreiro de Poá",
         'texto_2':['Que viagem é essa?']
         }
 
@@ -221,7 +222,6 @@ def inicio():
     bau2 = Bau(screen,400,800,['Ossos','Poção'])
     baus = pygame.sprite.Group()
     baus.add(bau1,bau2)
-    print(bau1)
 
     all_sprites.add(bau1)
 
@@ -230,9 +230,6 @@ def inicio():
     for npc in npcs:
         if npc.dialogo:
             dialogo_group.append(npc.dialogo)
-
-    print(dialogo_group)
-    print(f"Total de tiles carregados: {len(map_tiles)}")
 
     #CONFIG INVENTARIO
 
@@ -280,7 +277,6 @@ def inicio():
                 if bau.interagir_rect.colliderect(player.rect):
                     botao_ativo = True
                 if bau.rect.colliderect(player.rect):
-                    print("COLISAO BAU")
                     player.rect.x, player.rect.y = old_x, old_y
                 elif not bau.interagir_rect.colliderect(player.rect):
                     botao_ativo = False
@@ -373,13 +369,17 @@ def inicio():
 
         contador+=1
 
+
         if contador % 30 == 0:
             for inimigo in inimigos:
-                inimigo.atacar()
-        if contador % 1000 == 0:
+                if boss_parado:
+                    inimigo.atacar()
+                pass
+        if contador % 500 == 0:
             for inimigo in inimigos:
                 if inimigo.mover:
                     inimigo.mover = False
+                    boss_parado = True
                 else:
                     inimigo.mover = True
 
@@ -592,34 +592,3 @@ def inicio():
 
 if __name__ == "__main__":
     inicio()
-
-#----------------------------------------------------------------------------------------------------------------------------------------------------
-#     if player.rect.left <= -15:
-#         player.rect.left = -15
-
-#     if player.rect.right >= bg.get_width()-10:
-#         player.rect.right = bg.get_width()-10
-
-#     if player.rect.bottom >= bg.get_height()-28:
-#         player.rect.bottom = bg.get_height()-28
-
-#     if player.rect.top <= -15:
-#         player.rect.top = -15
-
-#     screen.blit(bg, (0, 0), camera)
-
-#     # if player.ivuln == True:
-#     #     if player.contador_iframes < player.iframes:
-#     #         player.contador_iframes += 1
-#     #     else:
-#     #         player.ivuln = False
-#     #         player.contador_iframes = 0
-#     #         player.rect.width = 64 
-#     #         player.rect.height = 64
-
-
-#     # if player.ivuln: 
-#     #     camera.center = (player.rect.x+32,player.rect.y + 32)
-#     #     print(camera.center)
-#     # elif not player.ivuln:
-#     camera.center = player.rect.center

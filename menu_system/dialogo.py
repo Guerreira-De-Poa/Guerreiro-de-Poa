@@ -33,12 +33,6 @@ class Dialogo():
             elif 'texto' in item:
                 self.qtd_textos +=1
                 self.todos_textos.append((personagem,item))
-
-        #print(self.todos_textos)
-
-        print(self.texto.get(self.todos_textos[1][1])[0])
-
-        #print(self.todos_textos[self.texto_index][0])
         
     def trocar_texto(self):
         if self.texto_open == False:
