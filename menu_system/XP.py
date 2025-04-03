@@ -10,11 +10,17 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Sistema de Combate Simples")
 
 class XP():
-    def __init__(self, screen, screen_width, screen_height, inimigo):
+    def __init__(self, screen, screen_width, screen_height):
 
         self.screen = screen
         self.screen_width, self.screen_height = screen_width, screen_height
-        self.inimigo = inimigo
+
+        # Cores
+        self.WHITE = (255, 255, 255)
+        self.RED = (255, 0, 0)
+        self.GREEN = (0, 255, 0)
+        self.BLUE = (0, 0, 255)
+        self.BLACK = (0, 0, 0)
 
         # Sistema de xp
         self.xp = 0
@@ -35,9 +41,9 @@ class XP():
         self.ganhando_xp = False
 
         # Posição desenho do nivel
-        self.pos_xp_x = (WIDTH // 2) - (self.xp_width // 2)
-        self.pos_xp_y = HEIGHT - (self.xp_height * 2)
-        self.pos_nivel_x = (WIDTH // 2) - (self.nivel)
+        self.pos_xp_x = (self.screen_width // 2) - (self.xp_width // 2)
+        self.pos_xp_y = self.screen_height - (self.xp_height * 2)
+        self.pos_nivel_x = (self.screen_width // 2) - 3
         self.pos_nivel_y = self.pos_xp_y - (self.tamanho_nivel - 10)
 
         # Distribuição de pontos
@@ -58,8 +64,8 @@ class XP():
     #     pygame.draw.rect(screen, self.GREEN, (x, y, health_width * health_ratio, health_height))
 
     # Atualiza a barra de XP
-    def atualizar_xp(self):
-        if self.inimigo == 0 and not self.ganhando_xp:
+    def atualizar_xp(self, inimigo):
+        if inimigo == 0 and not self.ganhando_xp:
             self.temporizador_xp = pygame.time.get_ticks()
             self.ganhando_xp = True
             self.xp_limitador += 100
@@ -98,14 +104,21 @@ class XP():
 
     # Exibe a tela com os componentes
     def render(self):
-        # Desenha a barra de xp
-        pygame.draw.rect(screen, self.WHITE, (self.pos_xp_x, self.pos_xp_y, self.xp_width, self.xp_height), 0, 10)
-        pygame.draw.rect(screen, self.GREEN, (self.pos_xp_x, self.pos_xp_y, self.xp_ratio, self.xp_height), 0, 10)
+        if self.xp_ratio is None:
+            self.xp_ratio = 0  # Garantir que não seja None
 
-        # Desenha o nivel
-        self.font_nivel = pygame.font.SysFont(None, self.tamanho_nivel)
+        # Desenha a barra de XP
+        pygame.draw.rect(self.screen, self.WHITE, (self.pos_xp_x, self.pos_xp_y, self.xp_width, self.xp_height), 0, 10)
+        pygame.draw.rect(self.screen, self.GREEN, (self.pos_xp_x, self.pos_xp_y, self.xp_ratio, self.xp_height), 0, 10)
+
+        # Ajustar a posição do nível para não ficar desalinhado
+        self.font_nivel = pygame.font.SysFont(None, self.tamanho_nivel, )
         self.text_nivel = self.font_nivel.render(f"{self.nivel}", True, self.GREEN)
         self.screen.blit(self.text_nivel, (self.pos_nivel_x, self.pos_nivel_y))
+        print("ola")
+
+
+
 
 #     # Loop do jogo
 #     def game_loop(self):
