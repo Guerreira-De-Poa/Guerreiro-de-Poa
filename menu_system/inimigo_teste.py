@@ -15,7 +15,7 @@ class Inimigo(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()  # Obtém o retângulo da imagem para movimentação
         self.bullet_img = pygame.image.load('bullet.png').convert_alpha()
 
-        self.HP = 10
+        self.HP = 1
 
         self.player = player
 

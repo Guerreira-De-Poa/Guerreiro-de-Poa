@@ -65,7 +65,7 @@ class XP():
 
     # Atualiza a barra de XP
     def atualizar_xp(self, inimigo):
-        if inimigo == 0 and not self.ganhando_xp:
+        if inimigo.HP == 0 and not self.ganhando_xp:
             self.temporizador_xp = pygame.time.get_ticks()
             self.ganhando_xp = True
             self.xp_limitador += 100
@@ -115,7 +115,6 @@ class XP():
         self.font_nivel = pygame.font.SysFont(None, self.tamanho_nivel, )
         self.text_nivel = self.font_nivel.render(f"{self.nivel}", True, self.GREEN)
         self.screen.blit(self.text_nivel, (self.pos_nivel_x, self.pos_nivel_y))
-        print("ola")
 
 
 

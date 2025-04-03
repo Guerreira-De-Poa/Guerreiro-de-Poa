@@ -384,10 +384,8 @@ def inicio():
 
         contador+=1
 
-
         if contador % 30 == 0:
             for inimigo in inimigos:
-                xp.atualizar_xp(inimigo)
                 if boss_parado:
                     inimigo.atacar()
                 pass
@@ -424,6 +422,7 @@ def inicio():
                 i+=1
 
         for inimigo in inimigos:
+            xp.atualizar_xp(inimigo)
             if inimigo.HP == 0:
                 inimigo.image = pygame.Surface((32, 32), pygame.SRCALPHA)
                 inimigo.remover_todas_balas()
