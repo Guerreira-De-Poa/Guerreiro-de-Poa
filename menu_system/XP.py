@@ -21,6 +21,7 @@ class XP():
         self.GREEN = (0, 255, 0)
         self.BLUE = (0, 0, 255)
         self.BLACK = (0, 0, 0)
+        self.DARK_PURPLE = (87, 23, 215)
 
         # Sistema de xp
         self.xp = 0
@@ -109,11 +110,11 @@ class XP():
 
         # Desenha a barra de XP
         pygame.draw.rect(self.screen, self.WHITE, (self.pos_xp_x, self.pos_xp_y, self.xp_width, self.xp_height), 0, 10)
-        pygame.draw.rect(self.screen, self.GREEN, (self.pos_xp_x, self.pos_xp_y, self.xp_ratio, self.xp_height), 0, 10)
+        pygame.draw.rect(self.screen, self.DARK_PURPLE, (self.pos_xp_x, self.pos_xp_y, self.xp_ratio, self.xp_height), 0, 10)
 
         # Ajustar a posição do nível para não ficar desalinhado
         self.font_nivel = pygame.font.SysFont(None, self.tamanho_nivel, )
-        self.text_nivel = self.font_nivel.render(f"{self.nivel}", True, self.GREEN)
+        self.text_nivel = self.font_nivel.render(f"{self.nivel}", True, self.DARK_PURPLE)
         self.screen.blit(self.text_nivel, (self.pos_nivel_x, self.pos_nivel_y))
 
 
