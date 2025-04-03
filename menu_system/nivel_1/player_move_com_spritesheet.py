@@ -15,6 +15,8 @@ from inventario1 import Inventario
 from boss import Boss1
 from bau import Bau
 
+from XP import XP
+
 pause = False
 
 def inicio():
@@ -383,6 +385,7 @@ def inicio():
 
         if contador % 30 == 0:
             for inimigo in inimigos:
+                xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT, inimigo)
                 if boss_parado:
                     inimigo.atacar()
                 pass
@@ -420,6 +423,7 @@ def inicio():
 
         for inimigo in inimigos:
             if inimigo.HP == 0:
+                xp.atualizar_xp()
                 inimigo.image = pygame.Surface((32, 32), pygame.SRCALPHA)
                 inimigo.remover_todas_balas()
                 inimigos.remove(inimigo)
@@ -497,6 +501,7 @@ def inicio():
             player.atacando = False
         
         # Renderização
+        xp.render()
         screen.fill((0, 0, 0))  # Fundo preto
         
         # Desenhar o mapa (apenas tiles visíveis)
