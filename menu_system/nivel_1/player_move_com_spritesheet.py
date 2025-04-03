@@ -141,6 +141,8 @@ def inicio():
     lista_2 = [13 for j in range(4)]
     lista_3 = [7 for k in range(14)]
 
+    lista_sprites = lista_1+lista_2+lista_3
+
     # Criar o jogador
     try:
         player_sprite_path = os.path.join(current_dir, '..', '..', 'player_com_arco.png')
@@ -177,14 +179,11 @@ def inicio():
 
     vida_imagem = pygame.image.load('love-always-wins(1).png')
 
-
-    spritesheet_inimigo_arco_png = pygame.image.load("inimigo_com_arco.png")
     spritesheet_inimigo_arco = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
     spritesheet_inimigo_arco0 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
     spritesheet_inimigo_arco1 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
     spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
     spritesheet_inimigo_arco3 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
-    spritesheet_inimigo_arco4 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
 
     enemy0 = Inimigo(player.rect, player, 0,0, False,spritesheet_inimigo_arco)
     boss = Inimigo(player.rect, player, 300,600, True,spritesheet_inimigo_arco0)
