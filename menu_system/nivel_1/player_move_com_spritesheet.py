@@ -175,11 +175,22 @@ def inicio():
 
     vida_imagem = pygame.image.load('love-always-wins(1).png')
 
-    # enemy0 = Inimigo(player.rect, player, 0,0, False,imagem_inimigo)
-    # boss = Inimigo(player.rect, player, 300,600, True,imagem_inimigo)
-    # enemy1 = Inimigo(player.rect, player, 200,0, False,imagem_inimigo)
-    # enemy2 = Inimigo(player.rect, player, 0,800, True,imagem_inimigo)
-    # enemy3 = Inimigo(player.rect, player, 800,0, False,imagem_inimigo)
+
+    spritesheet_inimigo_arco_png = pygame.image.load("inimigo_com_arco.png")
+    spritesheet_inimigo_arco = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
+    spritesheet_inimigo_arco0 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
+    spritesheet_inimigo_arco1 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
+    spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
+    spritesheet_inimigo_arco3 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
+    spritesheet_inimigo_arco4 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
+
+    enemy0 = Inimigo(player.rect, player, 0,0, False,spritesheet_inimigo_arco)
+    boss = Inimigo(player.rect, player, 300,600, True,spritesheet_inimigo_arco0)
+    enemy1 = Inimigo(player.rect, player, 200,0, False,spritesheet_inimigo_arco1)
+    enemy2 = Inimigo(player.rect, player, 0,800, True,spritesheet_inimigo_arco2)
+    enemy3 = Inimigo(player.rect, player, 800,0, False,spritesheet_inimigo_arco3)
+
+    print(enemy0.sheet)
 
     inimigos = pygame.sprite.Group()
 
@@ -190,12 +201,12 @@ def inicio():
     all_sprites.add(player)
     player_group.add(player)
 
-    # all_sprites.add(enemy0, enemy1, enemy2, enemy3,boss)
-    # inimigos.add(enemy0, enemy1, enemy2, enemy3,boss)
+    all_sprites.add(enemy0, enemy1, enemy2, enemy3,boss)
+    inimigos.add(enemy0, enemy1, enemy2, enemy3,boss)
 
-    boss2 = Boss1(player.rect,player,400,400,True,imagem_inimigo)
-    all_sprites.add(boss2)
-    inimigos.add(boss2)
+    # boss2 = Boss1(player.rect,player,400,400,True,spritesheet_inimigo_arco)
+    # all_sprites.add(boss2)
+    # inimigos.add(boss2)
 
     contador = 0
 
@@ -477,7 +488,7 @@ def inicio():
         if click:
             click_hold +=1
             player.atacando = True
-            player.hold_arrow(mouse_pos)
+            player.hold_arrow(mouse_pos,camera)
         else:
             if click_hold > 30:
                 player.shoot(mouse_pos)
@@ -542,7 +553,7 @@ def inicio():
         player.draw_balas(screen,camera)
 
         for inimigo in inimigos:
-            screen.blit(inimigo.image, (inimigo.rect.x - camera.left, inimigo.rect.y - camera.top))
+            inimigo.sheet.draw(screen, inimigo.rect.x - camera.left, inimigo.rect.y - camera.top)
 
         for vida in range(player.HP):
             screen.blit(vida_imagem,(18 + 32*vida,0))
