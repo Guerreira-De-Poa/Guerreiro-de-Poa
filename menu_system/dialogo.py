@@ -5,8 +5,8 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 class Dialogo():
     def __init__(self,texto,screen,missao):
-        self.font = pygame.font.Font(None,48)
-        self.font_secundaria = pygame.font.Font(None,36)
+        self.font = pygame.font.Font('8bitOperatorPlus8-Regular.ttf',27)
+        self.font_secundaria = pygame.font.Font('8bitOperatorPlus8-Regular.ttf',30)
         #text = (font.render(texto.get('texto_1')[iter_texto], True, (100,100,100)))
         self.screen = screen
 

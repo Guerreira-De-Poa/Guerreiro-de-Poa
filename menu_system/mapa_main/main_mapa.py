@@ -745,8 +745,6 @@ def inicio():
 
         for vida in range(player.HP):
             screen.blit(vida_imagem,(18 + 32*vida,0))
-        for npc in npcs:
-            npc.dialogo.coisa()
 
         for bau in baus:
             screen.blit(bau.image, (bau.rect.x - camera.left, bau.rect.y - camera.top))

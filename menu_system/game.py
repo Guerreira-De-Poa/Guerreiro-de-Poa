@@ -1,6 +1,7 @@
 import pygame
 from menu import *
 from nivel_1.player_move_com_spritesheet import *
+from mapa_main.main_mapa import inicio as inicio_real
 
 fundo_historia = pygame.image.load('fundo_historia.png')
 class Game():
@@ -25,7 +26,7 @@ class Game():
                 break
             if self.START_KEY: # quando clicamos em começar
                 self.playing = False # quebramos o loop, não o jogo em si, tipo, ainda roda, mas o loop do menu nãop
-                inicio()
+                inicio_real()
 
             self.display.blit(fundo_historia, (0,0)) # ATUALIZAMOS A TELA, pra que não fica tudo junto na mesma tela
             self.window.blit(self.display, (0,0)) # manda o display, MANDA PRA WINDOW (0,0) É PRA ALINHA DISPLAY COM WINDOW

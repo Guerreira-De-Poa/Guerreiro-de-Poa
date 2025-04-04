@@ -173,7 +173,7 @@ def inicio():
 
     vida_imagem = pygame.image.load('love-always-wins(1).png')
 
-    spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco2 = SpriteSheet('boss_agua.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
 
     boss = Boss1(player.rect,player,1220,1000,True,spritesheet_inimigo_arco2)
 
@@ -583,7 +583,7 @@ def inicio():
 
         if dialogo_a_abrir and dialogo_a_abrir.texto_open == False:
             
-            font = pygame.font.Font(None,48)
+            font = pygame.font.Font('8bitOperatorPlus8-Regular.ttf',48)
             render = font.render("Interagir", True, (0,0,0))
             screen.blit(interagir_bg,(300,450))
             screen.blit(render,(325,457))
@@ -591,9 +591,13 @@ def inicio():
         if boss.HP > 0:
             pygame.draw.rect(screen,(0,0,0),(200,45,400,25))
             pygame.draw.rect(screen,(255,0,0),(200,45,80*boss.HP,25))
-            fonte = pygame.font.Font(None,36)
+            fonte = pygame.font.Font('8-BIT WONDER.TTF',30)
             text_surface = fonte.render("O Ligeiro", True, (255, 255, 255))
-            screen.blit(text_surface, (340,70,400,100))
+            screen.blit(text_surface, (288,68,400,100))
+
+            fonte2 = pygame.font.Font('8-BIT WONDER.TTF',30)
+            text_surface = fonte2.render("O Ligeiro", True, (0, 0, 0))
+            screen.blit(text_surface, (290,70,400,100))
 
         # Desenhar os inventários e o botão
         if inventario1.inventory_open:
@@ -612,6 +616,9 @@ def inicio():
             inventario1.draw_dragging_item(screen, dragging_item)  # Agora o método `draw_dragging_item` é da classe Inventario1
 
         xp.render()
+
+        for npc in npcs:
+            npc.dialogo.coisa()
         pygame.display.flip()
 
     pygame.quit()
