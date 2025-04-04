@@ -165,8 +165,8 @@ class Personagem(pygame.sprite.Sprite):
         self.mousey = self.mouse_pos[1]
         self.mousex = self.mouse_pos[0]
 
-        self.rel_x = (self.mousex - self.center_x)+camera.left
-        self.rel_y = (self.mousey - self.center_y)+camera.top
+        self.rel_x = (self.mousex - self.center_x)-camera.left
+        self.rel_y = (self.mousey - self.center_y)-camera.top
 
         # Calcula o ângulo em radianos
         self.angle = math.atan2(self.rel_y, self.rel_x)  # Retorna ângulo de -π a π

@@ -4,7 +4,7 @@ import os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 class Dialogo():
-    def __init__(self,texto,screen):
+    def __init__(self,texto,screen,missao):
         self.font = pygame.font.Font(None,48)
         self.font_secundaria = pygame.font.Font(None,36)
         #text = (font.render(texto.get('texto_1')[iter_texto], True, (100,100,100)))
@@ -28,7 +28,7 @@ class Dialogo():
         #########
         # Uma variavel para configurar o inicio da missão
         #########
-        self.missao_ativada = False  # <-- Adicionando a variável de missão ativada
+        self.missao_ativada = missao  # <-- Adicionando a variável de missão ativada
 
         personagem = ''
         for item in self.texto.keys():
@@ -53,8 +53,9 @@ class Dialogo():
                 ##########
                 # Dai caso a missão seja true, começa, essa parte funciona!
                 ##########
-                self.missao_ativada = True  # <-- Missão ativada aqui!
-                print("Missão ativada!")  # Teste para ver se está funcionando
+                if self.missao_ativada !=0:
+                    self.missao_ativada = True  # <-- Missão ativada aqui!
+                    print("Missão ativada!")  # Teste para ver se está funcionando
                 return
 
         self.iter_texto +=1
@@ -70,7 +71,7 @@ class Dialogo():
         if self.texto_open == True:
             self.screen.blit(self.text_bg, (0,400))
 
-            if self.letra_index < len(self.text) and self.frame_count % 5 == 0:
+            if self.letra_index < len(self.text) and self.frame_count % 2 == 0:
                 self.frase += self.text[self.letra_index]
                 self.letra_index += 1
 

@@ -139,14 +139,16 @@ def inicio():
         print("Erro: Nenhum tile foi carregado para renderização!")
         pygame.quit()
         sys.exit()
-    lista_1 = [7 for i in range(16)]
-    lista_2 = [13 for j in range(4)]
-    lista_3 = [7 for k in range(14)]
+    lista_1 = [7 for i in range(4)]
+    lista_2 = [6 for i in range(4)]
+    lista_3 = [7 for i in range(8)]
+    lista_4 = [13 for j in range(4)]
+    lista_5 = [7 for k in range(14)]
 
     # Criar o jogador
     try:
         player_sprite_path = os.path.join(current_dir, '..', '..', 'player_com_arco.png')
-        player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
+        player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
         player = Personagem(player_sprite)
@@ -181,15 +183,15 @@ def inicio():
 
 
     spritesheet_inimigo_arco_png = pygame.image.load("inimigo_com_arco.png")
-    spritesheet_inimigo_arco = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
-    spritesheet_inimigo_arco0 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
-    spritesheet_inimigo_arco1 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
-    spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
-    spritesheet_inimigo_arco3 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
-    spritesheet_inimigo_arco4 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
+    spritesheet_inimigo_arco = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco0 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco1 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco3 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco4 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
 
     enemy0 = Inimigo(player.rect, player, 0,0, False,spritesheet_inimigo_arco)
-    boss = Inimigo(player.rect, player, 300,600, True,spritesheet_inimigo_arco0)
+    #boss = Inimigo(player.rect, player, 300,600, True,spritesheet_inimigo_arco0)
     enemy1 = Inimigo(player.rect, player, 200,0, False,spritesheet_inimigo_arco1)
     enemy2 = Inimigo(player.rect, player, 0,800, True,spritesheet_inimigo_arco2)
     enemy3 = Inimigo(player.rect, player, 800,0, False,spritesheet_inimigo_arco3)
@@ -205,8 +207,8 @@ def inicio():
     all_sprites.add(player)
     player_group.add(player)
 
-    all_sprites.add(enemy0, enemy1, enemy2, enemy3,boss)
-    inimigos.add(enemy0, enemy1, enemy2, enemy3,boss)
+    all_sprites.add(enemy0, enemy1, enemy2, enemy3)
+    inimigos.add(enemy0, enemy1, enemy2, enemy3)
 
     # boss2 = Boss1(player.rect,player,400,400,True,spritesheet_inimigo_arco)
     # all_sprites.add(boss2)
@@ -384,18 +386,18 @@ def inicio():
 
         contador+=1
 
-        if contador % 30 == 0:
+        if contador % 70 == 0:
             for inimigo in inimigos:
-                if boss_parado:
+                if inimigo.ataque:
                     inimigo.atacar()
                 pass
-        if contador % 500 == 0:
-            for inimigo in inimigos:
-                if inimigo.mover:
-                    inimigo.mover = False
-                    boss_parado = True
-                else:
-                    inimigo.mover = True
+        # if contador % 500 == 0:
+        #     for inimigo in inimigos:
+        #         if inimigo.mover:
+        #             inimigo.mover = False
+        #             boss_parado = True
+        #         elif inimigo.ataque:
+        #             inimigo.mover = True
 
         player_hits =  pygame.sprite.groupcollide(player.balas,inimigos, False, False)
         
@@ -547,6 +549,17 @@ def inicio():
             for i, text in enumerate(debug_info):
                 text_surface = font.render(text, True, (255, 255, 255))
                 screen.blit(text_surface, (10, 10 + i * 25))
+
+        for inimigo in inimigos:
+            if inimigo.rect.colliderect(player.rect):
+                player.get_hit()
+                inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
+                player.rect.topleft = (old_x,old_y)
+                inimigo.atacando_melee = True
+                inimigo.frame_change = 4
+            else:
+                inimigo.atacando_melee = False
+                inimigo.frame_change = 10
 
         # Desenhar o jogador
         player.sheet.draw(screen, player.rect.x - camera.left, player.rect.y - camera.top)

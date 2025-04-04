@@ -3,6 +3,8 @@ import sys
 import json
 import os
 
+from main_luta import inicio as inicio_boss
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from spritesheet_explicada import SpriteSheet
@@ -15,9 +17,13 @@ from inventario1 import Inventario
 from boss import Boss1
 from bau import Bau
 
+from XP import XP
+
 pause = False
 
 def inicio():
+    
+    boss_parado=False
     global pause
     # Inicialização do Pygame
     pygame.init()
@@ -46,6 +52,8 @@ def inicio():
     TILE_SIZE = map_data['tileSize']
     MAP_WIDTH = map_data['mapWidth']
     MAP_HEIGHT = map_data['mapHeight']
+
+    xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
 
     # Classe para carregar a spritesheet do mapa
     class MapSpriteSheet:
@@ -166,15 +174,16 @@ def inicio():
         print("Erro: Nenhum tile foi carregado para renderização!")
         pygame.quit()
         sys.exit()
-    lista_1 = [7 for i in range(16)]
-    lista_2 = [13 for j in range(4)]
-    lista_3 = [7 for k in range(14)]
+    lista_1 = [7 for i in range(4)]
+    lista_2 = [6 for i in range(4)]
+    lista_3 = [7 for i in range(8)]
+    lista_4 = [13 for j in range(4)]
+    lista_5 = [7 for k in range(14)]
 
-    print(lista_1+lista_2+lista_3)
     # Criar o jogador
     try:
-        player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha.png')
-        player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
+        player_sprite_path = os.path.join(current_dir, '..', '..', 'player_com_arco.png')
+        player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
         player = Personagem(player_sprite)
@@ -207,11 +216,14 @@ def inicio():
 
     vida_imagem = pygame.image.load('love-always-wins(1).png')
 
-    # enemy0 = Inimigo(player.rect, player, 0,0, False,imagem_inimigo)
-    # boss = Inimigo(player.rect, player, 300,600, True,imagem_inimigo)
-    # enemy1 = Inimigo(player.rect, player, 200,0, False,imagem_inimigo)
-    # enemy2 = Inimigo(player.rect, player, 0,800, True,imagem_inimigo)
-    # enemy3 = Inimigo(player.rect, player, 800,0, False,imagem_inimigo)
+
+    spritesheet_inimigo_arco_png = pygame.image.load("inimigo_com_arco.png")
+    spritesheet_inimigo_arco = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco0 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco1 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco3 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco4 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
 
     inimigos = pygame.sprite.Group()
 
@@ -222,8 +234,12 @@ def inicio():
     all_sprites.add(player)
     player_group.add(player)
 
-    # all_sprites.add(enemy0, enemy1, enemy2, enemy3,boss)
-    # inimigos.add(enemy0, enemy1, enemy2, enemy3,boss)
+    #all_sprites.add(enemy0, enemy1, enemy2, enemy3)
+    #inimigos.add(enemy0, enemy1, enemy2, enemy3)
+
+    # boss2 = Boss1(player.rect,player,400,400,True,spritesheet_inimigo_arco)
+    # all_sprites.add(boss2)
+    # inimigos.add(boss2)
 
     contador = 0
 
@@ -234,31 +250,36 @@ def inicio():
     omori = pygame.image.load('npc.png')
 
     texto = {
-        'personagem_1':'Omori',
-        'texto_1':['Bem vindo ao Espaço em branco', 'Meu nome é Omori'],
-        'personagem_2': "Guerreiro de Poá",
-        'texto_2':['Que viagem é essa?'],
-        # 'personagem_3':"TESTE", # esta orfem para npc
-        # 'texto3': ["TEST TESTE"]
+        'personagem':'Morador de Poá',
+        'texto_1':['Ei você', 'Você parece um guerreiro formidável', 'Por favor nos ajude', 'Nossa vila está sendo invadida'],
+        'personagem_1': "Guerreiro de Poá",
+        'texto_2':['Não se preocupe senhor', 'Eu irei ajuda-los']
+        }
 
+    texto_1 = {
+        'personagem':'Morador de Poá',
+        'texto_1':['Obrigado por nos salvar', 'Fale com o carinha que mora logo ali','Ele viu onde o chefe dos invasores fica', 'Se você derrotar o chefe', 'Eles nunca irão nos invadir de novo' ],
+        'personagem_1': "Guerreiro de Poá",
+        'texto_2':['Não se preocupe senhor', 'Eu irei ajuda-los']
+        }
+
+    texto_2 = {
+        'personagem':'Morador de Poá',
+        'texto_1':['Você foi o guerreiro que nos salvou certo?', 'Muito obrigado', 'Eu posso te levar ao chefe deles', 'Isso fará com que eles desistam de nos invadir'],
+        'personagem_1': "Guerreiro de Poá",
+        'texto_2':['Me leve até lá']
         }
     
     ########### 
     # de alguma forma, agora te que deixar o dicionario texto...
     ###########
 
-    npc = NPC(omori,screen,1248,545,texto)
+    npc0 = NPC(omori,screen,1248,545,texto_2, 2)
+    npc1 = NPC(omori,screen,2115, 2150,texto, 3)
 
-    all_sprites.add(npc)
+    all_sprites.add(npc0,npc1)
     npcs = pygame.sprite.Group()
-    npcs.add(npc)
-
-    bau1 = Bau(screen,400,600)
-    baus = pygame.sprite.Group()
-    baus.add(bau1)
-    print(bau1)
-
-    all_sprites.add(bau1)
+    npcs.add(npc0,npc1) 
 
     dialogo_group = []
 
@@ -293,7 +314,40 @@ def inicio():
     inventario1 = Inventario((50, 50, 50), 50, ["Espada", "Poção", "Escudo"])
     inventario2 = Inventario((0, 100, 0), 400)
 
+    baus = pygame.sprite.Group()
+
+    iterado_teste = 0
+
     while running:
+
+
+        missao_1 = npc1.dialogo.missao_ativada
+        missao_2 = npc0.dialogo.missao_ativada
+
+        if missao_2 == True:
+            running = False
+
+        if missao_1 == True and iterado_teste == 0:
+            iterado_teste+=1
+            npc.dialogo.frase = ''
+            npc1.dialogo.texto = texto_1
+            npc1.dialogo.iter_texto = 0
+            npc1.dialogo.texto_index = 0
+            npc1.dialogo.letra_index = 0
+
+        if missao_1 == True and len(inimigos) == 0:
+            enemy0 = Inimigo(player.rect, player, 1566,2322, False,spritesheet_inimigo_arco)
+            enemy1 = Inimigo(player.rect, player, 2150,1754, False,spritesheet_inimigo_arco1)
+            enemy2 = Inimigo(player.rect, player, 1570,2102, True,spritesheet_inimigo_arco2)
+            enemy3 = Inimigo(player.rect, player, 2650,2266, False,spritesheet_inimigo_arco3)
+            all_sprites.add(enemy0, enemy1, enemy2, enemy3)
+            inimigos.add(enemy0, enemy1, enemy2, enemy3)
+
+        bau_perto = False
+
+        for bau in baus:
+            if bau.interagir_rect.colliderect(player.rect):
+                bau_perto = bau
 
         clock.tick(60) # Delta time em segundos
 
@@ -313,16 +367,15 @@ def inicio():
             dialogo_a_abrir = dialogo_hitbox.dialogo
 
 
-
         for bau in baus:
-            if bau.interagir_rect.colliderect(player.rect):
-                botao_ativo = True
-            if bau.rect.colliderect(player.rect):
-                print("COLISAO BAU")
-                player.rect.x, player.rect.y = old_x, old_y
-            elif not bau.interagir_rect.colliderect(player.rect):
-                botao_ativo = False
-                inventario2.inventory_open = False
+            if bau_perto == bau:
+                if bau.interagir_rect.colliderect(player.rect):
+                    botao_ativo = True
+                if bau.rect.colliderect(player.rect):
+                    player.rect.x, player.rect.y = old_x, old_y
+                elif not bau.interagir_rect.colliderect(player.rect):
+                    botao_ativo = False
+                    bau_perto.inventario.inventory_open = False
 
         # Obter teclas pressionadas
         keys = pygame.key.get_pressed()
@@ -365,7 +418,8 @@ def inicio():
                     if dialogo_a_abrir:
                         dialogo_a_abrir.trocar_texto()
                     elif botao_ativo:
-                        inventario2.inventory_open = not inventario2.inventory_open
+                        if bau_perto:
+                            bau_perto.inventario.inventory_open = not bau_perto.inventario.inventory_open
                 elif keys[pygame.K_z]:
                     DEBUG_MODE = not DEBUG_MODE
                 elif event.key == pygame.K_p:
@@ -379,7 +433,8 @@ def inicio():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if button_rect.collidepoint(event.pos) and botao_ativo == True:
-                    inventario2.inventory_open = not inventario2.inventory_open
+                    if bau_perto:
+                        bau_perto.inventario.inventory_open = not bau_perto.inventario.inventory_open
 
                 if inventario1.inventory_open:
                     item = inventario1.get_item_at(event.pos)
@@ -387,35 +442,40 @@ def inicio():
                         dragging_item = item
                         dragging_from = "inventory1"
 
-                if inventario2.inventory_open:
-                    item = inventario2.get_item_at(event.pos)
-                    if item:
-                        dragging_item = item
-                        dragging_from = "inventory2"
+                if bau_perto:
+                    if bau_perto.inventario.inventory_open:
+                        item = bau_perto.inventario.get_item_at(event.pos)
+                        if item:
+                            dragging_item = item
+                            dragging_from = "inventory2"
 
             if event.type == pygame.MOUSEBUTTONUP:
                 # Handle mouse button release
-                if dragging_item:
-                    if inventario2.inventory_open and inventario2.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory1":
-                        inventario1.items.remove(dragging_item)
-                        inventario2.items.append(dragging_item)
-                    elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory2":
-                        inventario2.items.remove(dragging_item)
-                        inventario1.items.append(dragging_item)
-                    dragging_item = None
-                    dragging_from = None
+                if bau_perto:
+                    if dragging_item:
+                        if bau_perto.inventario.inventory_open and bau_perto.inventario.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory1":
+                            inventario1.items.remove(dragging_item)
+                            bau_perto.inventario.items.append(dragging_item)
+                        elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory2":
+                            bau_perto.inventario.items.remove(dragging_item)
+                            inventario1.items.append(dragging_item)
+                        dragging_item = None
+                        dragging_from = None
 
         contador+=1
 
-        if contador % 30 == 0:
+        if contador % 70 == 0:
             for inimigo in inimigos:
-                inimigo.atacar()
-        if contador % 1000 == 0:
-            for inimigo in inimigos:
-                if inimigo.mover:
-                    inimigo.mover = False
-                else:
-                    inimigo.mover = True
+                if inimigo.ataque:
+                    inimigo.atacar()
+                pass
+        # if contador % 500 == 0:
+        #     for inimigo in inimigos:
+        #         if inimigo.mover:
+        #             inimigo.mover = False
+        #             boss_parado = True
+        #         elif inimigo.ataque:
+        #             inimigo.mover = True
 
         player_hits =  pygame.sprite.groupcollide(player.balas,inimigos, False, False)
         
@@ -442,6 +502,7 @@ def inicio():
                 i+=1
 
         for inimigo in inimigos:
+            xp.atualizar_xp(inimigo)
             if inimigo.HP == 0:
                 inimigo.image = pygame.Surface((32, 32), pygame.SRCALPHA)
                 inimigo.remover_todas_balas()
@@ -490,8 +551,15 @@ def inicio():
 
         mouse_errado = pygame.mouse.get_pos()
 
-        mouse_pos = (mouse_errado[0]-camera.left, mouse_errado[1]-camera.top)
-        
+        mouse_pos =[0,0]
+
+        if camera.left > 0:
+            mouse_pos[0] = mouse_errado[0]+camera.left
+        else:
+            mouse_pos[0] = mouse_errado[0]-camera.left
+
+        mouse_pos[1] = mouse_errado[1]+camera.top
+
         # if click:
         #     player.shoot(mouse_pos)
         # else:
@@ -504,9 +572,9 @@ def inicio():
         if click:
             click_hold +=1
             player.atacando = True
-            player.hold_arrow(mouse_pos)
+            player.hold_arrow(mouse_pos,camera)
         else:
-            if click_hold > 0:
+            if click_hold > 30:
                 player.shoot(mouse_pos)
                 print(mouse_pos)
             click_hold = 0
@@ -560,9 +628,35 @@ def inicio():
                 text_surface = font.render(text, True, (255, 255, 255))
                 screen.blit(text_surface, (10, 10 + i * 25))
 
+            for inimigo in inimigos:
+                debug_enemy_rect = pygame.Rect(
+                    inimigo.rect.x - camera.left,
+                    inimigo.rect.y - camera.top,
+                    inimigo.rect.width,
+                    inimigo.rect.height
+                )
+                pygame.draw.rect(screen, (255, 255, 0), debug_enemy_rect, 2)
+
+        for inimigo in inimigos:
+            if inimigo.rect.colliderect(player.rect):
+                player.get_hit()
+                inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
+                player.rect.topleft = (old_x,old_y)
+                inimigo.atacando_melee = True
+                inimigo.frame_change = 4
+            else:
+                inimigo.atacando_melee = False
+                inimigo.frame_change = 10
+
+        for inimigo in inimigos:
+            if camera.colliderect(inimigo.rect):
+                screen.blit(inimigo.image, (inimigo.rect.x - camera.left, inimigo.rect.y - camera.top))
+
         # Desenhar o jogador
         player.sheet.draw(screen, player.rect.x - camera.left, player.rect.y - camera.top)
-        screen.blit(npc.image,(npc.rect.x - camera.left, npc.rect.y - camera.top))
+
+        for npc in npcs:
+            screen.blit(npc.image,(npc.rect.x - camera.left, npc.rect.y - camera.top))
 
         for inimigo in inimigos:
             inimigo.draw_balas(screen,camera)
@@ -570,22 +664,27 @@ def inicio():
 
         for inimigo in inimigos:
             screen.blit(inimigo.image, (inimigo.rect.x - camera.left, inimigo.rect.y - camera.top))
+            #print(inimigo.rect.x-camera.left,inimigo.rect.y-camera.top)
+            #1570,2102
+        print(camera.right, camera.bottom)
 
-        for vida in range(player.HP):
-            screen.blit(vida_imagem,(18 + 32*vida,0))
-        npc.dialogo.coisa()
+        # for vida in range(player.HP):
+        #     screen.blit(vida_imagem,(18 + 32*vida,0))
+        for npc in npcs:
+            npc.dialogo.coisa()
 
         for bau in baus:
             screen.blit(bau.image, (bau.rect.x - camera.left, bau.rect.y - camera.top))
 
-        npc_big_rect = pygame.Rect(
+        for npc in npcs:
+            npc_big_rect = pygame.Rect(
                 npc.dialogo_rect.x - camera.left,
                 npc.dialogo_rect.y - camera.top,
                 npc.dialogo_rect.width,
                 npc.dialogo_rect.height
             )
-        if npc.dialogo_rect.colliderect(player.rect):
-            pygame.draw.rect(screen, (0, 0, 255), npc_big_rect, 2)
+            if npc.dialogo_rect.colliderect(player.rect):
+                pygame.draw.rect(screen, (0, 0, 255), npc_big_rect, 2)
 
         if dialogo_a_abrir and dialogo_a_abrir.texto_open == False:
             
@@ -597,8 +696,12 @@ def inicio():
         # Desenhar os inventários e o botão
         if inventario1.inventory_open:
             inventario1.draw_inventory(screen)
-        if inventario2.inventory_open:
-            inventario2.draw_inventory(screen)
+        if bau_perto:
+            if bau_perto.inventario.inventory_open:
+                bau_perto.image = bau_perto.bau_aberto
+                bau_perto.inventario.draw_inventory(screen)
+            else:
+                bau_perto.image = bau_perto.bau_fechado
 
         if botao_ativo:
             inventario1.draw_button(screen)  # Agora o método `draw_button` é da classe Inventario1
@@ -607,11 +710,10 @@ def inicio():
             inventario1.draw_dragging_item(screen, dragging_item)  # Agora o método `draw_dragging_item` é da classe Inventario1
 
 
-            
+        xp.render()
         pygame.display.flip()
 
-    pygame.quit()
-    sys.exit()
+    inicio_boss()
 
 if __name__ == "__main__":
     inicio()

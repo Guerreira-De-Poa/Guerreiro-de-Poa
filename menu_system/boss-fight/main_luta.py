@@ -20,7 +20,6 @@ from XP import XP
 pause = False
 
 def inicio():
-    contador_boss_derrotado = 0
     
     boss_parado=False
     global pause
@@ -207,8 +206,6 @@ def inicio():
 
     baus = pygame.sprite.Group()
 
-    bau1 = Bau(screen,1210,300,['Armadura', 'Espada', 'Arco','Poção'])
-
     dialogo_group = []
 
     #CONFIG INVENTARIO
@@ -229,8 +226,6 @@ def inicio():
     print(boss.local_a_mover)
 
     while running:
-        if len(baus) == 0 and len(inimigos) == 0:
-            baus.add(bau1)
 
         bau_perto = False
 
@@ -548,16 +543,10 @@ def inicio():
 
         if boss.HP > 0:
             pygame.draw.rect(screen,(0,0,0),(200,45,400,25))
-            pygame.draw.rect(screen,(255,0,0),(200,45,80*boss.HP,25))
+            pygame.draw.rect(screen,(255,0,0),(200,45,40*boss.HP,25))
             fonte = pygame.font.Font(None,36)
             text_surface = fonte.render("O Ligeiro", True, (255, 255, 255))
             screen.blit(text_surface, (340,70,400,100))
-        else:
-            if contador_boss_derrotado < 180:
-                contador_boss_derrotado+=1
-                fonte = pygame.font.Font(None,36)
-                text_surface = fonte.render("BOSS DERROTADO", True, (0, 0, 0))
-                screen.blit(text_surface, (300,300,400,100))
 
         # Desenhar os inventários e o botão
         if inventario1.inventory_open:

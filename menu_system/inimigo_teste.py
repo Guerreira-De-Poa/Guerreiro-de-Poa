@@ -28,9 +28,13 @@ class Inimigo(pygame.sprite.Sprite):
         # Criar um grupo para gerenciar as balas
         self.balas = pygame.sprite.Group()
 
-        self.mover = True
+        self.mover = not ataque
 
-        self.ataque = ataque
+        self.ataque = False
+
+        self.atacar_ranged = ataque
+
+        self.atacando_melee = False
 
         self.frame_count = 0  # Contador de frames
         self.sprite_atual = 0  # Contador para alternar entre sprites de animação
@@ -52,11 +56,17 @@ class Inimigo(pygame.sprite.Sprite):
         self.balas.add(new_bala)
 
     def update(self ,dialogo_open):
+        self.old_pos_x, self.old_pos_y = self.rect.topleft[0], self.rect.topleft[1]
         if dialogo_open:
             return
         self.frame_count+=1
         # Atualiza as balas
         self.balas.update(dialogo_open)  # Atualiza a posição de todas as balas
+
+        if self.atacar_ranged == True:
+            if self.player_rect.x -900 <= self.rect.x or self.player_rect.x + 900 >= self.rect.x:
+                if self.player_rect.y -900 <= self.rect.y or self.player_rect.y + 900 >= self.rect.y:
+                    self.ataque = True
 
         if self.mover:
             if self.player_rect.centery-self.rect.centery != 0 and self.player_rect.centerx-self.rect.centerx < 200:
@@ -77,6 +87,42 @@ class Inimigo(pygame.sprite.Sprite):
                 elif self.player_rect.centerx < self.rect.centerx:
                     self.rect.x -=self.speed
                     self.sheet.action = 1
+                else:
+                    pass
+
+        elif self.ataque:
+            if self.player_rect.centery-self.rect.centery != 0 and self.player_rect.centerx-self.rect.centerx < 200:
+            
+                if self.player_rect.centery > self.rect.centery:
+                    self.sheet.action = 10
+                elif self.player_rect.centery < self.rect.centery:
+                    self.sheet.action = 8
+                else:
+                    pass
+
+            else:
+                if self.player_rect.centerx > self.rect.centerx:
+                    self.sheet.action = 11
+                elif self.player_rect.centerx < self.rect.centerx:
+                    self.sheet.action = 9
+                else:
+                    pass
+
+        if self.atacando_melee:
+            if self.player_rect.centery-self.rect.centery != 0 and self.player_rect.centerx-self.rect.centerx < 200:
+            
+                if self.player_rect.centery > self.rect.centery:
+                    self.sheet.action = 6
+                elif self.player_rect.centery < self.rect.centery:
+                    self.sheet.action =4
+                else:
+                    pass
+
+            else:
+                if self.player_rect.centerx > self.rect.centerx:
+                    self.sheet.action = 7
+                elif self.player_rect.centerx < self.rect.centerx:
+                    self.sheet.action = 5
                 else:
                     pass
 
