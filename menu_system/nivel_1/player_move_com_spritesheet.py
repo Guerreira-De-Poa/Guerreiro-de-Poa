@@ -16,6 +16,7 @@ from boss import Boss1
 from bau import Bau
 
 from XP import XP
+from menu_status import Menu
 
 pause = False
 
@@ -52,6 +53,7 @@ def inicio():
     MAP_HEIGHT = map_data['mapHeight']
 
     xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+    menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 2.5, 6.25, 10.0)
 
     # Classe para carregar a spritesheet do mapa
     class MapSpriteSheet:
@@ -344,6 +346,54 @@ def inicio():
                     DEBUG_MODE = not DEBUG_MODE
                 elif event.key == pygame.K_p:
                     pause = not pause
+                if event.key == pygame.K_m:
+                    xp.show_menu = not xp.show_menu
+                    if xp.show_menu:
+                        menu.valores_copy = menu.valores.copy()  # Salva os valores antes de editar
+
+            if xp.show_menu and menu.tamanho_menu_img_x == 600 and menu.tamanho_menu_img_y == 400:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    for atributo, botoes in menu.botoes.items():
+                        # Botão de diminuir
+                        if botoes["diminuir"]["rect"].collidepoint(event.pos) and xp.pontos_disponiveis < xp.pontos_disponiveis_copy:
+                            if menu.valores[atributo] > menu.valores_copy[atributo]:  # Impede de reduzir abaixo do inicial
+                                menu.valores[atributo] -= 1
+                                botoes["diminuir"]["pressionado"] = True
+                                xp.pontos_disponiveis += 1  # Devolve um ponto
+
+                                if atributo == "ataque":
+                                    menu.atributos[atributo] -= 1.25
+                                    xp.dano -= 10
+                                if atributo == "defesa":
+                                    menu.atributos[atributo] -= 1
+                                if atributo == "vida":
+                                    menu.atributos[atributo] -= 0.5
+                                if atributo == "stamina":
+                                    menu.atributos[atributo] -= 1.25
+                                if atributo == "velocidade":
+                                    menu.atributos[atributo] -= 2
+                                    xp.player_speed -= 1
+
+                                print(menu.atributos[atributo])
+
+                        # Botão de aumentar
+                        if botoes["aumentar"]["rect"].collidepoint(event.pos) and xp.pontos_disponiveis > 0:
+                            menu.valores[atributo] += 1
+                            botoes["aumentar"]["pressionado"] = True
+                            xp.pontos_disponiveis -= 1  # Gasta um ponto
+
+                            if atributo == "ataque":
+                                menu.atributos[atributo] += 1.25
+                                xp.dano += 10
+                            if atributo == "defesa":
+                                menu.atributos[atributo] += 1
+                            if atributo == "vida":
+                                menu.atributos[atributo] += 0.5
+                            if atributo == "stamina":
+                                menu.atributos[atributo] += 1.25
+                            if atributo == "velocidade":
+                                menu.atributos[atributo] += 2
+                                xp.player_speed += 1
 
                     #COMANDOS INVENTARIO
                 elif event.key in (pygame.K_LALT, pygame.K_RALT):
@@ -381,8 +431,10 @@ def inicio():
                             inventario1.items.append(dragging_item)
                         dragging_item = None
                         dragging_from = None
+                        
 
         contador+=1
+
 
         if contador % 30 == 0:
             for inimigo in inimigos:
@@ -598,6 +650,29 @@ def inicio():
         if dragging_item:
             inventario1.draw_dragging_item(screen, dragging_item)  # Agora o método `draw_dragging_item` é da classe Inventario1
 
+
+        if xp.show_menu and menu.tamanho_menu_img_x < 600 and menu.tamanho_menu_img_y < 400:
+            menu.tamanho_menu_img_x += 30  # Ajuste a velocidade do zoom
+            menu.tamanho_menu_img_y += 20
+            menu.menu_img = pygame.transform.scale(menu.menu_img_original, (menu.tamanho_menu_img_x, menu.tamanho_menu_img_y))
+        elif not xp.show_menu and menu.tamanho_menu_img_x > 0 and menu.tamanho_menu_img_y > 0:
+            menu.tamanho_menu_img_x = max(0, menu.tamanho_menu_img_x - 30)
+            menu.tamanho_menu_img_y = max(0, menu.tamanho_menu_img_y - 20)
+
+            if menu.tamanho_menu_img_x > 0 and menu.tamanho_menu_img_y > 0:
+                menu.menu_img = pygame.transform.scale(menu.menu_img_original, (menu.tamanho_menu_img_x, menu.tamanho_menu_img_y))
+
+
+                
+        if xp.show_menu:
+            # Exibe o menu na tela 
+            screen.blit(menu.menu_img,((SCREEN_WIDTH // 2) - (menu.tamanho_menu_img_x // 2),(SCREEN_HEIGHT // 2) - (menu.tamanho_menu_img_y // 2)))
+            if menu.tamanho_menu_img_x > 500 and menu.tamanho_menu_img_y > 333:
+                # Posição do menu
+                menu.desenhar_valores(screen, xp.font_nivel, xp.text_nivel, xp.nivel, xp.pontos_disponiveis)
+                menu.atualizar_sprites()
+                menu.desenhar_botoes(screen)
+                menu.resetar_botoes()
 
         xp.render()
         pygame.display.flip()
