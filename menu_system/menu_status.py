@@ -1,14 +1,8 @@
 import pygame
 # import plotly.express as px
 # import pandas as pd
-from XP import xp
 
 pygame.init()
-
-
-# Inicia o combate e o menu
-combate = xp()
-# menu = Menu(3, 2, 3, 2, 3)  # Inicializando o menu com valores
 
 class Menu():
     def __init__(self, valor_ataque, valor_defesa, valor_vida, valor_stamina, valor_velocidade, atr_ataque, atr_defesa, atr_vida, atr_stamina, atr_velocidade):  
@@ -33,14 +27,14 @@ class Menu():
         self.tamanho_menu_img_x = 0
         self.tamanho_menu_img_y = 0
 
-        self.menu_img_original = pygame.image.load("Imagem menu/menu.png")
+        self.menu_img_original = pygame.image.load("menu.png")
         self.menu_img = pygame.transform.scale(self.menu_img_original, (self.tamanho_menu_img_x, self.tamanho_menu_img_y))
 
         self.tamanho_fonte = 22
         self.fonte = pygame.font.SysFont(None, self.tamanho_fonte)
 
-        self.botao_mais = pygame.image.load('Spritesheet/SpriteSheet_mais.png')
-        self.botao_menos = pygame.image.load('Spritesheet/Spritesheet_menos.png')
+        self.botao_mais = pygame.image.load('SpriteSheet_mais.png')
+        self.botao_menos = pygame.image.load('Spritesheet_menos.png')
 
         self.botoes = {}
 

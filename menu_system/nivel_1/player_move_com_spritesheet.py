@@ -16,6 +16,7 @@ from boss import Boss1
 from bau import Bau
 
 from XP import XP
+from menu_status import Menu
 
 pause = False
 
@@ -52,6 +53,7 @@ def inicio():
     MAP_HEIGHT = map_data['mapHeight']
 
     xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+    menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 2.5, 6.25, 10.0)
 
     # Classe para carregar a spritesheet do mapa
     class MapSpriteSheet:
@@ -139,16 +141,14 @@ def inicio():
         print("Erro: Nenhum tile foi carregado para renderização!")
         pygame.quit()
         sys.exit()
-    lista_1 = [7 for i in range(4)]
-    lista_2 = [6 for i in range(4)]
-    lista_3 = [7 for i in range(8)]
-    lista_4 = [13 for j in range(4)]
-    lista_5 = [7 for k in range(14)]
+    lista_1 = [7 for i in range(16)]
+    lista_2 = [13 for j in range(4)]
+    lista_3 = [7 for k in range(14)]
 
     # Criar o jogador
     try:
         player_sprite_path = os.path.join(current_dir, '..', '..', 'player_com_arco.png')
-        player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+        player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
         player = Personagem(player_sprite)
@@ -183,15 +183,15 @@ def inicio():
 
 
     spritesheet_inimigo_arco_png = pygame.image.load("inimigo_com_arco.png")
-    spritesheet_inimigo_arco = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco0 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco1 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco3 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco4 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
+    spritesheet_inimigo_arco0 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
+    spritesheet_inimigo_arco1 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
+    spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
+    spritesheet_inimigo_arco3 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
+    spritesheet_inimigo_arco4 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
 
     enemy0 = Inimigo(player.rect, player, 0,0, False,spritesheet_inimigo_arco)
-    #boss = Inimigo(player.rect, player, 300,600, True,spritesheet_inimigo_arco0)
+    boss = Inimigo(player.rect, player, 300,600, True,spritesheet_inimigo_arco0)
     enemy1 = Inimigo(player.rect, player, 200,0, False,spritesheet_inimigo_arco1)
     enemy2 = Inimigo(player.rect, player, 0,800, True,spritesheet_inimigo_arco2)
     enemy3 = Inimigo(player.rect, player, 800,0, False,spritesheet_inimigo_arco3)
@@ -207,8 +207,8 @@ def inicio():
     all_sprites.add(player)
     player_group.add(player)
 
-    all_sprites.add(enemy0, enemy1, enemy2, enemy3)
-    inimigos.add(enemy0, enemy1, enemy2, enemy3)
+    all_sprites.add(enemy0, enemy1, enemy2, enemy3,boss)
+    inimigos.add(enemy0, enemy1, enemy2, enemy3,boss)
 
     # boss2 = Boss1(player.rect,player,400,400,True,spritesheet_inimigo_arco)
     # all_sprites.add(boss2)
@@ -346,8 +346,13 @@ def inicio():
                     DEBUG_MODE = not DEBUG_MODE
                 elif event.key == pygame.K_p:
                     pause = not pause
+                if event.key == pygame.K_m:
+                    xp.show_menu = not xp.show_menu
+                    if xp.show_menu:
+                        menu.valores_copy = menu.valores.copy()  # Salva os valores antes de editar
 
-                    #COMANDOS INVENTARIO
+
+                #COMANDOS INVENTARIO
                 elif event.key in (pygame.K_LALT, pygame.K_RALT):
                     inventario1.inventory_open = not inventario1.inventory_open
                 elif event.key == pygame.K_ESCAPE:
@@ -384,20 +389,66 @@ def inicio():
                         dragging_item = None
                         dragging_from = None
 
+            if xp.show_menu and menu.tamanho_menu_img_x == 600 and menu.tamanho_menu_img_y == 400:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    for atributo, botoes in menu.botoes.items():
+                        # Botão de diminuir
+                        if botoes["diminuir"]["rect"].collidepoint(event.pos) and xp.pontos_disponiveis < xp.pontos_disponiveis_copy:
+                            if menu.valores[atributo] > menu.valores_copy[atributo]:  # Impede de reduzir abaixo do inicial
+                                menu.valores[atributo] -= 1
+                                botoes["diminuir"]["pressionado"] = True
+                                xp.pontos_disponiveis += 1  # Devolve um ponto
+
+                                if atributo == "ataque":
+                                    menu.atributos[atributo] -= 1.25
+                                    xp.dano -= 10
+                                if atributo == "defesa":
+                                    menu.atributos[atributo] -= 1
+                                if atributo == "vida":
+                                    menu.atributos[atributo] -= 0.5
+                                if atributo == "stamina":
+                                    menu.atributos[atributo] -= 1.25
+                                if atributo == "velocidade":
+                                    menu.atributos[atributo] -= 2
+                                    xp.player_speed -= 1
+
+                                print(menu.atributos[atributo])
+
+                        # Botão de aumentar
+                        if botoes["aumentar"]["rect"].collidepoint(event.pos) and xp.pontos_disponiveis > 0:
+                            menu.valores[atributo] += 1
+                            botoes["aumentar"]["pressionado"] = True
+                            xp.pontos_disponiveis -= 1  # Gasta um ponto
+
+                            if atributo == "ataque":
+                                menu.atributos[atributo] += 1.25
+                                xp.dano += 10
+                            if atributo == "defesa":
+                                menu.atributos[atributo] += 1
+                            if atributo == "vida":
+                                menu.atributos[atributo] += 0.5
+                            if atributo == "stamina":
+                                menu.atributos[atributo] += 1.25
+                            if atributo == "velocidade":
+                                menu.atributos[atributo] += 2
+                                xp.player_speed += 1
+                        
+
         contador+=1
 
-        if contador % 70 == 0:
+
+        if contador % 30 == 0:
             for inimigo in inimigos:
-                if inimigo.ataque:
+                if boss_parado:
                     inimigo.atacar()
                 pass
-        # if contador % 500 == 0:
-        #     for inimigo in inimigos:
-        #         if inimigo.mover:
-        #             inimigo.mover = False
-        #             boss_parado = True
-        #         elif inimigo.ataque:
-        #             inimigo.mover = True
+        if contador % 500 == 0:
+            for inimigo in inimigos:
+                if inimigo.mover:
+                    inimigo.mover = False
+                    boss_parado = True
+                else:
+                    inimigo.mover = True
 
         player_hits =  pygame.sprite.groupcollide(player.balas,inimigos, False, False)
         
@@ -443,6 +494,9 @@ def inicio():
 
         if dialogo_a_abrir:
             all_sprites.update(dialogo_a_abrir.texto_open)
+
+        elif xp.show_menu:
+            all_sprites.update(True)
         else:
             all_sprites.update(False)
         
@@ -550,17 +604,6 @@ def inicio():
                 text_surface = font.render(text, True, (255, 255, 255))
                 screen.blit(text_surface, (10, 10 + i * 25))
 
-        for inimigo in inimigos:
-            if inimigo.rect.colliderect(player.rect):
-                player.get_hit()
-                inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
-                player.rect.topleft = (old_x,old_y)
-                inimigo.atacando_melee = True
-                inimigo.frame_change = 4
-            else:
-                inimigo.atacando_melee = False
-                inimigo.frame_change = 10
-
         # Desenhar o jogador
         player.sheet.draw(screen, player.rect.x - camera.left, player.rect.y - camera.top)
         screen.blit(npc.image,(npc.rect.x - camera.left, npc.rect.y - camera.top))
@@ -611,6 +654,29 @@ def inicio():
         if dragging_item:
             inventario1.draw_dragging_item(screen, dragging_item)  # Agora o método `draw_dragging_item` é da classe Inventario1
 
+
+        if xp.show_menu and menu.tamanho_menu_img_x < 600 and menu.tamanho_menu_img_y < 400:
+            menu.tamanho_menu_img_x += 30  # Ajuste a velocidade do zoom
+            menu.tamanho_menu_img_y += 20
+            menu.menu_img = pygame.transform.scale(menu.menu_img_original, (menu.tamanho_menu_img_x, menu.tamanho_menu_img_y))
+        elif not xp.show_menu and menu.tamanho_menu_img_x > 0 and menu.tamanho_menu_img_y > 0:
+            menu.tamanho_menu_img_x = max(0, menu.tamanho_menu_img_x - 30)
+            menu.tamanho_menu_img_y = max(0, menu.tamanho_menu_img_y - 20)
+
+            if menu.tamanho_menu_img_x > 0 and menu.tamanho_menu_img_y > 0:
+                menu.menu_img = pygame.transform.scale(menu.menu_img_original, (menu.tamanho_menu_img_x, menu.tamanho_menu_img_y))
+
+
+        if xp.show_menu:
+            # Exibe o menu na tela 
+            screen.blit(menu.menu_img,((SCREEN_WIDTH // 2) - (menu.tamanho_menu_img_x // 2),(SCREEN_HEIGHT // 2) - (menu.tamanho_menu_img_y // 2)))
+            if menu.tamanho_menu_img_x > 500 and menu.tamanho_menu_img_y > 333:
+                # Posição do menu
+                menu.desenhar_valores(screen, xp.font_nivel, xp.text_nivel, xp.nivel, xp.pontos_disponiveis)
+                menu.atualizar_sprites()
+                menu.desenhar_botoes(screen)
+                menu.resetar_botoes()
+                dialogo_a_abrir = True
 
         xp.render()
         pygame.display.flip()
