@@ -28,6 +28,7 @@ class Menu():
         self.tamanho_menu_img_y = 0
 
         self.menu_img_original = pygame.image.load("menu.png")
+        self.menu_img_original = pygame.image.load("menu.png")
         self.menu_img = pygame.transform.scale(self.menu_img_original, (self.tamanho_menu_img_x, self.tamanho_menu_img_y))
 
         self.tamanho_fonte = 22
