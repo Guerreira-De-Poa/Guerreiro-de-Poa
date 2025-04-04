@@ -808,6 +808,10 @@ def inicio():
 
 
         xp.render()
+
+        for npc in npcs:
+            npc.dialogo.coisa()
+
         pygame.display.flip()
 
     boss_fight()
