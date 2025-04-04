@@ -326,6 +326,8 @@ def inicio():
 
     iterado_teste = 0
 
+    contador_ataque_melee = 0
+
     while running:
 
 
@@ -618,6 +620,12 @@ def inicio():
 
         mouse_errado = pygame.mouse.get_pos()
 
+        click = pygame.mouse.get_pressed()[0]
+
+        click_mouse_2 = pygame.mouse.get_pressed()[2]
+
+        mouse_errado = pygame.mouse.get_pos()
+
         mouse_pos =[0,0]
 
         if camera.left > 0:
@@ -640,12 +648,15 @@ def inicio():
             click_hold +=1
             player.atacando = True
             player.hold_arrow(mouse_pos,camera)
+        elif click_mouse_2:
+            player.atacando_melee = True
+            player.hold_arrow(mouse_pos,camera)
         else:
             if click_hold > 30:
                 player.shoot(mouse_pos)
-                print(mouse_pos)
             click_hold = 0
             player.atacando = False
+            player.atacando_melee = False
         
         # Renderização
         screen.fill((0, 0, 0))  # Fundo preto
