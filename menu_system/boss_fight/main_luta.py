@@ -141,7 +141,7 @@ def inicio():
 
     # Criar o jogador
     try:
-        player_sprite_path = os.path.join(current_dir, '..', '..', 'player_com_arco.png')
+        player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha.png')
         player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
@@ -152,10 +152,8 @@ def inicio():
         sys.exit()
 
     # Posicionar o jogador em uma posição válida no mapa
-    player.rect.x = 5 * TILE_SIZE
-    player.rect.y = 5 * TILE_SIZE
 
-    player.rect.x,player.rect.y = 500,500
+    player.rect.x,player.rect.y = 1220,1300
 
     # Configuração da câmera
     camera = pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -177,7 +175,7 @@ def inicio():
 
     spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
 
-    boss = Boss1(player.rect,player,700,700,True,spritesheet_inimigo_arco2)
+    boss = Boss1(player.rect,player,1220,1000,True,spritesheet_inimigo_arco2)
 
 
     inimigos = pygame.sprite.Group()
@@ -472,40 +470,40 @@ def inicio():
 
 
         # Dentro do game loop, na seção de renderização (após desenhar o jogador):
-        if DEBUG_MODE:
-            # 1. Desenhar colisores do mapa (vermelho)
-            for wall in walls:
-                if camera.colliderect(wall):
-                    debug_wall_rect = pygame.Rect(
-                        wall.x - camera.left,
-                        wall.y - camera.top,
-                        wall.width,
-                        wall.height
-                    )
-                    pygame.draw.rect(screen, (255, 0, 0), debug_wall_rect, 1)
+        # if DEBUG_MODE:
+        #     # 1. Desenhar colisores do mapa (vermelho)
+        #     for wall in walls:
+        #         if camera.colliderect(wall):
+        #             debug_wall_rect = pygame.Rect(
+        #                 wall.x - camera.left,
+        #                 wall.y - camera.top,
+        #                 wall.width,
+        #                 wall.height
+        #             )
+        #             pygame.draw.rect(screen, (255, 0, 0), debug_wall_rect, 1)
             
-            # 2. Desenhar colisor do jogador (azul)
-            debug_player_rect = pygame.Rect(
-                player.rect.x - camera.left,
-                player.rect.y - camera.top,
-                player.rect.width,
-                player.rect.height
-            )
-            pygame.draw.rect(screen, (0, 0, 255), debug_player_rect, 2)
+        #     # 2. Desenhar colisor do jogador (azul)
+        #     debug_player_rect = pygame.Rect(
+        #         player.rect.x - camera.left,
+        #         player.rect.y - camera.top,
+        #         player.rect.width,
+        #         player.rect.height
+        #     )
+        #     pygame.draw.rect(screen, (0, 0, 255), debug_player_rect, 2)
             
-            # 3. Mostrar informações de debug
-            font = pygame.font.SysFont(None, 24)
-            debug_info = [
-                f"Posição: ({player.rect.x}, {player.rect.y})",
-                f"Direção: {player.direction}",
-                f"Velocidade: {player.speed}",
-                f"Colisores: {len(walls)}",
-                "Z: Debug ON/OFF"
-            ]
+        #     # 3. Mostrar informações de debug
+        #     font = pygame.font.SysFont(None, 24)
+        #     debug_info = [
+        #         f"Posição: ({player.rect.x}, {player.rect.y})",
+        #         f"Direção: {player.direction}",
+        #         f"Velocidade: {player.speed}",
+        #         f"Colisores: {len(walls)}",
+        #         "Z: Debug ON/OFF"
+        #     ]
             
-            for i, text in enumerate(debug_info):
-                text_surface = font.render(text, True, (255, 255, 255))
-                screen.blit(text_surface, (10, 10 + i * 25))
+            # for i, text in enumerate(debug_info):
+            #     text_surface = font.render(text, True, (255, 255, 255))
+            #     screen.blit(text_surface, (10, 10 + i * 25))
 
         for inimigo in inimigos:
             if inimigo.rect.colliderect(player.rect):
@@ -543,7 +541,7 @@ def inicio():
 
         if boss.HP > 0:
             pygame.draw.rect(screen,(0,0,0),(200,45,400,25))
-            pygame.draw.rect(screen,(255,0,0),(200,45,40*boss.HP,25))
+            pygame.draw.rect(screen,(255,0,0),(200,45,80*boss.HP,25))
             fonte = pygame.font.Font(None,36)
             text_surface = fonte.render("O Ligeiro", True, (255, 255, 255))
             screen.blit(text_surface, (340,70,400,100))

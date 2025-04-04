@@ -62,6 +62,22 @@ def inicio():
     xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
 
     # Classe para carregar a spritesheet do mapa
+    try:
+        with open(map_path, 'r') as f:
+            map_data = json.load(f)
+    except Exception as e:
+        print(f"Erro ao carregar mapa: {e}")
+        pygame.quit()
+        sys.exit()
+
+    # Configurações do mapa
+    TILE_SIZE = map_data['tileSize']
+    MAP_WIDTH = map_data['mapWidth']
+    MAP_HEIGHT = map_data['mapHeight']
+
+    xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+
+    # Classe para carregar a spritesheet do mapa
     class MapSpriteSheet:
         def __init__(self, filename):
             try:
@@ -86,52 +102,18 @@ def inicio():
 
     # Dicionário de mapeamento de tiles
     TILE_MAPPING = {
-    '0': (0, 0), '1': (64, 0), '2': (128, 0),
-    '3': (192, 0), '4': (256, 0), '5': (320, 0),
-    '6': (384, 0), '7': (448, 0), '8': (0, 64),
-    '9': (64, 64), '10': (128, 64), '11': (192, 64),
-    '12': (256, 64), '13': (320, 64), '14': (384, 64),
-    '15': (448, 64), '16': (0, 128), '17': (64, 128),
-    '18': (128, 128), '19': (192, 128), '20': (256, 128),
-    '21': (320, 128), '22': (384, 128), '23': (448, 128),
-    '24': (0, 192), '25': (64, 192), '26': (128, 192),
-    '27': (192, 192), '28': (256, 192), '29': (320, 192),
-    '30': (384, 192), '31': (448, 192), '32': (0, 256),
-    '33': (64, 256), '34': (128, 256), '35': (192, 256),
-    '36': (256, 256), '37': (320, 256), '38': (384, 256),
-    '39': (448, 256), '40': (0, 320), '41': (64, 320),
-    '42': (128, 320), '43': (192, 320), '44': (256, 320),
-    '45': (320, 320), '46': (384, 320), '47': (448, 320),
-    '48': (0, 384), '49': (64, 384), '50': (128, 384),
-    '51': (192, 384), '52': (256, 384), '53': (320, 384),
-    '54': (384, 384), '55': (448, 384), '56': (0, 448),
-    '57': (64, 448), '58': (128, 448), '59': (192, 448),
-    '60': (256, 448), '61': (320, 448), '62': (384, 448),
-    '63': (448, 448), '64': (0, 512), '65': (64, 512),
-    '66': (128, 512), '67': (192, 512), '68': (256, 512),
-    '69': (320, 512), '70': (384, 512), '71': (448, 512),
-    '72': (0, 576), '73': (64, 576), '74': (128, 576),
-    '75': (192, 576), '76': (256, 576), '77': (320, 576),
-    '78': (384, 576), '79': (448, 576), '80': (0, 640),
-    '81': (64, 640), '82': (128, 640), '83': (192, 640),
-    '84': (256, 640), '85': (320, 640), '86': (384, 640),
-    '87': (448, 640), '88': (0, 704), '89': (64, 704),
-    '90': (128, 704), '91': (192, 704), '92': (256, 704),
-    '93': (320, 704), '94': (384, 704), '95': (448, 704),
-    '96': (0, 768), '97': (64, 768), '98': (128, 768),
-    '99': (192, 768), '100': (256, 768), '101': (320, 768),
-    '102': (384, 768), '103': (448, 768), '104': (0, 832),
-    '105': (64, 832), '106': (128, 832), '107': (192, 832),
-    '108': (256, 832), '109': (320, 832), '110': (384, 832),
-    '111': (448, 832), '112': (0, 896), '113': (64, 896),
-    '114': (128, 896), '115': (192, 896), '116': (256, 896),
-    '117': (320, 896), '118': (384, 896), '119': (448, 896),
-    '120': (0, 960), '121': (64, 960), '122': (128, 960),
-    '123': (192, 960), '124': (256, 960), '125': (320, 960),
-    '126': (384, 960), '127': (448, 960), '128': (0, 1024),
-    '129': (64, 1024), '130': (128, 1024), '131': (192, 1024),
-    '132': (256, 1024), '133': (320, 1024), '134': (384, 1024),
-    '135': (448, 1024), 
+        '33': (64, 256),
+        '0': (0, 0), '1': (64, 0), '2': (128, 0),
+        '3': (192, 0), '4': (256, 0), '5': (320, 0),
+        '6': (384, 0), '7': (448, 0), '8': (0, 64),
+        '9': (64, 64), '10': (128, 64), '11': (192, 64),
+        '12': (256, 64), '13': (320, 64), '14': (384, 64),
+        '15': (448, 64), '16': (0, 128), '17': (64, 128),
+        '18': (128, 128), '19': (192, 128), '20': (256, 128),
+        '21': (320, 128), '22': (384, 128), '23': (448, 128),
+        '24': (0, 192), '25': (64, 192), '26': (128, 192),
+        '27': (192, 192), '28': (256, 192), '29': (320, 192),
+        '30': (384, 192), '31': (448, 192), '32': (0, 256),
     }
 
     def process_map_for_collision(map_data):
@@ -146,7 +128,8 @@ def inicio():
 
     def process_map_for_rendering(map_data):
         tiles = []
-        layer_order = ['Background', 'Sand', 'Cliff', 'Rocks', 'Grass', 'detalhes', 'detalinhos', 'pedra_mar', 'casas', 'arvores']
+        layer_order = ['Background', 'Sand', 'pedras_para_preencher_vazio', 'Grass', 
+                      'Rocks', 'Cliff', 'escadas']
         
         layer_dict = {layer_name: [] for layer_name in layer_order}
         
@@ -199,8 +182,8 @@ def inicio():
         sys.exit()
 
     # Posicionar o jogador em uma posição válida no mapa
-    player.rect.x = 33 * TILE_SIZE
-    player.rect.y = 36 * TILE_SIZE
+    player.rect.x = 5 * TILE_SIZE
+    player.rect.y = 5 * TILE_SIZE
 
     # Configuração da câmera
     camera = pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -218,10 +201,7 @@ def inicio():
 
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
-    imagem_inimigo = pygame.image.load('Biomech Dragon Splice.png')
-
     vida_imagem = pygame.image.load('love-always-wins(1).png')
-
 
     spritesheet_inimigo_arco_png = pygame.image.load("inimigo_com_arco.png")
     spritesheet_inimigo_arco = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
@@ -324,6 +304,13 @@ def inicio():
 
     iterado_teste = 0
 
+    enemy0 = Inimigo(player.rect, player, 200,100, False,spritesheet_inimigo_arco)
+    enemy1 = Inimigo(player.rect, player, 100,754, False,spritesheet_inimigo_arco1)
+    enemy2 = Inimigo(player.rect, player, 570,102, True,spritesheet_inimigo_arco2)
+    enemy3 = Inimigo(player.rect, player, 650,266, False,spritesheet_inimigo_arco3)
+    all_sprites.add(enemy0, enemy1, enemy2, enemy3)
+    inimigos.add(enemy0, enemy1, enemy2, enemy3)
+
     while running:
 
 
@@ -340,14 +327,6 @@ def inicio():
             npc1.dialogo.iter_texto = 0
             npc1.dialogo.texto_index = 0
             npc1.dialogo.letra_index = 0
-
-        if missao_1 == True and len(inimigos) == 0:
-            enemy0 = Inimigo(player.rect, player, 1566,2322, False,spritesheet_inimigo_arco)
-            enemy1 = Inimigo(player.rect, player, 2150,1754, False,spritesheet_inimigo_arco1)
-            enemy2 = Inimigo(player.rect, player, 1570,2102, True,spritesheet_inimigo_arco2)
-            enemy3 = Inimigo(player.rect, player, 2650,2266, False,spritesheet_inimigo_arco3)
-            all_sprites.add(enemy0, enemy1, enemy2, enemy3)
-            inimigos.add(enemy0, enemy1, enemy2, enemy3)
 
         bau_perto = False
 
@@ -667,7 +646,8 @@ def inicio():
         player.draw_balas(screen,camera)
 
         for inimigo in inimigos:
-            inimigo.sheet.draw(screen, inimigo.rect.x - camera.left, inimigo.rect.y - camera.top)
+            screen.blit(inimigo.image, (inimigo.rect.x - camera.left, inimigo.rect.y - camera.top))
+            print(inimigo.sheet.tile_rect)
             #print(inimigo.rect.x-camera.left,inimigo.rect.y-camera.top)
             #1570,2102
 
