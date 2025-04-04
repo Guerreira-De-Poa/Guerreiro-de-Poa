@@ -61,6 +61,8 @@ class Personagem(pygame.sprite.Sprite):
 
         self.super_range = pygame.Rect(self.rect.left-40, self.rect.top-40, self.rect.width+80, self.rect.height+80)
 
+        self.dash = False
+
     def update(self, dialogo_open):
         if dialogo_open:
             return

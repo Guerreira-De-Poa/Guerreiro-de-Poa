@@ -225,6 +225,10 @@ def inicio():
 
     contador_ataque_melee = 0
 
+    dash = 0
+    cooldown_dash = 0
+    velocidade_anterior = 0
+
     while running:
 
         bau_perto = False
@@ -296,6 +300,11 @@ def inicio():
                     player.nova_direcao = True
                 elif event.key == pygame.K_d:
                     player.nova_direcao = True
+                elif event.key == pygame.K_r:
+                    if cooldown_dash == 0:
+                        velocidade_anterior = player.speed
+                        player.dash = True
+                        cooldown_dash = 1
                 elif event.key == pygame.K_LSHIFT:
                     player.correr()
                 elif event.key == pygame.K_SPACE:
@@ -347,6 +356,23 @@ def inicio():
                         dragging_from = None
 
         contador+=1
+
+        #print(player.dash)
+
+        if cooldown_dash>0:
+            cooldown_dash+=1
+            if cooldown_dash == 90:
+                cooldown_dash = 0
+
+        if player.dash == True:
+            print(cooldown_dash)
+            player.speed = 10
+            dash+=1
+            if dash == 10:
+                player.dash = False
+                player.speed = velocidade_anterior
+                dash=0
+
 
         # if contador % 500 == 0:
         #     for inimigo in inimigos:
