@@ -351,6 +351,44 @@ def inicio():
                     if xp.show_menu:
                         menu.valores_copy = menu.valores.copy()  # Salva os valores antes de editar
 
+
+                #COMANDOS INVENTARIO
+                elif event.key in (pygame.K_LALT, pygame.K_RALT):
+                    inventario1.inventory_open = not inventario1.inventory_open
+                elif event.key == pygame.K_ESCAPE:
+                    running = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if button_rect.collidepoint(event.pos) and botao_ativo == True:
+                    if bau_perto:
+                        bau_perto.inventario.inventory_open = not bau_perto.inventario.inventory_open
+
+                if inventario1.inventory_open:
+                    item = inventario1.get_item_at(event.pos)
+                    if item:
+                        dragging_item = item
+                        dragging_from = "inventory1"
+
+                if bau_perto:
+                    if bau_perto.inventario.inventory_open:
+                        item = bau_perto.inventario.get_item_at(event.pos)
+                        if item:
+                            dragging_item = item
+                            dragging_from = "inventory2"
+
+            if event.type == pygame.MOUSEBUTTONUP:
+                # Handle mouse button release
+                if bau_perto:
+                    if dragging_item:
+                        if bau_perto.inventario.inventory_open and bau_perto.inventario.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory1":
+                            inventario1.items.remove(dragging_item)
+                            bau_perto.inventario.items.append(dragging_item)
+                        elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory2":
+                            bau_perto.inventario.items.remove(dragging_item)
+                            inventario1.items.append(dragging_item)
+                        dragging_item = None
+                        dragging_from = None
+
             if xp.show_menu and menu.tamanho_menu_img_x == 600 and menu.tamanho_menu_img_y == 400:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     for atributo, botoes in menu.botoes.items():
@@ -394,43 +432,6 @@ def inicio():
                             if atributo == "velocidade":
                                 menu.atributos[atributo] += 2
                                 xp.player_speed += 1
-
-                    #COMANDOS INVENTARIO
-                elif event.key in (pygame.K_LALT, pygame.K_RALT):
-                    inventario1.inventory_open = not inventario1.inventory_open
-                elif event.key == pygame.K_ESCAPE:
-                    running = False
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if button_rect.collidepoint(event.pos) and botao_ativo == True:
-                    if bau_perto:
-                        bau_perto.inventario.inventory_open = not bau_perto.inventario.inventory_open
-
-                if inventario1.inventory_open:
-                    item = inventario1.get_item_at(event.pos)
-                    if item:
-                        dragging_item = item
-                        dragging_from = "inventory1"
-
-                if bau_perto:
-                    if bau_perto.inventario.inventory_open:
-                        item = bau_perto.inventario.get_item_at(event.pos)
-                        if item:
-                            dragging_item = item
-                            dragging_from = "inventory2"
-
-            if event.type == pygame.MOUSEBUTTONUP:
-                # Handle mouse button release
-                if bau_perto:
-                    if dragging_item:
-                        if bau_perto.inventario.inventory_open and bau_perto.inventario.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory1":
-                            inventario1.items.remove(dragging_item)
-                            bau_perto.inventario.items.append(dragging_item)
-                        elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory2":
-                            bau_perto.inventario.items.remove(dragging_item)
-                            inventario1.items.append(dragging_item)
-                        dragging_item = None
-                        dragging_from = None
                         
 
         contador+=1
@@ -493,6 +494,9 @@ def inicio():
 
         if dialogo_a_abrir:
             all_sprites.update(dialogo_a_abrir.texto_open)
+
+        elif xp.show_menu:
+            all_sprites.update(True)
         else:
             all_sprites.update(False)
         
@@ -663,7 +667,6 @@ def inicio():
                 menu.menu_img = pygame.transform.scale(menu.menu_img_original, (menu.tamanho_menu_img_x, menu.tamanho_menu_img_y))
 
 
-                
         if xp.show_menu:
             # Exibe o menu na tela 
             screen.blit(menu.menu_img,((SCREEN_WIDTH // 2) - (menu.tamanho_menu_img_x // 2),(SCREEN_HEIGHT // 2) - (menu.tamanho_menu_img_y // 2)))
@@ -673,6 +676,7 @@ def inicio():
                 menu.atualizar_sprites()
                 menu.desenhar_botoes(screen)
                 menu.resetar_botoes()
+                dialogo_a_abrir = True
 
         xp.render()
         pygame.display.flip()
