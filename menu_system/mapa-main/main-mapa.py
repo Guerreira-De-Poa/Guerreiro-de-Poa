@@ -188,7 +188,7 @@ def inicio():
 
     # Criar o jogador
     try:
-        player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha.png')
+        player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha(1).png')
         player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
@@ -514,6 +514,16 @@ def inicio():
                 inimigo.remover_todas_balas()
                 inimigos.remove(inimigo)
                 all_sprites.remove(inimigo)
+            if inimigo.rect.colliderect(player.range_melee) and player.atacando_melee:
+                if contador_ataque_melee % 120 ==0:
+                    contador_ataque_melee+=1
+                    print("HIT MELEE")
+                    inimigo.HP -=1
+                    inimigo.rect.x, inimigo.rect.y = inimigo.old_pos_x, inimigo.old_pos_y
+                elif player.super_range.colliderect(inimigo.rect):
+                        contador_ataque_melee = 1
+                else:
+                    contador_ataque_melee = 0
 
 
         player.sheet.draw(screen, player.rect.x - camera.left , player.rect.y - camera.top)
@@ -679,15 +689,15 @@ def inicio():
         for bau in baus:
             screen.blit(bau.image, (bau.rect.x - camera.left, bau.rect.y - camera.top))
 
-        for npc in npcs:
-            npc_big_rect = pygame.Rect(
-                npc.dialogo_rect.x - camera.left,
-                npc.dialogo_rect.y - camera.top,
-                npc.dialogo_rect.width,
-                npc.dialogo_rect.height
-            )
-            if npc.dialogo_rect.colliderect(player.rect):
-                pygame.draw.rect(screen, (0, 0, 255), npc_big_rect, 2)
+        # for npc in npcs:
+        #     npc_big_rect = pygame.Rect(
+        #         npc.dialogo_rect.x - camera.left,
+        #         npc.dialogo_rect.y - camera.top,
+        #         npc.dialogo_rect.width,
+        #         npc.dialogo_rect.height
+        #     )
+        #     if npc.dialogo_rect.colliderect(player.rect):
+        #         pygame.draw.rect(screen, (0, 0, 255), npc_big_rect, 2)
 
         if dialogo_a_abrir and dialogo_a_abrir.texto_open == False:
             

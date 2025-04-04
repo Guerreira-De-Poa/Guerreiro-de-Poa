@@ -141,7 +141,7 @@ def inicio():
 
     # Criar o jogador
     try:
-        player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha.png')
+        player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha(1).png')
         player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
@@ -222,6 +222,8 @@ def inicio():
     inventario2 = Inventario((0, 100, 0), 400)
 
     print(boss.local_a_mover)
+
+    contador_ataque_melee = 0
 
     while running:
 
@@ -378,6 +380,8 @@ def inicio():
             for inimigo in inimigos:
                 i+=1
 
+        
+
         for inimigo in inimigos:
             xp.atualizar_xp(inimigo)
             if inimigo.HP == 0:
@@ -385,6 +389,19 @@ def inicio():
                 inimigo.remover_todas_balas()
                 inimigos.remove(inimigo)
                 all_sprites.remove(inimigo)
+            if inimigo.rect.colliderect(player.range_melee) and player.atacando_melee:
+                if contador_ataque_melee % 120 ==0:
+                    contador_ataque_melee+=1
+                    print("HIT MELEE")
+                    inimigo.HP -=1
+                    inimigo.rect.x, inimigo.rect.y = inimigo.old_pos_x, inimigo.old_pos_y
+                elif player.super_range.colliderect(inimigo.rect):
+                        contador_ataque_melee = 1
+                else:
+                    contador_ataque_melee = 0
+
+            
+            
 
 
         player.sheet.draw(screen, player.rect.x - camera.left , player.rect.y - camera.top)
@@ -426,6 +443,8 @@ def inicio():
 
         click = pygame.mouse.get_pressed()[0]
 
+        click_mouse_2 = pygame.mouse.get_pressed()[2]
+
         mouse_errado = pygame.mouse.get_pos()
 
         mouse_pos =[0,0]
@@ -450,12 +469,15 @@ def inicio():
             click_hold +=1
             player.atacando = True
             player.hold_arrow(mouse_pos,camera)
+        elif click_mouse_2:
+            player.atacando_melee = True
+            player.hold_arrow(mouse_pos,camera)
         else:
             if click_hold > 30:
                 player.shoot(mouse_pos)
-                print(mouse_pos)
             click_hold = 0
             player.atacando = False
+            player.atacando_melee = False
         
         # Renderização
         screen.fill((0, 0, 0))  # Fundo preto
@@ -515,6 +537,7 @@ def inicio():
             else:
                 inimigo.atacando_melee = False
                 inimigo.frame_change = 8
+
 
         # Desenhar o jogador
         player.sheet.draw(screen, player.rect.x - camera.left, player.rect.y - camera.top)

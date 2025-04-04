@@ -55,6 +55,12 @@ class Personagem(pygame.sprite.Sprite):
         self.segurando = False
         self.contador_ataque = 0
 
+        self.atacando_melee = False
+
+        self.range_melee = pygame.Rect(self.rect.left-32, self.rect.top-32, self.rect.width+64, self.rect.height+64)
+
+        self.super_range = pygame.Rect(self.rect.left-40, self.rect.top-40, self.rect.width+80, self.rect.height+80)
+
     def update(self, dialogo_open):
         if dialogo_open:
             return
@@ -98,8 +104,30 @@ class Personagem(pygame.sprite.Sprite):
                 self.rect.x += self.speed  # Move para a direita
                 self.moving = True
 
+        self.range_melee = pygame.Rect(self.rect.left-32, self.rect.top-32, self.rect.width+64, self.rect.height+64)
+        self.super_range = pygame.Rect(self.rect.left-40, self.rect.top-40, self.rect.width+80, self.rect.height+80)
 
-        if self.atacando:
+        if self.atacando_melee:
+            if self.sheet.tile_rect == self.sheet.cells[self.sheet.action][-3]:
+                self.segurando = True
+
+            if -math.pi / 4 <= self.angle < math.pi / 4:
+                #DIREITA
+                self.sheet.action = 7
+
+            elif self.angle >= 3 * math.pi / 4 or self.angle < -3 * math.pi / 4:
+                #ESQUERDA
+                self.sheet.action = 5
+
+            elif math.pi / 4 <= self.angle < 3 * math.pi / 4:
+                #BAIXO
+                self.sheet.action = 6
+
+            else:
+                #Cima
+                self.sheet.action = 4
+
+        elif self.atacando:
             if self.sheet.tile_rect == self.sheet.cells[self.sheet.action][-3]:
                 self.segurando = True
 
@@ -137,6 +165,10 @@ class Personagem(pygame.sprite.Sprite):
             if self.frame_count % self.frame_change == 0 or self.nova_direcao == True:  
                 self.sheet.update()
                 self.nova_direcao = False
+        elif self.atacando_melee:
+            if self.frame_count % self.frame_change == 0:  
+                #print(self.sheet.action)
+                self.sheet.update()
         elif self.atacando:
             if self.frame_count % self.frame_change == 0:  
                 #print(self.sheet.action)
@@ -231,7 +263,7 @@ class Personagem(pygame.sprite.Sprite):
             if bala.active:
                 # Ajuste da posição com a câmera
                 screen.blit(bala.image, (bala.rect.x - camera.left, bala.rect.y - camera.top))
-                pygame.draw.rect(screen, (255, 0, 0), bala.rect, 1)
+                # pygame.draw.rect(screen, (255, 0, 0), bala.rect, 1)
 
     def remover_todas_balas(self):
         for bala in self.balas:
