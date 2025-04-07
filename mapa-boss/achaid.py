@@ -1,7 +1,7 @@
 import pygame
 
 pygame.init()
-screen = pygame.display.set_mode((800, 1500))
+screen = pygame.display.set_mode((800, 800))
 clock = pygame.time.Clock()
 
 # Carrega sua spritesheet
@@ -14,7 +14,7 @@ offset_x, offset_y = 0, 0
 dragging = False
 last_mouse_pos = (0, 0)
 selected_tile = None
-t = 64 # altere conforme o tamanho do tile
+t = 16 # altere conforme o tamanho do tile
 
 running = True
 while running:
