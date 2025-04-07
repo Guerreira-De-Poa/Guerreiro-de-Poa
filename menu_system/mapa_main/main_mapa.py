@@ -335,7 +335,9 @@ def inicio():
         missao_2 = npc0.dialogo.missao_ativada
 
         if missao_2 == True:
+            print("MISSAO 2 == TRUE")
             running = False
+            boss_fight() # AQUI É MELHOR
 
         if missao_1 == True and iterado_teste == 0:
             iterado_teste+=1
@@ -816,7 +818,7 @@ def inicio():
 
         pygame.display.flip()
 
-    boss_fight()
+    
 
 if __name__ == "__main__":
     inicio()

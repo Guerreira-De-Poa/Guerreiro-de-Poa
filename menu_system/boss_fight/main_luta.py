@@ -395,6 +395,7 @@ def inicio():
                 inimigo.balas.remove(a)
                 
                 player.get_hit(screen)
+                # print("PARECE QUE VOCE TOMOU DANO")
 
         if len(player_hits) > 0:
             a = (player_hits.keys())
@@ -601,6 +602,11 @@ def inicio():
             fonte2 = pygame.font.Font('8-BIT WONDER.TTF',30)
             text_surface = fonte2.render("O Ligeiro", True, (0, 0, 0))
             screen.blit(text_surface, (290,70,400,100))
+        else:
+            # to do: adicionar um "loading", tipo, voce venceu, bonitinho, e depois vai pra tela inicial
+            running = False
+            from mapa_main.main_mapa import inicio as mapa_principal # PARA CORRIGIR O PROBLEMA DE IMPORTAÇÃO CIRCULAR
+            mapa_principal()
 
         # Desenhar os inventários e o botão
         if inventario1.inventory_open:
