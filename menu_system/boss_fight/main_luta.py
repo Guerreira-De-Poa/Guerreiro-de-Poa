@@ -136,18 +136,20 @@ def inicio():
     walls = process_map_for_collision(map_data)
     map_tiles = process_map_for_rendering(map_data)
     lista_1 = [7 for i in range(4)]
-    lista_2 = [6 for i in range(4)]
-    lista_3 = [7 for i in range(8)]
+    lista_2 = [4 for i in range(4)]
+    lista_3 = [6 for i in range(8)]
     lista_4 = [13 for j in range(4)]
     lista_5 = [7 for k in range(14)]
 
     # Criar o jogador
     try:
-        player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha(1).png')
+        player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha(2).png')
+        player_sprite_path2 = os.path.join(current_dir, '..', '..', 'sprites_ataque_espada.png')
         player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+        player_sprite_ataques = SpriteSheet(player_sprite_path2, 48, 44, 96, 128, 64,[6,6,6,6], (255,255,255))
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
-        player = Personagem(player_sprite, menu.atributos["ataque"], menu.atributos["defesa"], menu.atributos["vida"], menu.atributos["stamina"], menu.atributos["velocidade"])
+        player = Personagem(player_sprite, menu.atributos["ataque"], menu.atributos["defesa"], menu.atributos["vida"], menu.atributos["stamina"], menu.atributos["velocidade"],player_sprite_ataques)
     except Exception as e:
         print(f"Erro ao carregar sprite do jogador: {e}")
         pygame.quit()
@@ -433,8 +435,6 @@ def inicio():
             
 
 
-        player.sheet.draw(screen, player.rect.x - camera.left , player.rect.y - camera.top)
-
         # Salvar a posição anterior para colisão
         old_x, old_y = player.rect.x, player.rect.y
         
@@ -498,6 +498,7 @@ def inicio():
             click_hold +=1
             player.atacando = True
             player.hold_arrow(mouse_pos,camera)
+            player.atacando_melee = False
         elif click_mouse_2:
             player.atacando_melee = True
             player.hold_arrow(mouse_pos,camera)
@@ -569,7 +570,16 @@ def inicio():
 
 
         # Desenhar o jogador
-        player.sheet.draw(screen, player.rect.x - camera.left, player.rect.y - camera.top)
+        #print(player.atacando_melee)
+        # if not player.usando_sprite2:
+        #     player.sheet.draw(screen, player.rect.x - camera.left, player.rect.y - camera.top)
+        # else:
+        #     player.sheet.draw(screen, player.rect.x - camera.left, player.rect.y - camera.top)
+
+        # player.sheet.draw(screen, player.rect.x - camera.left, player.rect.y - camera.top)
+
+        player.draw(screen, camera)
+
 
         for inimigo in inimigos:
             inimigo.draw_balas(screen,camera)
