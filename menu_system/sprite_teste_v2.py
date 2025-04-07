@@ -4,7 +4,7 @@ from balas import Bala
 
 # Classe que herda de pygame.sprite.Sprite
 class Personagem(pygame.sprite.Sprite):
-    def __init__(self, sprite_sheet, dano, defesa, vida, stamina, velocidade):
+    def __init__(self, sprite_sheet, ataque, defesa, vida, stamina, velocidade):
         super().__init__()  # Chama o inicializador da classe pai
         self.sheet = sprite_sheet
         self.image = pygame.Surface((64, 64), pygame.SRCALPHA)  # A imagem inicial
@@ -18,9 +18,12 @@ class Personagem(pygame.sprite.Sprite):
 
         self.atacando = False
 
-        self.HP = vida
+        self.MAX_HP = vida
+        self.HP = self.MAX_HP
         self.velocidade_corrida = velocidade
         self.max_stamina = stamina
+        self.dano = ataque
+        self.defesa = defesa
 
         self.balas = pygame.sprite.Group()
 
@@ -68,7 +71,6 @@ class Personagem(pygame.sprite.Sprite):
         self.stamina_width = 100
         self.stamina_height = 10
         self.stamina = self.max_stamina
-        self.stamina_ratio = (self.stamina / self.max_stamina) * 100
         self.temporizador_corrida = None
 
     def update(self, dialogo_open):
@@ -244,7 +246,7 @@ class Personagem(pygame.sprite.Sprite):
             if tempo_atual - self.temporizador_corrida >= 500:
                 self.stamina -= 1
                 self.temporizador_corrida = tempo_atual
-                print(f'Stamina: {self.max_stamina}')
+                # print(f'Stamina: {self.max_stamina}')
 
             if self.stamina <= 0:
                 self.stamina = 0
@@ -315,20 +317,24 @@ class Personagem(pygame.sprite.Sprite):
         for bala in self.balas:
             self.balas.remove(bala)
 
-    def get_hit(self, screen):
-        #print('rect center : ',self.rect.center)
-        self.health_width = 100
-        self.health_height = 20
-        self.health_ratio = (self.HP / self.health_width) * 200
-
-        pygame.draw.rect(screen, (255, 0, 0), (20, 20, self.health_width, self.health_height), 0, 3)
-        pygame.draw.rect(screen, (0, 255, 0), (20, 20, self.health_ratio, self.health_height), 0, 3)
+    def get_hit(self, dano):
+        # print(self.HP)
         # if self.ivuln == False:
-        #     self.contador_iframes = 0
-        #     self.HP -= 1
+            # self.contador_iframes = 0
+        self.HP -= max(dano - self.defesa, 0)
+        self.HP = max(self.HP, 0)
         #     self.ivuln = True
             # self.ivuln = True
             # #print(self.HP)
             # self.rect.width = 0  # "Desativa" a hitbox (remove colisão)
             # self.rect.height = 0
             #print('rect 0 0 center',self.rect.center)
+    
+    def draw_health(self, screen):
+        #print('rect center : ',self.rect.center)
+        self.health_width = 100
+        self.health_height = 20
+        self.health_ratio = (self.HP / self.MAX_HP) * self.health_width
+
+        pygame.draw.rect(screen, (255, 0, 0), (20, 20, self.health_width, self.health_height), 0, 3)
+        pygame.draw.rect(screen, (0, 255, 0), (20, 20, self.health_ratio, self.health_height), 0, 3)

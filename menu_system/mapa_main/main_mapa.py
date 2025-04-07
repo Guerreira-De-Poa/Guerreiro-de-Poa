@@ -61,7 +61,7 @@ def inicio():
     MAP_HEIGHT = map_data['mapHeight']
 
     xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
-    menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 2.5, 6.25, 10.0)
+    menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0)
 
     # Classe para carregar a spritesheet do mapa
     class MapSpriteSheet:
@@ -346,10 +346,10 @@ def inicio():
             npc1.dialogo.letra_index = 0
 
         if missao_1 == True and len(inimigos) == 0:
-            enemy0 = Inimigo(player.rect, player, 1566,2322, False,spritesheet_inimigo_arco)
-            enemy1 = Inimigo(player.rect, player, 2150,1754, False,spritesheet_inimigo_arco1)
-            enemy2 = Inimigo(player.rect, player, 1570,2102, True,spritesheet_inimigo_arco2)
-            enemy3 = Inimigo(player.rect, player, 2650,2266, False,spritesheet_inimigo_arco3)
+            enemy0 = Inimigo(player.rect, player, 1566,2322, False,spritesheet_inimigo_arco, 10, 75, 50)
+            enemy1 = Inimigo(player.rect, player, 2150,1754, False,spritesheet_inimigo_arco1, 13, 50, 20)
+            enemy2 = Inimigo(player.rect, player, 1570,2102, True,spritesheet_inimigo_arco2, 8, 65, 30)
+            enemy3 = Inimigo(player.rect, player, 2650,2266, False,spritesheet_inimigo_arco3, 9, 60, 40)
             all_sprites.add(enemy0, enemy1, enemy2, enemy3)
             inimigos.add(enemy0, enemy1, enemy2, enemy3)
 
@@ -458,13 +458,17 @@ def inicio():
 
                                 if atributo == "ataque":
                                     menu.atributos[atributo] -= 1.25
-                                    # player.velocidade_corrida = menu.atributos[atributo]
+                                    player.dano = menu.atributos[atributo]
                                 if atributo == "defesa":
                                     menu.atributos[atributo] -= 1
+                                    player.defesa = menu.atributos[atributo]
                                 if atributo == "vida":
-                                    menu.atributos[atributo] -= 0.5
+                                    menu.atributos[atributo] -= 3
+                                    player.MAX_HP = menu.atributos[atributo]
+                                    player.HP -= 3
                                 if atributo == "stamina":
                                     menu.atributos[atributo] -= 1.25
+                                    player.stamina = menu.atributos[atributo]
                                 if atributo == "velocidade":
                                     menu.atributos[atributo] -= 2
                                     player.velocidade_corrida = menu.atributos[atributo]
@@ -477,10 +481,14 @@ def inicio():
 
                             if atributo == "ataque":
                                 menu.atributos[atributo] += 1.25
+                                player.dano = menu.atributos[atributo]
                             if atributo == "defesa":
                                 menu.atributos[atributo] += 1
+                                player.defesa = menu.atributos[atributo]
                             if atributo == "vida":
-                                menu.atributos[atributo] += 0.5
+                                menu.atributos[atributo] += 3
+                                player.MAX_HP = menu.atributos[atributo]
+                                player.HP += 3
                             if atributo == "stamina":
                                 menu.atributos[atributo] += 1.25
                                 player.max_stamina = menu.atributos[atributo]
@@ -543,7 +551,7 @@ def inicio():
                 a = (enemy_hits.keys())
                 inimigo.balas.remove(a)
                 
-                player.get_hit(screen)
+                player.get_hit(inimigo.dano)
 
         if len(player_hits) > 0:
             a = (player_hits.keys())
@@ -553,23 +561,26 @@ def inicio():
             for value in b:
                 for item in inimigos:
                     if value[0] == item:
-                        item.HP-=1
+                        item.HP -= player.dano
+                        print(enemy0.HP)
+                        print(enemy1.HP)
             i = 0
             for inimigo in inimigos:
                 i+=1
 
         for inimigo in inimigos:
-            xp.atualizar_xp(inimigo)
-            if inimigo.HP == 0:
+            xp.atualizar_xp(inimigo, inimigo.xp)
+            if inimigo.HP <= 0:
                 inimigo.image = pygame.Surface((32, 32), pygame.SRCALPHA)
                 inimigo.remover_todas_balas()
+                
                 inimigos.remove(inimigo)
                 all_sprites.remove(inimigo)
             if inimigo.rect.colliderect(player.range_melee) and player.atacando_melee:
                 if contador_ataque_melee % 120 ==0:
                     contador_ataque_melee+=1
                     print("HIT MELEE")
-                    inimigo.HP -=1
+                    inimigo.HP -= player.dano
                     inimigo.rect.x, inimigo.rect.y = inimigo.old_pos_x, inimigo.old_pos_y
                 elif player.super_range.colliderect(inimigo.rect):
                         contador_ataque_melee = 1
@@ -715,7 +726,7 @@ def inicio():
 
         for inimigo in inimigos:
             if inimigo.rect.colliderect(player.rect):
-                player.get_hit(screen)
+                player.get_hit(inimigo.dano)
                 inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
                 player.rect.topleft = (old_x,old_y)
                 inimigo.atacando_melee = True
@@ -806,9 +817,8 @@ def inicio():
                 menu.desenhar_botoes(screen)
                 menu.resetar_botoes()
 
-        
+        player.draw_health(screen)
         player.draw_stamina(screen)
-        player.get_hit(screen)
         xp.render()
 
         for npc in npcs:
