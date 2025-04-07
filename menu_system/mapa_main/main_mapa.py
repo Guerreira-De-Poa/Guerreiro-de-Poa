@@ -194,7 +194,7 @@ def inicio():
         player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
-        player = Personagem(player_sprite)
+        player = Personagem(player_sprite, menu.atributos["ataque"], menu.atributos["defesa"], menu.atributos["vida"], menu.atributos["stamina"], menu.atributos["velocidade"])
     except Exception as e:
         print(f"Erro ao carregar sprite do jogador: {e}")
         pygame.quit()
@@ -329,7 +329,7 @@ def inicio():
     contador_ataque_melee = 0
 
     while running:
-
+        player.atualizar_stamina()
 
         missao_1 = npc1.dialogo.missao_ativada
         missao_2 = npc0.dialogo.missao_ativada
@@ -458,7 +458,7 @@ def inicio():
 
                                 if atributo == "ataque":
                                     menu.atributos[atributo] -= 1.25
-                                    xp.dano -= 10
+                                    # player.velocidade_corrida = menu.atributos[atributo]
                                 if atributo == "defesa":
                                     menu.atributos[atributo] -= 1
                                 if atributo == "vida":
@@ -467,7 +467,7 @@ def inicio():
                                     menu.atributos[atributo] -= 1.25
                                 if atributo == "velocidade":
                                     menu.atributos[atributo] -= 2
-                                    xp.player_speed -= 1
+                                    player.velocidade_corrida = menu.atributos[atributo]
 
                         # Botão de aumentar
                         if botoes["aumentar"]["rect"].collidepoint(event.pos) and xp.pontos_disponiveis > 0:
@@ -477,16 +477,16 @@ def inicio():
 
                             if atributo == "ataque":
                                 menu.atributos[atributo] += 1.25
-                                xp.dano += 10
                             if atributo == "defesa":
                                 menu.atributos[atributo] += 1
                             if atributo == "vida":
                                 menu.atributos[atributo] += 0.5
                             if atributo == "stamina":
                                 menu.atributos[atributo] += 1.25
+                                player.max_stamina = menu.atributos[atributo]
                             if atributo == "velocidade":
                                 menu.atributos[atributo] += 2
-                                xp.player_speed += 1
+                                player.velocidade_corrida = menu.atributos[atributo]
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if button_rect.collidepoint(event.pos) and botao_ativo == True:
@@ -543,7 +543,7 @@ def inicio():
                 a = (enemy_hits.keys())
                 inimigo.balas.remove(a)
                 
-                player.get_hit()
+                player.get_hit(screen)
 
         if len(player_hits) > 0:
             a = (player_hits.keys())
@@ -715,7 +715,7 @@ def inicio():
 
         for inimigo in inimigos:
             if inimigo.rect.colliderect(player.rect):
-                player.get_hit()
+                player.get_hit(screen)
                 inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
                 player.rect.topleft = (old_x,old_y)
                 inimigo.atacando_melee = True
@@ -743,8 +743,8 @@ def inicio():
             #print(inimigo.rect.x-camera.left,inimigo.rect.y-camera.top)
             #1570,2102
 
-        for vida in range(player.HP):
-            screen.blit(vida_imagem,(18 + 32*vida,0))
+        # for vida in range(player.HP):
+        #     screen.blit(vida_imagem,(18 + 32*vida,0))
 
         for bau in baus:
             screen.blit(bau.image, (bau.rect.x - camera.left, bau.rect.y - camera.top))
@@ -804,9 +804,11 @@ def inicio():
                 menu.desenhar_valores(screen, xp.font_nivel, xp.text_nivel, xp.nivel, xp.pontos_disponiveis)
                 menu.atualizar_sprites()
                 menu.desenhar_botoes(screen)
-                menu.resetar_botoes()   
+                menu.resetar_botoes()
 
-
+        
+        player.draw_stamina(screen)
+        player.get_hit(screen)
         xp.render()
 
         for npc in npcs:
