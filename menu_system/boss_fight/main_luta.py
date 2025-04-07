@@ -16,6 +16,7 @@ from boss import Boss1
 from bau import Bau
 
 from XP import XP
+from menu_status import Menu
 
 pause = False
 
@@ -77,6 +78,7 @@ def inicio():
 
 
     xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+    menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 2.5, 6.25, 10.0)
 
     # Dicionário de mapeamento de tiles
     TILE_MAPPING = {
@@ -145,7 +147,7 @@ def inicio():
         player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
-        player = Personagem(player_sprite)
+        player = Personagem(player_sprite, menu.atributos["ataque"], menu.atributos["defesa"], menu.atributos["vida"], menu.atributos["stamina"], menu.atributos["velocidade"])
     except Exception as e:
         print(f"Erro ao carregar sprite do jogador: {e}")
         pygame.quit()
@@ -230,6 +232,7 @@ def inicio():
     velocidade_anterior = 0
 
     while running:
+        player.atualizar_stamina()
 
         bau_perto = False
 
@@ -391,7 +394,7 @@ def inicio():
                 a = (enemy_hits.keys())
                 inimigo.balas.remove(a)
                 
-                player.get_hit()
+                player.get_hit(screen)
 
         if len(player_hits) > 0:
             a = (player_hits.keys())
@@ -555,7 +558,7 @@ def inicio():
 
         for inimigo in inimigos:
             if inimigo.rect.colliderect(player.rect):
-                player.get_hit()
+                player.get_hit(screen)
                 inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
                 player.rect.topleft = (old_x,old_y)
                 inimigo.atacando_melee = True
@@ -575,8 +578,8 @@ def inicio():
         for inimigo in inimigos:
             inimigo.sheet.draw(screen, inimigo.rect.x - camera.left, inimigo.rect.y - camera.top)
 
-        for vida in range(player.HP):
-            screen.blit(vida_imagem,(18 + 32*vida,0))
+        # for vida in range(player.HP):
+        #     screen.blit(vida_imagem,(18 + 32*vida,0))
 
         for bau in baus:
             screen.blit(bau.image, (bau.rect.x - camera.left, bau.rect.y - camera.top))
@@ -615,6 +618,8 @@ def inicio():
         if dragging_item:
             inventario1.draw_dragging_item(screen, dragging_item)  # Agora o método `draw_dragging_item` é da classe Inventario1
 
+        player.draw_stamina(screen)
+        player.get_hit(screen)
         xp.render()
 
         for npc in npcs:
