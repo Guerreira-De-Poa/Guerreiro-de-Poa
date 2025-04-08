@@ -10,11 +10,11 @@ with open('mapa-boss/map.json') as f:
     map_data = json.load(f)
 
 # Configurações do jogo
-TILE_SIZE = map_data['tileSize']
+TILE_SIZE = 16
 MAP_WIDTH = map_data['mapWidth']
 MAP_HEIGHT = map_data['mapHeight']
-SCREEN_WIDTH = MAP_WIDTH * TILE_SIZE
-SCREEN_HEIGHT = MAP_HEIGHT * TILE_SIZE
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
 
 # Cores
 BLACK = (0, 0, 0)
@@ -41,6 +41,8 @@ class SpriteSheet:
         if self.sheet:
             sprite = pygame.Surface((width, height), pygame.SRCALPHA)
             sprite.blit(self.sheet, (0, 0), (x, y, width, height))
+
+            sprite = pygame.transform.scale(sprite, (64, 64))
             return sprite
         return None
 
@@ -134,10 +136,10 @@ def process_map_for_collision(map_data):
     for layer in map_data['layers']:
         if layer['collider']:
             for tile in layer['tiles']:
-                x = int(tile['x']) * TILE_SIZE
-                y = int(tile['y']) * TILE_SIZE
+                x = int(tile['x']) * 64
+                y = int(tile['y']) * 64
                 walls.append({
-                    'rect': pygame.Rect(x, y, TILE_SIZE, TILE_SIZE),
+                    'rect': pygame.Rect(x, y, 64, 64),
                     'layer': layer['name']
                 })
     
@@ -161,8 +163,8 @@ def process_map_for_rendering(map_data):
         
         for tile in layer['tiles']:
             tile_id = str(tile['id'])
-            x = int(tile['x']) * TILE_SIZE
-            y = int(tile['y']) * TILE_SIZE
+            x = int(tile['x']) * 64
+            y = int(tile['y']) * 64
             
             if tile_id in TILE_MAPPING and spritesheet.sheet:
                 sprite_x, sprite_y = TILE_MAPPING[tile_id]
