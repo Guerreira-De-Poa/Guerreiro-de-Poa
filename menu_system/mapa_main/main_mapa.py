@@ -182,6 +182,16 @@ def inicio():
         print("Erro: Nenhum tile foi carregado para renderização!")
         pygame.quit()
         sys.exit()
+
+    # Criando as listas: lista_tamanhos e lista_acoes para que o código reladione cada tamanho para cada ação
+
+    # lista_tamanhhos: contém uma tupla por action (uma tupla para cada linha da spritesheet)
+    player_lista_tamanhos = [(64, 64) for _ in range(38)] + [(128,128) for _ in range(12)]
+    # lista_acoes: contém de indíces a qtde de linhas do spritesheet, e o valor de cada indíce é a qtde de frames da linha
+    player_lista_acoes = [9 for _ in range(8)] + [13 for _ in range(4)] + [8 for _ in range(26)] + [9 for _ in range(4)] + [6 for _ in range(8)]
+
+    lista_tamanhos = [(64, 64) for _ in range(38)] + [(128,128) for _ in range(12)]
+
     lista_1 = [7 for i in range(4)]
     lista_2 = [6 for i in range(4)]
     lista_3 = [7 for i in range(8)]
@@ -190,8 +200,8 @@ def inicio():
 
     # Criar o jogador
     try:
-        player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha(1).png')
-        player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+        player_sprite_path = os.path.join(current_dir, '..', '..', 'wopDefinitivo.png')
+        player_sprite = SpriteSheet(player_sprite_path, 0, -10, player_lista_tamanhos, 4, player_lista_acoes, (0, 0, 0))
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
         player = Personagem(player_sprite, menu.atributos["ataque"], menu.atributos["defesa"], menu.atributos["vida"], menu.atributos["stamina"], menu.atributos["velocidade"])
@@ -226,12 +236,12 @@ def inicio():
 
 
     spritesheet_inimigo_arco_png = pygame.image.load("inimigo_com_arco.png")
-    spritesheet_inimigo_arco = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco0 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco1 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco3 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco4 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco = SpriteSheet('inimigo_com_adaga.png', 0, 522, lista_tamanhos, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco0 = SpriteSheet('inimigo_com_adaga.png', 0, 522, lista_tamanhos, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco1 = SpriteSheet('inimigo_com_adaga.png', 0, 522, lista_tamanhos, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 522, lista_tamanhos, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco3 = SpriteSheet('inimigo_com_adaga.png', 0, 522, lista_tamanhos, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco4 = SpriteSheet('inimigo_com_arco.png', 0, 522, lista_tamanhos, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
 
     inimigos = pygame.sprite.Group()
 
@@ -424,6 +434,8 @@ def inicio():
                     player.nova_direcao = True
                 elif event.key == pygame.K_LSHIFT:
                     player.correr()
+                elif event.key == pygame.K_t:
+                    player.arcoEquipado = not player.arcoEquipado
                 elif event.key == pygame.K_SPACE:
                     if dialogo_a_abrir:
                         dialogo_a_abrir.trocar_texto()
@@ -445,6 +457,12 @@ def inicio():
                     xp.show_menu = not xp.show_menu
                     if xp.show_menu:
                         menu.valores_copy = menu.valores.copy()
+
+            if not player.arcoEquipado:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        player.attack(mouse_pos, camera)
+
                 
             if xp.show_menu and menu.tamanho_menu_img_x == 600 and menu.tamanho_menu_img_y == 400:
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -655,19 +673,18 @@ def inicio():
         #     click_hold = 0
         #     player.atacando = False
 
-        if click:
-            click_hold +=1
-            player.atacando = True
-            player.hold_arrow(mouse_pos,camera)
-        elif click_mouse_2:
-            player.atacando_melee = True
-            player.hold_arrow(mouse_pos,camera)
-        else:
-            if click_hold > 30:
-                player.shoot(mouse_pos)
-            click_hold = 0
-            player.atacando = False
-            player.atacando_melee = False
+        if player.arcoEquipado:
+            if click:
+                player.atacando = True
+                # player.hold_arrow(mouse_pos,camera)
+                player.get_angle(mouse_pos,camera)
+                click_hold +=1
+            else:
+                if click_hold > 30:
+                    player.shoot(mouse_pos)
+                    print(mouse_pos)
+                click_hold = 0
+                player.atacando = False
         
         # Renderização
         screen.fill((0, 0, 0))  # Fundo preto

@@ -1,7 +1,7 @@
 import pygame
 
 class SpriteSheet:
-    def __init__(self, filename, pos_x, pos_y, lista_tamanhos, m, lista_acoes, color_key=None, multiplas_linhas = True):
+    def __init__(self, filename, pos_x, pos_y, lista_tamanhos, m, lista_acoes, color_key=None, multiplas_linhas=True):
         """
         Classe para manipular spritesheets e criar animações.
         
@@ -23,7 +23,7 @@ class SpriteSheet:
         self.cells = []
         
         # Define a cor de transparência se fornecida
-        if color_key:
+        if color_key is not None:
             self.sheet = self.sheet.convert()
             self.sheet.set_colorkey(color_key)
         else:

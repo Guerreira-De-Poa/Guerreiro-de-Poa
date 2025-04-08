@@ -18,6 +18,14 @@ class Personagem(pygame.sprite.Sprite):
 
         self.atacando = False
 
+        # Atributos para geração de hitbox
+        self.attack_cooldown = 1000  # ms entre ataques
+        self.attack_duration = 1000  # ms de duração do golpe
+        self.ultimo_attack = 0
+        self.attack_ativo_ate = 0
+        self.attack_hitbox = None
+        self.attack_direction_set = False
+
         self.MAX_HP = vida
         self.HP = self.MAX_HP
         self.velocidade_corrida = velocidade
@@ -39,6 +47,8 @@ class Personagem(pygame.sprite.Sprite):
         self.frame_change = 10 #Quantidade de frames até a troca de sprite
 
         self.nova_direcao = False
+
+        self.arcoEquipado = True # Permite a troca de arma equipada, troca com T
 
         self.run = False
         self.atacar = False
@@ -159,30 +169,30 @@ class Personagem(pygame.sprite.Sprite):
         #         self.sheet.action = 4
 
         if self.atacando:
-            if self.sheet.tile_rect == self.sheet.cells[self.sheet.action][-3]:
-                self.segurando = True
+            if self.arcoEquipado:
+                if self.sheet.tile_rect == self.sheet.cells[self.sheet.action][-3]:
+                    self.segurando = True
 
-                if -math.pi / 4 <= self.angle < math.pi / 4:
-                    #DIREITA
-                    self.sheet.action = 11
+                    if -math.pi / 4 <= self.angle < math.pi / 4:
+                        #DIREITA
+                        self.sheet.action = 11
 
-                elif self.angle >= 3 * math.pi / 4 or self.angle < -3 * math.pi / 4:
-                    #ESQUERDA
-                    self.sheet.action = 9
+                    elif self.angle >= 3 * math.pi / 4 or self.angle < -3 * math.pi / 4:
+                        #ESQUERDA
+                        self.sheet.action = 9
 
-                elif math.pi / 4 <= self.angle < 3 * math.pi / 4:
-                    #BAIXO
-                    self.sheet.action = 10
+                    elif math.pi / 4 <= self.angle < 3 * math.pi / 4:
+                        #BAIXO
+                        self.sheet.action = 10
 
-                else:
-                    #CIMA
-                    self.sheet.action = 8
+                    else:
+                        #CIMA
+                        self.sheet.action = 8
             else:
                 now = pygame.time.get_ticks()
 
                 # Se ainda está no tempo da animação
-                if now < self.attack_active_until:
-                    self.attack_animating = True
+                if now < self.attack_ativo_ate:
 
                     # Define ação baseada no ângulo apenas UMA vez no início do ataque
                     if not self.attack_direction_set:
@@ -200,7 +210,6 @@ class Personagem(pygame.sprite.Sprite):
                 else:
                     # Finalizou tempo de ataque
                     self.atacando = False
-                    self.attack_animating = False
                     self.attack_direction_set = False
                     self.attack_hitbox = None
 
@@ -277,8 +286,6 @@ class Personagem(pygame.sprite.Sprite):
                 self.frame_change = 10
             elif self.run == False:
                 self.speed = 2
-
-
 
     def atualizar_stamina(self):
         # Controla consumo de stamina
@@ -383,3 +390,30 @@ class Personagem(pygame.sprite.Sprite):
 
         pygame.draw.rect(screen, (255, 0, 0), (20, 20, self.health_width, self.health_height), 0, 3)
         pygame.draw.rect(screen, (0, 255, 0), (20, 20, self.health_ratio, self.health_height), 0, 3)
+
+    def generate_attack_hitbox(self):
+        # distância à frente do player
+        distance = 10
+        width = 96
+        height = 48
+
+        offset_x = math.cos(self.angle) * distance
+        offset_y = math.sin(self.angle) * distance
+
+        hitbox_center = (
+            self.rect.centerx + offset_x,
+            self.rect.centery + offset_y
+        )
+
+        hitbox_rect = pygame.Rect(0, 0, width, height)
+        hitbox_rect.center = hitbox_center
+        return hitbox_rect
+
+    def attack(self, mouse_pos, camera):
+        now = pygame.time.get_ticks()
+        if now - self.ultimo_attack >= self.attack_cooldown:
+            self.get_angle(mouse_pos, camera)  # garante que o ângulo seja atualizado
+            self.atacando = True
+            self.ultimo_attack = now
+            self.attack_ativo_ate = now + self.attack_duration
+            self.attack_hitbox = self.generate_attack_hitbox()

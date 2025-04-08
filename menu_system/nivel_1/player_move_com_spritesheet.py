@@ -141,14 +141,24 @@ def inicio():
         print("Erro: Nenhum tile foi carregado para renderização!")
         pygame.quit()
         sys.exit()
+
+    # Criando as listas: lista_tamanhos e lista_acoes para que o código reladione cada tamanho para cada ação
+
+    # lista_tamanhhos: contém uma tupla por action (uma tupla para cada linha da spritesheet)
+    player_lista_tamanhos = [(64, 64) for _ in range(38)] + [(128,128) for _ in range(12)]
+    # lista_acoes: contém de indíces a qtde de linhas do spritesheet, e o valor de cada indíce é a qtde de frames da linha
+    player_lista_acoes = [9 for _ in range(8)] + [13 for _ in range(4)] + [8 for _ in range(26)] + [9 for _ in range(4)] + [6 for _ in range(8)]
+
+    lista_tamanhos = [(64, 64) for _ in range(54)] + [(128, 128) for _ in range(12)]
+
     lista_1 = [7 for i in range(16)]
     lista_2 = [13 for j in range(4)]
     lista_3 = [7 for k in range(14)]
-
+    
     # Criar o jogador
     try:
         player_sprite_path = os.path.join(current_dir, '..', '..', 'wopDefinitivo.png')
-        player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
+        player_sprite = SpriteSheet(player_sprite_path, 0, -10, player_lista_tamanhos, 4, player_lista_acoes, (0, 0, 0))
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
         player = Personagem(player_sprite)
@@ -183,12 +193,12 @@ def inicio():
 
 
     spritesheet_inimigo_arco_png = pygame.image.load("inimigo_com_arco.png")
-    spritesheet_inimigo_arco = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
-    spritesheet_inimigo_arco0 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
-    spritesheet_inimigo_arco1 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
-    spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
-    spritesheet_inimigo_arco3 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
-    spritesheet_inimigo_arco4 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3, (0, 0, 0))
+    spritesheet_inimigo_arco = SpriteSheet('inimigo_com_arco.png', 0, 0, lista_tamanhos, 4, lista_1+lista_2+lista_3, (0, 0, 0))
+    spritesheet_inimigo_arco0 = SpriteSheet('inimigo_com_arco.png', 0, 0, lista_tamanhos, 4, lista_1+lista_2+lista_3, (0, 0, 0))
+    spritesheet_inimigo_arco1 = SpriteSheet('inimigo_com_arco.png', 0, 0, lista_tamanhos, 4, lista_1+lista_2+lista_3, (0, 0, 0))
+    spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 0, lista_tamanhos, 4, lista_1+lista_2+lista_3, (0, 0, 0))
+    spritesheet_inimigo_arco3 = SpriteSheet('inimigo_com_arco.png', 0, 0, lista_tamanhos, 4, lista_1+lista_2+lista_3, (0, 0, 0))
+    spritesheet_inimigo_arco4 = SpriteSheet('inimigo_com_arco.png', 0, 0, lista_tamanhos, 4, lista_1+lista_2+lista_3, (0, 0, 0))
 
     enemy0 = Inimigo(player.rect, player, 0,0, False,spritesheet_inimigo_arco)
     boss = Inimigo(player.rect, player, 300,600, True,spritesheet_inimigo_arco0)
@@ -336,6 +346,8 @@ def inicio():
                     player.nova_direcao = True
                 elif event.key == pygame.K_LSHIFT:
                     player.correr()
+                elif event.key == pygame.K_t:
+                    player.arcoEquipado = not player.arcoEquipado
                 elif event.key == pygame.K_SPACE:
                     if dialogo_a_abrir:
                         dialogo_a_abrir.trocar_texto()
@@ -546,9 +558,13 @@ def inicio():
         #     player.atacando = False
 
         if click:
-            click_hold +=1
             player.atacando = True
+            # player.hold_arrow(mouse_pos,camera)
             player.get_angle(mouse_pos,camera)
+            if player.arcoEquipado:
+                click_hold +=1
+            else:
+                player.attack(mouse_pos, camera)
         else:
             if click_hold > 30:
                 player.shoot(mouse_pos)
@@ -589,6 +605,11 @@ def inicio():
                 player.rect.height
             )
             pygame.draw.rect(screen, (0, 0, 255), debug_player_rect, 2)
+
+            # DEBUG: desenha o hitbox do ataque (opcional)
+            # Corrige para câmera, se necessário
+            if player.atacando and player.attack_hitbox:
+                pygame.draw.rect(screen, (255, 0, 0), player.attack_hitbox, 2)
             
             # 3. Mostrar informações de debug
             font = pygame.font.SysFont(None, 24)
