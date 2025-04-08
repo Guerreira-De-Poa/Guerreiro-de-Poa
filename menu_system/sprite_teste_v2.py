@@ -4,7 +4,11 @@ from balas import Bala
 
 # Classe que herda de pygame.sprite.Sprite
 class Personagem(pygame.sprite.Sprite):
+<<<<<<< HEAD
     def __init__(self, sprite_sheet, dano, defesa, vida, stamina, velocidade,sheet_sec):
+=======
+    def __init__(self, sprite_sheet, ataque, defesa, vida, stamina, velocidade):
+>>>>>>> 0a93c867f3014e775e7f8b9c531d53b2593c21ca
         super().__init__()  # Chama o inicializador da classe pai
         self.sheet = sprite_sheet
         self.sheet_sec = sheet_sec
@@ -20,9 +24,20 @@ class Personagem(pygame.sprite.Sprite):
 
         self.atacando = False
 
-        self.HP = vida
+        # Atributos para geração de hitbox
+        self.attack_cooldown = 1000  # ms entre ataques
+        self.attack_duration = 1000  # ms de duração do golpe
+        self.ultimo_attack = 0
+        self.attack_ativo_ate = 0
+        self.attack_hitbox = None
+        self.attack_direction_set = False
+
+        self.MAX_HP = vida
+        self.HP = self.MAX_HP
         self.velocidade_corrida = velocidade
         self.max_stamina = stamina
+        self.dano = ataque
+        self.defesa = defesa
 
         self.balas = pygame.sprite.Group()
 
@@ -38,6 +53,8 @@ class Personagem(pygame.sprite.Sprite):
         self.frame_change = 10 #Quantidade de frames até a troca de sprite
 
         self.nova_direcao = False
+
+        self.arcoEquipado = True # Permite a troca de arma equipada, troca com T
 
         self.run = False
         self.atacar = False
@@ -70,7 +87,6 @@ class Personagem(pygame.sprite.Sprite):
         self.stamina_width = 100
         self.stamina_height = 10
         self.stamina = self.max_stamina
-        self.stamina_ratio = (self.stamina / self.max_stamina) * 100
         self.temporizador_corrida = None
 
         self.usando_sprite2 = False
@@ -84,6 +100,7 @@ class Personagem(pygame.sprite.Sprite):
         self.moving = False
         self.usando_sprite2 = False
 
+<<<<<<< HEAD
         self.range_melee = pygame.Rect(self.rect.left-32, self.rect.top-32, self.rect.width+64, self.rect.height+64)
         self.super_range = pygame.Rect(self.rect.left-40, self.rect.top-40, self.rect.width+80, self.rect.height+80)
 
@@ -149,22 +166,129 @@ class Personagem(pygame.sprite.Sprite):
         elif self.atacando:
             if self.sheet.tile_rect == self.sheet.cells[self.sheet.action][-3]:
                 self.segurando = True
+=======
+        if not self.atacando:
+            if self.run:
+                if self.direction == 'UP':
+                    self.sheet.action = 30
+                    self.rect.y -= self.speed  # Move para cima
+                    self.moving = True
+                elif self.direction == 'DOWN':
+                    self.sheet.action = 32
+                    self.rect.y += self.speed  # Move para baixo
+                    self.moving = True
+                elif self.direction == 'LEFT':
+                    self.sheet.action = 31
+                    self.rect.x -= self.speed  # Move para a esquerda
+                    self.moving = True
+                elif self.direction == 'RIGHT':
+                    self.sheet.action = 33
+                    self.rect.x += self.speed  # Move para a direita
+                    self.moving = True
+            else:      
+                if self.arcoEquipado:
+                    if self.direction == 'UP'and self.run == False:
+                        self.sheet.action = 38
+                        self.rect.y -= self.speed  # Move para cima
+                        self.moving = True
+                    elif self.direction == 'DOWN'and self.run == False:
+                        self.sheet.action = 40
+                        self.rect.y += self.speed  # Move para baixo
+                        self.moving = True
+                    elif self.direction == 'LEFT'and self.run == False:
+                        self.sheet.action = 39
+                        self.rect.x -= self.speed  # Move para a esquerda
+                        self.moving = True
+                    elif self.direction == 'RIGHT'and self.run == False:
+                        self.sheet.action = 41
+                        self.rect.x += self.speed  # Move para a direita
+                        self.moving = True
+                else:
+                    if self.direction == 'UP'and self.run == False:
+                        self.sheet.action = 0
+                        self.rect.y -= self.speed  # Move para cima
+                        self.moving = True
+                    elif self.direction == 'DOWN'and self.run == False:
+                        self.sheet.action = 2
+                        self.rect.y += self.speed  # Move para baixo
+                        self.moving = True
+                    elif self.direction == 'LEFT'and self.run == False:
+                        self.sheet.action = 1
+                        self.rect.x -= self.speed  # Move para a esquerda
+                        self.moving = True
+                    elif self.direction == 'RIGHT'and self.run == False:
+                        self.sheet.action = 3
+                        self.rect.x += self.speed  # Move para a direita
+                        self.moving = True
 
-            if -math.pi / 4 <= self.angle < math.pi / 4:
-                #DIREITA
-                self.sheet.action = 11
+        # self.range_melee = pygame.Rect(self.rect.left-32, self.rect.top-32, self.rect.width+64, self.rect.height+64)
+        # self.super_range = pygame.Rect(self.rect.left-40, self.rect.top-40, self.rect.width+80, self.rect.height+80)
 
-            elif self.angle >= 3 * math.pi / 4 or self.angle < -3 * math.pi / 4:
-                #ESQUERDA
-                self.sheet.action = 9
+        # if self.atacando_melee:
+        #     if self.sheet.tile_rect == self.sheet.cells[self.sheet.action][-3]:
+        #         self.segurando = True
 
-            elif math.pi / 4 <= self.angle < 3 * math.pi / 4:
-                #BAIXO
-                self.sheet.action = 10
+        #     if -math.pi / 4 <= self.angle < math.pi / 4:
+        #         #DIREITA
+        #         self.sheet.action = 7
 
+        #     elif self.angle >= 3 * math.pi / 4 or self.angle < -3 * math.pi / 4:
+        #         #ESQUERDA
+        #         self.sheet.action = 5
+
+        #     elif math.pi / 4 <= self.angle < 3 * math.pi / 4:
+        #         #BAIXO
+        #         self.sheet.action = 6
+
+        #     else:
+        #         #Cima
+        #         self.sheet.action = 4
+
+        if self.atacando:
+            if self.arcoEquipado:
+                if self.sheet.tile_rect == self.sheet.cells[self.sheet.action][-3]:
+                    self.segurando = True
+
+                    if -math.pi / 4 <= self.angle < math.pi / 4:
+                        #DIREITA
+                        self.sheet.action = 11
+
+                    elif self.angle >= 3 * math.pi / 4 or self.angle < -3 * math.pi / 4:
+                        #ESQUERDA
+                        self.sheet.action = 9
+
+                    elif math.pi / 4 <= self.angle < 3 * math.pi / 4:
+                        #BAIXO
+                        self.sheet.action = 10
+
+                    else:
+                        #CIMA
+                        self.sheet.action = 8
             else:
-                #Cima
-                self.sheet.action = 8
+                now = pygame.time.get_ticks()
+
+                # Se ainda está no tempo da animação
+                if now < self.attack_ativo_ate:
+>>>>>>> 0a93c867f3014e775e7f8b9c531d53b2593c21ca
+
+                    # Define ação baseada no ângulo apenas UMA vez no início do ataque
+                    if not self.attack_direction_set:
+                        if -math.pi / 4 <= self.angle < math.pi / 4:
+                            self.sheet.action = 45  # Direita
+                        elif self.angle >= 3 * math.pi / 4 or self.angle < -3 * math.pi / 4:
+                            self.sheet.action = 43  # Esquerda
+                        elif math.pi / 4 <= self.angle < 3 * math.pi / 4:
+                            self.sheet.action = 44  # Baixo
+                        else:
+                            self.sheet.action = 42  # Cima
+
+                        self.attack_direction_set = True
+
+                else:
+                    # Finalizou tempo de ataque
+                    self.atacando = False
+                    self.attack_direction_set = False
+                    self.attack_hitbox = None
 
 
         # if self.atacando:
@@ -190,15 +314,20 @@ class Personagem(pygame.sprite.Sprite):
                 self.sheet_sec.update()
 
         elif self.atacando:
-            if self.frame_count % self.frame_change == 0:  
-                #print(self.sheet.action)
-                if self.sheet.tile_rect != self.sheet.cells[self.sheet.action][-3]:
+            if self.arcoEquipado:
+                if self.frame_count % self.frame_change == 0:  
+                    #print(self.sheet.action)
+                    if self.sheet.tile_rect != self.sheet.cells[self.sheet.action][-3]:
+                        self.sheet.update()
+            else:
+                if self.frame_count % self.frame_change == 0:
                     self.sheet.update()
         else:
-            if self.sheet.action in [30,31,32,33]:
-                self.sheet.tile_rect = self.sheet.cells[self.sheet.action-30][0]
-            else:
-                self.sheet.tile_rect = self.sheet.cells[self.sheet.action][0]
+            # if self.sheet.action in [30,31,32,33]:
+            #     self.sheet.tile_rect = self.sheet.cells[self.sheet.action-30][0]
+            # else:
+            self.sheet.index = 0
+            self.sheet.tile_rect = self.sheet.cells[self.sheet.action][0]
 
         for bala in self.balas:
             if not bala.active:
@@ -211,7 +340,7 @@ class Personagem(pygame.sprite.Sprite):
             if self.contador_iframes == self.iframes:
                 self.ivuln = False
 
-    def hold_arrow(self,mouse_pos, camera):
+    def get_angle(self,mouse_pos, camera):
         #print(mouse_pos)
         self.mouse_pos = mouse_pos
         self.mousey = self.mouse_pos[1]
@@ -241,8 +370,6 @@ class Personagem(pygame.sprite.Sprite):
             elif self.run == False:
                 self.speed = 2
 
-
-
     def atualizar_stamina(self):
         # Controla consumo de stamina
         tempo_atual = pygame.time.get_ticks()
@@ -254,7 +381,7 @@ class Personagem(pygame.sprite.Sprite):
             if tempo_atual - self.temporizador_corrida >= 500:
                 self.stamina -= 1
                 self.temporizador_corrida = tempo_atual
-                print(f'Stamina: {self.max_stamina}')
+                # print(f'Stamina: {self.max_stamina}')
 
             if self.stamina <= 0:
                 self.stamina = 0
@@ -325,6 +452,7 @@ class Personagem(pygame.sprite.Sprite):
         for bala in self.balas:
             self.balas.remove(bala)
 
+<<<<<<< HEAD
     def get_hit(self, screen):
         #print('rect center : ',self.rect.center)
         self.health_width = 100
@@ -334,15 +462,21 @@ class Personagem(pygame.sprite.Sprite):
         pygame.draw.rect(screen, (255, 0, 0), (20, 20, self.health_width, self.health_height), 0, 3)
         pygame.draw.rect(screen, (0, 255, 0), (20, 20, self.health_ratio, self.health_height), 0, 3)
 
+=======
+    def get_hit(self, dano):
+        # print(self.HP)
+>>>>>>> 0a93c867f3014e775e7f8b9c531d53b2593c21ca
         # if self.ivuln == False:
-        #     self.contador_iframes = 0
-        #     self.HP -= 1
+            # self.contador_iframes = 0
+        self.HP -= max(dano - self.defesa, 0)
+        self.HP = max(self.HP, 0)
         #     self.ivuln = True
             # self.ivuln = True
             # #print(self.HP)
             # self.rect.width = 0  # "Desativa" a hitbox (remove colisão)
             # self.rect.height = 0
             #print('rect 0 0 center',self.rect.center)
+<<<<<<< HEAD
 
     def draw(self, screen, camera):
         x = self.rect.x - camera.left
@@ -351,3 +485,41 @@ class Personagem(pygame.sprite.Sprite):
             self.sheet_sec.draw(screen, x, y)
         else:
             self.sheet.draw(screen, x, y)
+=======
+    
+    def draw_health(self, screen):
+        #print('rect center : ',self.rect.center)
+        self.health_width = 100
+        self.health_height = 20
+        self.health_ratio = (self.HP / self.MAX_HP) * self.health_width
+
+        pygame.draw.rect(screen, (255, 0, 0), (20, 20, self.health_width, self.health_height), 0, 3)
+        pygame.draw.rect(screen, (0, 255, 0), (20, 20, self.health_ratio, self.health_height), 0, 3)
+
+    def generate_attack_hitbox(self):
+        # distância à frente do player
+        distance = 10
+        width = 96
+        height = 48
+
+        offset_x = math.cos(self.angle) * distance
+        offset_y = math.sin(self.angle) * distance
+
+        hitbox_center = (
+            self.rect.centerx + offset_x,
+            self.rect.centery + offset_y
+        )
+
+        hitbox_rect = pygame.Rect(0, 0, width, height)
+        hitbox_rect.center = hitbox_center
+        return hitbox_rect
+
+    def attack(self, mouse_pos, camera):
+        now = pygame.time.get_ticks()
+        if now - self.ultimo_attack >= self.attack_cooldown:
+            self.get_angle(mouse_pos, camera)  # garante que o ângulo seja atualizado
+            self.atacando = True
+            self.ultimo_attack = now
+            self.attack_ativo_ate = now + self.attack_duration
+            self.attack_hitbox = self.generate_attack_hitbox()
+>>>>>>> 0a93c867f3014e775e7f8b9c531d53b2593c21ca

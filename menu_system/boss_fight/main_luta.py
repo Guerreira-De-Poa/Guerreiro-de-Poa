@@ -179,7 +179,7 @@ def inicio():
 
     spritesheet_inimigo_arco2 = SpriteSheet('boss_agua.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
 
-    boss = Boss1(player.rect,player,1220,1000,True,spritesheet_inimigo_arco2)
+    boss = Boss1(player.rect,player,1220,1000,True,spritesheet_inimigo_arco2, 30, 300, 200)
 
 
     inimigos = pygame.sprite.Group()
@@ -396,7 +396,7 @@ def inicio():
                 a = (enemy_hits.keys())
                 inimigo.balas.remove(a)
                 
-                player.get_hit(screen)
+                player.get_hit(30)
 
         if len(player_hits) > 0:
             a = (player_hits.keys())
@@ -414,7 +414,7 @@ def inicio():
         
 
         for inimigo in inimigos:
-            xp.atualizar_xp(inimigo)
+            xp.atualizar_xp(inimigo, 300)
             if inimigo.HP == 0:
                 inimigo.image = pygame.Surface((32, 32), pygame.SRCALPHA)
                 inimigo.remover_todas_balas()
@@ -559,7 +559,7 @@ def inicio():
 
         for inimigo in inimigos:
             if inimigo.rect.colliderect(player.rect):
-                player.get_hit(screen)
+                player.get_hit(30)
                 inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
                 player.rect.topleft = (old_x,old_y)
                 inimigo.atacando_melee = True
@@ -628,8 +628,8 @@ def inicio():
         if dragging_item:
             inventario1.draw_dragging_item(screen, dragging_item)  # Agora o método `draw_dragging_item` é da classe Inventario1
 
+        player.draw_health(screen)
         player.draw_stamina(screen)
-        player.get_hit(screen)
         xp.render()
 
         for npc in npcs:
