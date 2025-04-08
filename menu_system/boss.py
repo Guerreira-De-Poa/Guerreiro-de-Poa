@@ -4,8 +4,8 @@ from balas import Bala
 from random import randint
 
 class Boss1(Inimigo):
-    def __init__(self, player_rect, player, x, y, ataque, sprite_sheet):
-        super().__init__(player_rect, player, x, y, ataque, sprite_sheet)
+    def __init__(self, player_rect, player, x, y, ataque, sprite_sheet, dano, xp, vida):
+        super().__init__(player_rect, player, x, y, ataque, sprite_sheet, dano, xp, vida)
         self.sheet = sprite_sheet
         self.image = pygame.Surface((64, 64), pygame.SRCALPHA)  # A imagem inicial
         self.rect = self.image.get_rect()  # Obtém o retângulo da imagem para movimentação

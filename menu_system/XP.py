@@ -65,18 +65,18 @@ class XP():
     #     pygame.draw.rect(screen, self.GREEN, (x, y, health_width * health_ratio, health_height))
 
     # Atualiza a barra de XP
-    def atualizar_xp(self, inimigo):
-        if inimigo.HP == 0 and not self.ganhando_xp:
+    def atualizar_xp(self, inimigo, xp_inimigo):
+        if inimigo.HP <= 0 and not self.ganhando_xp:
             self.temporizador_xp = pygame.time.get_ticks()
             self.ganhando_xp = True
-            self.xp_limitador += 100
+            self.xp_limitador += xp_inimigo
 
         if self.ganhando_xp:
             if self.xp <= self.xp_limitador and pygame.time.get_ticks() - self.temporizador_xp > 30:
-                self.xp += 5
+                self.xp += (0.02 * self.xp_max)
                 self.xp_ratio = (self.xp / self.xp_max) * 200
                 self.temporizador_xp = pygame.time.get_ticks()
-            elif self.xp > self.xp_limitador - 5:
+            elif self.xp > self.xp_limitador - (0.02 * self.xp_max):
                 self.ganhando_xp = False 
 
         if self.xp >= self.xp_max and self.temporizador_mensagem is None:
