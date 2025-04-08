@@ -8,7 +8,7 @@ class Personagem(pygame.sprite.Sprite):
         super().__init__()  # Chama o inicializador da classe pai
         self.sheet = sprite_sheet
         self.sheet_sec = sheet_sec
-        self.image = pygame.Surface((70, 70), pygame.SRCALPHA)  # A imagem inicial
+        self.image = pygame.Surface((64, 64), pygame.SRCALPHA)  # A imagem inicial
         self.rect = self.image.get_rect()  # Obtém o retângulo da imagem para movimentação
         print(self.rect)
         
