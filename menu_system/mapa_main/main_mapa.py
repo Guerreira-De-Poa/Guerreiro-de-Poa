@@ -200,11 +200,14 @@ def inicio():
 
     # Criar o jogador
     try:
-        player_sprite_path = os.path.join(current_dir, '..', '..', 'wopDefinitivo.png')
-        player_sprite = SpriteSheet(player_sprite_path, 0, -10, player_lista_tamanhos, 4, player_lista_acoes, (0, 0, 0))
+        player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha(2).png')
+        player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+
+        sheet_sec_path = os.path.join(current_dir, '..', '..', 'sprites_ataque_espada.png')
+        sheet_sec = SpriteSheet(sheet_sec_path, 28, 44, 128, 128, 34,[6,6,6,6], (255, 255, 255))
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
-        player = Personagem(player_sprite, menu.atributos["ataque"], menu.atributos["defesa"], menu.atributos["vida"], menu.atributos["stamina"], menu.atributos["velocidade"])
+        player = Personagem(player_sprite, menu.atributos["ataque"], menu.atributos["defesa"], menu.atributos["vida"], menu.atributos["stamina"], menu.atributos["velocidade"],sheet_sec)
     except Exception as e:
         print(f"Erro ao carregar sprite do jogador: {e}")
         pygame.quit()
@@ -236,13 +239,12 @@ def inicio():
 
 
     spritesheet_inimigo_arco_png = pygame.image.load("inimigo_com_arco.png")
-    spritesheet_inimigo_arco = SpriteSheet('inimigo_com_adaga.png', 0, 522, lista_tamanhos, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco0 = SpriteSheet('inimigo_com_adaga.png', 0, 522, lista_tamanhos, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco1 = SpriteSheet('inimigo_com_adaga.png', 0, 522, lista_tamanhos, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 522, lista_tamanhos, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco3 = SpriteSheet('inimigo_com_adaga.png', 0, 522, lista_tamanhos, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco4 = SpriteSheet('inimigo_com_arco.png', 0, 522, lista_tamanhos, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-
+    spritesheet_inimigo_arco = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco0 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco1 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco3 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco4 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
     inimigos = pygame.sprite.Group()
 
     player_group = pygame.sprite.Group()
@@ -679,7 +681,7 @@ def inicio():
         if player.arcoEquipado:
             if click:
                 player.atacando = True
-                # player.hold_arrow(mouse_pos,camera)
+                player.hold_arrow(mouse_pos,camera)
                 player.get_angle(mouse_pos,camera)
                 click_hold +=1
             else:
