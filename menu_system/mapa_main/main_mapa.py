@@ -356,10 +356,10 @@ def inicio():
             npc1.dialogo.letra_index = 0
 
         if missao_1 == True and len(inimigos) == 0:
-            enemy0 = Inimigo(player.rect, player, 1566,2322, False,spritesheet_inimigo_arco, 10, 75, 50)
-            enemy1 = Inimigo(player.rect, player, 2150,1754, False,spritesheet_inimigo_arco1, 13, 50, 20)
-            enemy2 = Inimigo(player.rect, player, 1570,2102, True,spritesheet_inimigo_arco2, 8, 65, 30)
-            enemy3 = Inimigo(player.rect, player, 2650,2266, False,spritesheet_inimigo_arco3, 9, 60, 40)
+            enemy0 = Inimigo(player.rect, player, 1566,2322, False,spritesheet_inimigo_arco, 10, 750, 50)
+            enemy1 = Inimigo(player.rect, player, 2150,1754, False,spritesheet_inimigo_arco1, 13, 500, 20)
+            enemy2 = Inimigo(player.rect, player, 1570,2102, True,spritesheet_inimigo_arco2, 8, 650, 30)
+            enemy3 = Inimigo(player.rect, player, 2650,2266, False,spritesheet_inimigo_arco3, 9, 600, 40)
             all_sprites.add(enemy0, enemy1, enemy2, enemy3)
             inimigos.add(enemy0, enemy1, enemy2, enemy3)
 
@@ -510,9 +510,12 @@ def inicio():
                             if atributo == "stamina":
                                 menu.atributos[atributo] += 1.25
                                 player.max_stamina = menu.atributos[atributo]
-                            if atributo == "velocidade":
+                            if atributo == "velocidade" and menu.valores["velocidade"] <= 6:
                                 menu.atributos[atributo] += 2
                                 player.velocidade_corrida = menu.atributos[atributo]
+                            else:
+                                menu.valores[atributo] = menu.valores_max[atributo]
+                                xp.pontos_disponiveis = xp.pontos_disponiveis
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if button_rect.collidepoint(event.pos) and botao_ativo == True:

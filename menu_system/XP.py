@@ -29,6 +29,7 @@ class XP():
         self.xp_max = 100
         self.nivel = 1
         self.nivel_anterior = self.nivel
+        self.nivel_max = 3
         self.tamanho_nivel = 40
         self.dano = 15
         self.multiplicador_xp = 1.1
@@ -79,29 +80,37 @@ class XP():
             elif self.xp > self.xp_limitador - (0.02 * self.xp_max):
                 self.ganhando_xp = False 
 
-        if self.xp >= self.xp_max and self.temporizador_mensagem is None:
-            self.temporizador_mensagem = pygame.time.get_ticks()
+        if self.nivel < self.nivel_max:
+            if self.xp >= self.xp_max and self.temporizador_mensagem is None:
+                self.temporizador_mensagem = pygame.time.get_ticks()
 
-            self.nivel += 1
-            self.pontos_disponiveis += 5
-            print(self.pontos_disponiveis)
-            self.pontos_disponiveis_copy = self.pontos_disponiveis
-            print(self.pontos_disponiveis_copy)
-            self.xp_excedente = self.xp_limitador - self.xp_max
-            self.xp_max *= self.multiplicador_xp
-            self.xp = 0
-            self.xp_limitador = self.xp_excedente
-            self.xp_ratio = (self.xp / self.xp_max) * 200
+                self.nivel += 1
+                self.pontos_disponiveis += 5
+                print(self.pontos_disponiveis)
+                self.pontos_disponiveis_copy = self.pontos_disponiveis
+                print(self.pontos_disponiveis_copy)
+                self.xp_excedente = self.xp_limitador - self.xp_max
+                self.xp_max *= self.multiplicador_xp
+                self.xp = 0
+                self.xp_limitador = self.xp_excedente
+                self.xp_ratio = (self.xp / self.xp_max) * 200
 
-        if self.nivel_anterior < self.nivel:
-            self.nivel_anterior = self.nivel
+            if self.nivel_anterior < self.nivel:
+                self.nivel_anterior = self.nivel
 
-        if self.temporizador_mensagem is not None:
-            font = pygame.font.SysFont(None, 55)
-            text = font.render("Você upou de nível", True, self.GREEN)
-            self.screen.blit(text, (self.screen_width // 2 - 120, self.screen_height // 2 - 50))
-            if pygame.time.get_ticks() - self.temporizador_mensagem > 1500:
-                self.temporizador_mensagem = None
+            if self.temporizador_mensagem is not None:
+                font = pygame.font.SysFont(None, 55)
+                text = font.render("Você upou de nível", True, self.GREEN)
+                self.screen.blit(text, (self.screen_width // 2 - 120, self.screen_height // 2 - 50))
+                if pygame.time.get_ticks() - self.temporizador_mensagem > 1500:
+                    self.temporizador_mensagem = None
+        
+        else:
+            self.xp_limitador = self.xp_max
+
+    # def nivel_limitador(self):
+    #     if self.nivel > 10:
+    #         self.xp
 
     # Exibe a tela com os componentes
     def render(self):
@@ -113,9 +122,16 @@ class XP():
         pygame.draw.rect(self.screen, self.DARK_PURPLE, (self.pos_xp_x, self.pos_xp_y, self.xp_ratio, self.xp_height), 0, 10)
 
         # Ajustar a posição do nível para não ficar desalinhado
-        self.font_nivel = pygame.font.SysFont(None, self.tamanho_nivel, )
-        self.text_nivel = self.font_nivel.render(f"{self.nivel}", True, self.DARK_PURPLE)
-        self.screen.blit(self.text_nivel, (self.pos_nivel_x, self.pos_nivel_y))
+        self.font_nivel = pygame.font.SysFont(None, self.tamanho_nivel)
+        if self.nivel < self.nivel_max:
+            self.text_nivel = self.font_nivel.render(f"{self.nivel}", True, self.DARK_PURPLE)
+            self.screen.blit(self.text_nivel, (self.pos_nivel_x, self.pos_nivel_y))
+        elif self.nivel >= 10:
+            self.text_nivel = self.font_nivel.render(f"{self.nivel}", True, self.DARK_PURPLE)
+            self.screen.blit(self.text_nivel, (self.pos_nivel_x - 5, self.pos_nivel_y))
+        else:
+            self.text_nivel = self.font_nivel.render("MAX", True, self.DARK_PURPLE)
+            self.screen.blit(self.text_nivel, (self.pos_nivel_x - 30, self.pos_nivel_y))
 
 
 

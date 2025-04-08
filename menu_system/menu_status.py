@@ -22,6 +22,14 @@ class Menu():
             "velocidade": atr_velocidade
         }
 
+        self.valores_max = {
+            "ataque": 30,
+            "defesa": 30,
+            "vida": 30,
+            "stamina": 30,
+            "velocidade": 6
+        }
+
         self.valores_copy = 0
 
         self.tamanho_menu_img_x = 0
