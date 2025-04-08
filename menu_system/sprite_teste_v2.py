@@ -7,7 +7,7 @@ class Personagem(pygame.sprite.Sprite):
 <<<<<<< HEAD
     def __init__(self, sprite_sheet, dano, defesa, vida, stamina, velocidade,sheet_sec):
 =======
-    def __init__(self, sprite_sheet, ataque, defesa, vida, stamina, velocidade):
+    def __init__(self, sprite_sheet, ataque, defesa, vida, stamina, velocidade,sheet_sec):
 >>>>>>> 0a93c867f3014e775e7f8b9c531d53b2593c21ca
         super().__init__()  # Chama o inicializador da classe pai
         self.sheet = sprite_sheet
@@ -310,6 +310,7 @@ class Personagem(pygame.sprite.Sprite):
                 self.nova_direcao = False
         elif self.atacando_melee:
             self.usando_sprite2 = True
+            self.usando_sprite2 = True
             if self.frame_count % self.frame_change == 0:  
                 self.sheet_sec.update()
 
@@ -523,3 +524,12 @@ class Personagem(pygame.sprite.Sprite):
             self.attack_ativo_ate = now + self.attack_duration
             self.attack_hitbox = self.generate_attack_hitbox()
 >>>>>>> 0a93c867f3014e775e7f8b9c531d53b2593c21ca
+
+
+    def draw(self, screen, camera):
+        x = self.rect.x - camera.left
+        y = self.rect.y - camera.top
+        if self.usando_sprite2:
+            self.sheet_sec.draw(screen, x, y)
+        else:
+            self.sheet.draw(screen, x, y)
