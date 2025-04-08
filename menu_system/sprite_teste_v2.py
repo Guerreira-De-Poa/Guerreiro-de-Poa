@@ -236,15 +236,20 @@ class Personagem(pygame.sprite.Sprite):
                 #print(self.sheet.action)
                 self.sheet.update()
         elif self.atacando:
-            if self.frame_count % self.frame_change == 0:  
-                #print(self.sheet.action)
-                if self.sheet.tile_rect != self.sheet.cells[self.sheet.action][-3]:
+            if self.arcoEquipado:
+                if self.frame_count % self.frame_change == 0:  
+                    #print(self.sheet.action)
+                    if self.sheet.tile_rect != self.sheet.cells[self.sheet.action][-3]:
+                        self.sheet.update()
+            else:
+                if self.frame_count % self.frame_change == 0:
                     self.sheet.update()
         else:
-            if self.sheet.action in [30,31,32,33]:
-                self.sheet.tile_rect = self.sheet.cells[self.sheet.action-30][0]
-            else:
-                self.sheet.tile_rect = self.sheet.cells[self.sheet.action][0]
+            # if self.sheet.action in [30,31,32,33]:
+            #     self.sheet.tile_rect = self.sheet.cells[self.sheet.action-30][0]
+            # else:
+            self.sheet.index = 0
+            self.sheet.tile_rect = self.sheet.cells[self.sheet.action][0]
 
         for bala in self.balas:
             if not bala.active:

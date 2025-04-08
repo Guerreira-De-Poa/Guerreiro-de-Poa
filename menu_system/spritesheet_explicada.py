@@ -59,8 +59,6 @@ class SpriteSheet:
     def update(self):
         """ Atualiza o quadro atual da animação. """
         self.tile_rect = self.cells[self.action][self.index % len(self.cells[self.action])]  # Alterna entre os quadros disponíveis
-        if self.tile_rect == self.cells[self.action][0]:
-            self.tile_rect = self.cells[self.action][1]
         self.index += 1  # Avança para o próximo quadro
     
     def draw(self, surface, x, y):
