@@ -78,7 +78,7 @@ def inicio():
 
 
     xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
-    menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 2.5, 6.25, 10.0)
+    menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 2.5, 6.25, 4.0)
 
     # Dicionário de mapeamento de tiles
     TILE_MAPPING = {
@@ -147,10 +147,9 @@ def inicio():
     try:
         player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha(2).png')
         player_sprite_path2 = os.path.join(current_dir, '..', '..', 'sprites_ataque_espada.png')
-        player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha(2).png')
-        player_sprite_path2 = os.path.join(current_dir, '..', '..', 'sprites_ataque_espada.png')
+        
         player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-        player_sprite_ataques = SpriteSheet(player_sprite_path2, 28, 44, 128, 132, 12,[6,6,6,6], (255,255,255))
+        player_sprite_ataques = SpriteSheet(player_sprite_path2, 28, 44, 128, 128, 8,[6,6,6,6], (255,255,255))
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
         player = Personagem(player_sprite, menu.atributos["ataque"], menu.atributos["defesa"], menu.atributos["vida"], menu.atributos["stamina"], menu.atributos["velocidade"],player_sprite_ataques)
@@ -238,6 +237,11 @@ def inicio():
     velocidade_anterior = 0
 
     while running:
+
+        #print("LEN = ",len([player.sheet.action]),"NUM = ",player.sheet.index % len(player.sheet.cells[player.sheet.action]))
+        # print(player.sheet.action)
+        # print(player.sheet.cells[0])
+        
         player.atualizar_stamina()
 
         bau_perto = False
