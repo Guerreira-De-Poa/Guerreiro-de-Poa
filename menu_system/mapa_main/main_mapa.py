@@ -200,13 +200,9 @@ def inicio():
 
     # Criar o jogador
     try:
-<<<<<<< HEAD
         player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha(2).png')
         player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-=======
-        player_sprite_path = os.path.join(current_dir, '..', '..', 'wopDefinitivo.png')
-        player_sprite = SpriteSheet(player_sprite_path, 0, -10, player_lista_tamanhos, 4, player_lista_acoes, (0, 0, 0))
->>>>>>> 0a93c867f3014e775e7f8b9c531d53b2593c21ca
+
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
         player = Personagem(player_sprite, menu.atributos["ataque"], menu.atributos["defesa"], menu.atributos["vida"], menu.atributos["stamina"], menu.atributos["velocidade"])

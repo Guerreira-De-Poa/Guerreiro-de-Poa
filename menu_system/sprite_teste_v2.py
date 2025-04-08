@@ -4,11 +4,7 @@ from balas import Bala
 
 # Classe que herda de pygame.sprite.Sprite
 class Personagem(pygame.sprite.Sprite):
-<<<<<<< HEAD
     def __init__(self, sprite_sheet, dano, defesa, vida, stamina, velocidade,sheet_sec):
-=======
-    def __init__(self, sprite_sheet, ataque, defesa, vida, stamina, velocidade):
->>>>>>> 0a93c867f3014e775e7f8b9c531d53b2593c21ca
         super().__init__()  # Chama o inicializador da classe pai
         self.sheet = sprite_sheet
         self.sheet_sec = sheet_sec
@@ -36,7 +32,7 @@ class Personagem(pygame.sprite.Sprite):
         self.HP = self.MAX_HP
         self.velocidade_corrida = velocidade
         self.max_stamina = stamina
-        self.dano = ataque
+        self.dano = dano
         self.defesa = defesa
 
         self.balas = pygame.sprite.Group()
@@ -100,7 +96,6 @@ class Personagem(pygame.sprite.Sprite):
         self.moving = False
         self.usando_sprite2 = False
 
-<<<<<<< HEAD
         self.range_melee = pygame.Rect(self.rect.left-32, self.rect.top-32, self.rect.width+64, self.rect.height+64)
         self.super_range = pygame.Rect(self.rect.left-40, self.rect.top-40, self.rect.width+80, self.rect.height+80)
 
@@ -166,7 +161,8 @@ class Personagem(pygame.sprite.Sprite):
         elif self.atacando:
             if self.sheet.tile_rect == self.sheet.cells[self.sheet.action][-3]:
                 self.segurando = True
-=======
+
+
         if not self.atacando:
             if self.run:
                 if self.direction == 'UP':
@@ -269,7 +265,6 @@ class Personagem(pygame.sprite.Sprite):
 
                 # Se ainda está no tempo da animação
                 if now < self.attack_ativo_ate:
->>>>>>> 0a93c867f3014e775e7f8b9c531d53b2593c21ca
 
                     # Define ação baseada no ângulo apenas UMA vez no início do ataque
                     if not self.attack_direction_set:
@@ -452,7 +447,6 @@ class Personagem(pygame.sprite.Sprite):
         for bala in self.balas:
             self.balas.remove(bala)
 
-<<<<<<< HEAD
     def get_hit(self, screen):
         #print('rect center : ',self.rect.center)
         self.health_width = 100
@@ -462,10 +456,8 @@ class Personagem(pygame.sprite.Sprite):
         pygame.draw.rect(screen, (255, 0, 0), (20, 20, self.health_width, self.health_height), 0, 3)
         pygame.draw.rect(screen, (0, 255, 0), (20, 20, self.health_ratio, self.health_height), 0, 3)
 
-=======
     def get_hit(self, dano):
         # print(self.HP)
->>>>>>> 0a93c867f3014e775e7f8b9c531d53b2593c21ca
         # if self.ivuln == False:
             # self.contador_iframes = 0
         self.HP -= max(dano - self.defesa, 0)
@@ -476,7 +468,6 @@ class Personagem(pygame.sprite.Sprite):
             # self.rect.width = 0  # "Desativa" a hitbox (remove colisão)
             # self.rect.height = 0
             #print('rect 0 0 center',self.rect.center)
-<<<<<<< HEAD
 
     def draw(self, screen, camera):
         x = self.rect.x - camera.left
@@ -485,7 +476,6 @@ class Personagem(pygame.sprite.Sprite):
             self.sheet_sec.draw(screen, x, y)
         else:
             self.sheet.draw(screen, x, y)
-=======
     
     def draw_health(self, screen):
         #print('rect center : ',self.rect.center)
@@ -522,4 +512,3 @@ class Personagem(pygame.sprite.Sprite):
             self.ultimo_attack = now
             self.attack_ativo_ate = now + self.attack_duration
             self.attack_hitbox = self.generate_attack_hitbox()
->>>>>>> 0a93c867f3014e775e7f8b9c531d53b2593c21ca
