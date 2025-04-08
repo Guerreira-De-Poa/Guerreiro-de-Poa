@@ -32,7 +32,7 @@ class Personagem(pygame.sprite.Sprite):
         self.HP = self.MAX_HP
         self.velocidade_corrida = velocidade
         self.max_stamina = stamina
-        self.dano = dano
+        self.dano = ataque
         self.defesa = defesa
 
         self.balas = pygame.sprite.Group()
@@ -513,7 +513,6 @@ class Personagem(pygame.sprite.Sprite):
             self.ultimo_attack = now
             self.attack_ativo_ate = now + self.attack_duration
             self.attack_hitbox = self.generate_attack_hitbox()
->>>>>>> 0a93c867f3014e775e7f8b9c531d53b2593c21ca
 
 
     def draw(self, screen, camera):
