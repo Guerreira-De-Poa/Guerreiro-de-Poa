@@ -326,17 +326,8 @@ class Personagem(pygame.sprite.Sprite):
         for bala in self.balas:
             self.balas.remove(bala)
 
-    def get_hit(self, screen):
-        #print('rect center : ',self.rect.center)
-        self.health_width = 100
-        self.health_height = 20
-        self.health_ratio = (self.HP / self.health_width) * 200
-
-        pygame.draw.rect(screen, (255, 0, 0), (20, 20, self.health_width, self.health_height), 0, 3)
-        pygame.draw.rect(screen, (0, 255, 0), (20, 20, self.health_ratio, self.health_height), 0, 3)
-
     def get_hit(self, dano):
-        #print(self.HP)
+        print(self.HP)
         if self.ivuln == False:
             self.contador_iframes = 0
             self.HP -= max(dano - self.defesa, 0)
@@ -348,14 +339,6 @@ class Personagem(pygame.sprite.Sprite):
             # self.rect.width = 0  # "Desativa" a hitbox (remove colisão)
             # self.rect.height = 0
             #print('rect 0 0 center',self.rect.center)
-
-    def draw(self, screen, camera):
-        x = self.rect.x - camera.left
-        y = self.rect.y - camera.top
-        if self.usando_sprite2:
-            self.sheet_sec.draw(screen, x, y)
-        else:
-            self.sheet.draw(screen, x, y)
 
     def hold_arrow(self,mouse_pos, camera):
         #print(mouse_pos)
@@ -371,12 +354,13 @@ class Personagem(pygame.sprite.Sprite):
     
     def draw_health(self, screen):
         #print('rect center : ',self.rect.center)
-        self.health_width = 100
+        self.health_width = 10
         self.health_height = 20
         self.health_ratio = (self.HP / self.MAX_HP) * self.health_width
+        print(self.MAX_HP, self.HP)
 
-        pygame.draw.rect(screen, (255, 0, 0), (20, 20, self.health_width, self.health_height), 0, 3)
-        pygame.draw.rect(screen, (0, 255, 0), (20, 20, self.health_ratio, self.health_height), 0, 3)
+        pygame.draw.rect(screen, (255, 0, 0), (20, 20, self.health_width*self.MAX_HP, self.health_height), 0, 3)
+        pygame.draw.rect(screen, (0, 255, 0), (20, 20, self.health_ratio*self.HP, self.health_height), 0, 3)
 
     # def generate_attack_hitbox(self):
     #     # distância à frente do player
@@ -410,6 +394,7 @@ class Personagem(pygame.sprite.Sprite):
         x = self.rect.x - camera.left
         y = self.rect.y - camera.top
         if self.usando_sprite2:
+            x-=20
             self.sheet_sec.draw(screen, x, y)
         else:
             self.sheet.draw(screen, x, y)

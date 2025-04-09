@@ -78,7 +78,7 @@ def inicio():
 
 
     xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
-    menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 2.5, 6.25, 5.0)
+    menu = Menu(5, 5, 5, 5, 5, 6.25, 0.0, 10, 6.25, 5.0)
 
     # Dicionário de mapeamento de tiles
     TILE_MAPPING = {
@@ -146,8 +146,8 @@ def inicio():
         player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha(2).png')
         player_sprite_path2 = os.path.join(current_dir, '..', '..', 'sprites_ataque_espada.png')
         
-        player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-        player_sprite_ataques = SpriteSheet(player_sprite_path2, 18, 44, 128, 128, 12,[6,6,6,6], (255,255,255))
+        player_sprite = SpriteSheet(player_sprite_path, 0, 514, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+        player_sprite_ataques = SpriteSheet(player_sprite_path2, 8, 38, 128, 128, 12,[6,6,6,6], (255,255,255))
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
         player = Personagem(player_sprite, menu.atributos["ataque"], menu.atributos["defesa"], menu.atributos["vida"], menu.atributos["stamina"], menu.atributos["velocidade"],player_sprite_ataques)
@@ -395,7 +395,7 @@ def inicio():
                 a = (enemy_hits.keys())
                 inimigo.balas.remove(a)
                 
-                player.get_hit(30)
+                player.get_hit(2.5)
 
         if len(player_hits) > 0:
             a = (player_hits.keys())
@@ -524,7 +524,7 @@ def inicio():
                 inimigo.frame_change = 8
 
         player.draw(screen, camera)
-
+        #print(player.rect.x)
 
         for inimigo in inimigos:
             inimigo.draw_balas(screen,camera)
