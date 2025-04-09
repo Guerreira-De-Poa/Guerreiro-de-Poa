@@ -78,7 +78,7 @@ def inicio():
 
 
     xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
-    menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 2.5, 6.25, 4.0)
+    menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 2.5, 6.25, 5.0)
 
     # Dicionário de mapeamento de tiles
     TILE_MAPPING = {
@@ -234,6 +234,8 @@ def inicio():
     cooldown_dash = 0
     velocidade_anterior = 0
 
+    contador_melee = 0
+
     while running:
 
         #print("LEN = ",len([player.sheet.action]),"NUM = ",player.sheet.index % len(player.sheet.cells[player.sheet.action]))
@@ -377,21 +379,12 @@ def inicio():
 
         if player.dash == True:
             print(cooldown_dash)
-            player.speed = 10
+            player.speed = 15
             dash+=1
             if dash == 10:
                 player.dash = False
                 player.speed = velocidade_anterior
                 dash=0
-
-
-        # if contador % 500 == 0:
-        #     for inimigo in inimigos:
-        #         if inimigo.mover:
-        #             inimigo.mover = False
-        #             boss_parado = True
-        #         elif inimigo.ataque:
-        #             inimigo.mover = True
 
         player_hits =  pygame.sprite.groupcollide(player.balas,inimigos, False, False)
         
@@ -432,8 +425,6 @@ def inicio():
                     inimigo.get_hit(1)
                     inimigo.rect.x, inimigo.rect.y = inimigo.old_pos_x, inimigo.old_pos_y
             
-
-
         # Salvar a posição anterior para colisão
         old_x, old_y = player.rect.x, player.rect.y
         
@@ -483,30 +474,33 @@ def inicio():
             mouse_pos[0] = mouse_errado[0]-camera.left
 
         mouse_pos[1] = mouse_errado[1]+camera.top
-
-        # if click:
-        #     player.shoot(mouse_pos)
-        # else:
-        #     if click_hold > 0:
-        #         player.shoot(mouse_pos)
-        #         print(mouse_pos)
-        #     click_hold = 0
-        #     player.atacando = False
-
-        if click:
-            click_hold +=1
-            player.atacando = True
-            player.hold_arrow(mouse_pos,camera)
-            player.atacando_melee = False
-        elif click_mouse_2:
-            player.atacando_melee = True
-            player.hold_arrow(mouse_pos,camera)
-        else:
-            if click_hold > 30:
+    
+        if not player.atacando_melee:
+            if click:
+                click_hold +=1
+                player.atacando = True
+                player.hold_arrow(mouse_pos,camera)
+                player.atacando_melee = False
+            elif click_mouse_2:
+                player.atacando_melee = True
+                player.hold_arrow(mouse_pos,camera)
+            elif click_hold > 30:
                 player.shoot(mouse_pos)
-            click_hold = 0
-            player.atacando = False
-            player.atacando_melee = False
+                click_hold = 0
+                player.atacando = False
+                player.atacando_melee = False
+        else:
+            contador_melee += 1
+            if contador_melee != 7*7:
+                player.atacando_melee = True
+            else:
+                contador_melee = 0
+                player.sheet_sec.index = 0
+                if not click_mouse_2:
+                    player.atacando_melee = False
+                else:
+                    player.atacando_melee = True
+                    player.hold_arrow(mouse_pos,camera)
         
         # Renderização
         screen.fill((0, 0, 0))  # Fundo preto
@@ -518,44 +512,6 @@ def inicio():
                 camera.top - TILE_SIZE <= y < camera.bottom):
                 screen.blit(image, (x - camera.left, y - camera.top))
 
-
-
-        # Dentro do game loop, na seção de renderização (após desenhar o jogador):
-        # if DEBUG_MODE:
-        #     # 1. Desenhar colisores do mapa (vermelho)
-        #     for wall in walls:
-        #         if camera.colliderect(wall):
-        #             debug_wall_rect = pygame.Rect(
-        #                 wall.x - camera.left,
-        #                 wall.y - camera.top,
-        #                 wall.width,
-        #                 wall.height
-        #             )
-        #             pygame.draw.rect(screen, (255, 0, 0), debug_wall_rect, 1)
-            
-        #     # 2. Desenhar colisor do jogador (azul)
-        #     debug_player_rect = pygame.Rect(
-        #         player.rect.x - camera.left,
-        #         player.rect.y - camera.top,
-        #         player.rect.width,
-        #         player.rect.height
-        #     )
-        #     pygame.draw.rect(screen, (0, 0, 255), debug_player_rect, 2)
-            
-        #     # 3. Mostrar informações de debug
-        #     font = pygame.font.SysFont(None, 24)
-        #     debug_info = [
-        #         f"Posição: ({player.rect.x}, {player.rect.y})",
-        #         f"Direção: {player.direction}",
-        #         f"Velocidade: {player.speed}",
-        #         f"Colisores: {len(walls)}",
-        #         "Z: Debug ON/OFF"
-        #     ]
-            
-            # for i, text in enumerate(debug_info):
-            #     text_surface = font.render(text, True, (255, 255, 255))
-            #     screen.blit(text_surface, (10, 10 + i * 25))
-
         for inimigo in inimigos:
             if inimigo.rect.colliderect(player.rect):
                 player.get_hit(30)
@@ -566,16 +522,6 @@ def inicio():
             else:
                 inimigo.atacando_melee = False
                 inimigo.frame_change = 8
-
-
-        # Desenhar o jogador
-        #print(player.atacando_melee)
-        # if not player.usando_sprite2:
-        #     player.sheet.draw(screen, player.rect.x - camera.left, player.rect.y - camera.top)
-        # else:
-        #     player.sheet.draw(screen, player.rect.x - camera.left, player.rect.y - camera.top)
-
-        # player.sheet.draw(screen, player.rect.x - camera.left, player.rect.y - camera.top)
 
         player.draw(screen, camera)
 

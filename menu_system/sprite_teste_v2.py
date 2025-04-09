@@ -8,7 +8,7 @@ class Personagem(pygame.sprite.Sprite):
         super().__init__()  # Chama o inicializador da classe pai
         self.sheet = sprite_sheet
         self.sheet_sec = sheet_sec
-        self.image = pygame.Surface((70, 70), pygame.SRCALPHA)  # A imagem inicial
+        self.image = pygame.Surface((64, 64), pygame.SRCALPHA)  # A imagem inicial
         self.rect = self.image.get_rect()  # Obtém o retângulo da imagem para movimentação
         print(self.rect)
         
@@ -158,24 +158,6 @@ class Personagem(pygame.sprite.Sprite):
                 self.rect.x += self.speed  # Move para a direita
                 self.moving = True
 
-        if not self.atacando:
-            if self.run:
-                if self.direction == 'UP':
-                    self.sheet.action = 30
-                    self.rect.y -= self.speed  # Move para cima
-                    self.moving = True
-                elif self.direction == 'DOWN':
-                    self.sheet.action = 32
-                    self.rect.y += self.speed  # Move para baixo
-                    self.moving = True
-                elif self.direction == 'LEFT':
-                    self.sheet.action = 31
-                    self.rect.x -= self.speed  # Move para a esquerda
-                    self.moving = True
-                elif self.direction == 'RIGHT':
-                    self.sheet.action = 33
-                    self.rect.x += self.speed  # Move para a direita
-                    self.moving = True
 
         elif self.atacando:
             if self.sheet.tile_rect == self.sheet.cells[self.sheet.action][-3]:
@@ -197,6 +179,11 @@ class Personagem(pygame.sprite.Sprite):
                 #Cima
                 self.sheet.action = 8
 
+        if self.atacando_melee:
+            self.frame_change = 7
+
+        # while self.sheet_sec.tile_rect not in [self.sheet_sec.cells[self.sheet_sec.action][0],self.sheet_sec.cells[self.sheet_sec.action][0]]:
+        #     self.atacando_melee = True
 
         if self.moving:
             if self.frame_count % self.frame_change == 0 or self.nova_direcao == True:  
@@ -326,8 +313,7 @@ class Personagem(pygame.sprite.Sprite):
         new_bala = Bala(self.rect.centerx, self.rect.centery, self.direction, self.bullet_speed, self.bullet_img)
         self.balas.add(new_bala)
 
-        if self.sheet.tile_rect != self.sheet.cells[self.sheet.action][0]:
-            self.sheet.update()
+        self.sheet.tile_rect = self.sheet.cells[self.sheet.action][0]
 
     def draw_balas(self, screen, camera):
         for bala in self.balas:

@@ -340,6 +340,8 @@ def inicio():
 
     contador_ataque_melee = 0
 
+    contador_melee = 0
+
     while running:
         player.atualizar_stamina()
 
@@ -463,7 +465,7 @@ def inicio():
             if not player.arcoEquipado:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        player.attack(mouse_pos, camera)
+                        player.shoot(mouse_pos, camera)
 
                 
             if xp.show_menu and menu.tamanho_menu_img_x == 600 and menu.tamanho_menu_img_y == 400:
@@ -665,20 +667,32 @@ def inicio():
         #     click_hold = 0
         #     player.atacando = False
 
-        if click:
-            click_hold +=1
-            player.atacando = True
-            player.hold_arrow(mouse_pos,camera)
-            player.atacando_melee = False
-        elif click_mouse_2:
-            player.atacando_melee = True
-            player.hold_arrow(mouse_pos,camera)
-        else:
-            if click_hold > 30:
+        if not player.atacando_melee:
+            if click:
+                click_hold +=1
+                player.atacando = True
+                player.hold_arrow(mouse_pos,camera)
+                player.atacando_melee = False
+            elif click_mouse_2:
+                player.atacando_melee = True
+                player.hold_arrow(mouse_pos,camera)
+            elif click_hold > 30:
                 player.shoot(mouse_pos)
-            click_hold = 0
-            player.atacando = False
-            player.atacando_melee = False
+                click_hold = 0
+                player.atacando = False
+                player.atacando_melee = False
+        else:
+            contador_melee += 1
+            if contador_melee != 7*7:
+                player.atacando_melee = True
+            else:
+                contador_melee = 0
+                player.sheet_sec.index = 0
+                if not click_mouse_2:
+                    player.atacando_melee = False
+                else:
+                    player.atacando_melee = True
+                    player.hold_arrow(mouse_pos,camera)
         
         # Renderização
         screen.fill((0, 0, 0))  # Fundo preto
@@ -689,51 +703,6 @@ def inicio():
             if (camera.left - TILE_SIZE <= x < camera.right and 
                 camera.top - TILE_SIZE <= y < camera.bottom):
                 screen.blit(image, (x - camera.left, y - camera.top))
-
-        # Dentro do game loop, na seção de renderização (após desenhar o jogador):
-        # if DEBUG_MODE:
-        #     # 1. Desenhar colisores do mapa (vermelho)
-        #     for wall in walls:
-        #         if camera.colliderect(wall):
-        #             debug_wall_rect = pygame.Rect(
-        #                 wall.x - camera.left,
-        #                 wall.y - camera.top,
-        #                 wall.width,
-        #                 wall.height
-        #             )
-        #             pygame.draw.rect(screen, (255, 0, 0), debug_wall_rect, 1)
-            
-        #     # 2. Desenhar colisor do jogador (azul)
-        #     debug_player_rect = pygame.Rect(
-        #         player.rect.x - camera.left,
-        #         player.rect.y - camera.top,
-        #         player.rect.width,
-        #         player.rect.height
-        #     )
-        #     pygame.draw.rect(screen, (0, 0, 255), debug_player_rect, 2)
-            
-        #     # 3. Mostrar informações de debug
-        #     font = pygame.font.SysFont(None, 24)
-        #     debug_info = [
-        #         f"Posição: ({player.rect.x}, {player.rect.y})",
-        #         f"Direção: {player.direction}",
-        #         f"Velocidade: {player.speed}",
-        #         f"Colisores: {len(walls)}",
-        #         "Z: Debug ON/OFF"
-        #     ]
-            
-        #     for i, text in enumerate(debug_info):
-        #         text_surface = font.render(text, True, (255, 255, 255))
-        #         screen.blit(text_surface, (10, 10 + i * 25))
-
-        #     for inimigo in inimigos:
-        #         debug_enemy_rect = pygame.Rect(
-        #             inimigo.rect.x - camera.left,
-        #             inimigo.rect.y - camera.top,
-        #             inimigo.rect.width,
-        #             inimigo.rect.height
-        #         )
-        #         pygame.draw.rect(screen, (255, 255, 0), debug_enemy_rect, 2)
 
         for inimigo in inimigos:
             if inimigo.rect.colliderect(player.rect):
@@ -765,21 +734,9 @@ def inicio():
             #print(inimigo.rect.x-camera.left,inimigo.rect.y-camera.top)
             #1570,2102
 
-        # for vida in range(player.HP):
-        #     screen.blit(vida_imagem,(18 + 32*vida,0))
-
         for bau in baus:
             screen.blit(bau.image, (bau.rect.x - camera.left, bau.rect.y - camera.top))
 
-        # for npc in npcs:
-        #     npc_big_rect = pygame.Rect(
-        #         npc.dialogo_rect.x - camera.left,
-        #         npc.dialogo_rect.y - camera.top,
-        #         npc.dialogo_rect.width,
-        #         npc.dialogo_rect.height
-        #     )
-        #     if npc.dialogo_rect.colliderect(player.rect):
-        #         pygame.draw.rect(screen, (0, 0, 255), npc_big_rect, 2)
 
         if dialogo_a_abrir and dialogo_a_abrir.texto_open == False:
             
@@ -841,33 +798,3 @@ def inicio():
 
 if __name__ == "__main__":
     inicio()
-#----------------------------------------------------------------------------------------------------------------------------------------------------
-#     if player.rect.left <= -15:
-#         player.rect.left = -15
-
-#     if player.rect.right >= bg.get_width()-10:
-#         player.rect.right = bg.get_width()-10
-
-#     if player.rect.bottom >= bg.get_height()-28:
-#         player.rect.bottom = bg.get_height()-28
-
-#     if player.rect.top <= -15:
-#         player.rect.top = -15
-
-#     screen.blit(bg, (0, 0), camera)
-
-#     # if player.ivuln == True:
-#     #     if player.contador_iframes < player.iframes:
-#     #         player.contador_iframes += 1
-#     #     else:
-#     #         player.ivuln = False
-#     #         player.contador_iframes = 0
-#     #         player.rect.width = 64 
-#     #         player.rect.height = 64
-
-
-#     # if player.ivuln: 
-#     #     camera.center = (player.rect.x+32,player.rect.y + 32)
-#     #     print(camera.center)
-#     # elif not player.ivuln:
-#     camera.center = player.rect.center

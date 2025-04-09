@@ -1,11 +1,13 @@
 import pygame
+import math
 
 class Bala(pygame.sprite.Sprite):
     def __init__(self, x, y, direction, speed, bullet_img):
         super().__init__()
-        self.image = bullet_img
-        self.rect = self.image.get_rect(center=(x, y))
         self.direction = direction
+        angulo = -math.degrees(math.atan2(self.direction[0], -self.direction[1]))
+        self.image = pygame.transform.rotate(bullet_img, angulo)
+        self.rect = self.image.get_rect(center=(x, y))
         self.speed = speed
         self.active = True  # Flag para controlar se a bala está ativa ou não
 
