@@ -46,6 +46,10 @@ class Boss1(Inimigo):
 
         self.contagem_tempo_parado = 0
 
+        self.ivuln = False
+        self.iframes = 30
+        self.contador_iframes = 0
+
     def gerar_local_a_mover(self):
         self.local_a_mover = [randint(200,800),randint(400,1000)]
 
@@ -144,7 +148,7 @@ class Boss1(Inimigo):
                     else:
                         pass
         if self.contagem_ataques >=5:
-            print(self.contagem_tempo_parado)
+            #print(self.contagem_tempo_parado)
             if self.contagem_tempo_parado < 180:
                 self.contagem_tempo_parado+=1
                 self.mover = False
@@ -169,6 +173,11 @@ class Boss1(Inimigo):
             # else:
             #     print('(',self.rect.centerx,self.rect.centery,')',self.local_a_mover)
 
+        if self.ivuln == True:
+            self.contador_iframes +=1
+            if self.contador_iframes == self.iframes:
+                self.ivuln = False
+
         for bala in self.balas:
             if not bala.active:
                 self.balas.remove(bala)
@@ -187,3 +196,9 @@ class Boss1(Inimigo):
     def atacar(self):
         if self.ataque:
             self.shoot(self.player_rect)
+
+    def get_hit(self, dano):
+        if self.ivuln == False:
+            self.contador_iframes = 0
+            self.HP -= dano
+            self.ivuln = True

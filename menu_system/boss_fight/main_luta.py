@@ -138,8 +138,6 @@ def inicio():
     lista_1 = [7 for i in range(4)]
     lista_2 = [4 for i in range(4)]
     lista_3 = [6 for i in range(8)]
-    lista_2 = [4 for i in range(4)]
-    lista_3 = [6 for i in range(8)]
     lista_4 = [13 for j in range(4)]
     lista_5 = [7 for k in range(14)]
 
@@ -149,7 +147,7 @@ def inicio():
         player_sprite_path2 = os.path.join(current_dir, '..', '..', 'sprites_ataque_espada.png')
         
         player_sprite = SpriteSheet(player_sprite_path, 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-        player_sprite_ataques = SpriteSheet(player_sprite_path2, 28, 44, 128, 128, 8,[6,6,6,6], (255,255,255))
+        player_sprite_ataques = SpriteSheet(player_sprite_path2, 18, 44, 128, 128, 12,[6,6,6,6], (255,255,255))
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
         player = Personagem(player_sprite, menu.atributos["ataque"], menu.atributos["defesa"], menu.atributos["vida"], menu.atributos["stamina"], menu.atributos["velocidade"],player_sprite_ataques)
@@ -414,7 +412,7 @@ def inicio():
             for value in b:
                 for item in inimigos:
                     if value[0] == item:
-                        item.HP-=1
+                        item.get_hit(1)
             i = 0
             for inimigo in inimigos:
                 i+=1
@@ -423,23 +421,16 @@ def inicio():
 
         for inimigo in inimigos:
             xp.atualizar_xp(inimigo, 300)
-            if inimigo.HP == 0:
+            if inimigo.HP <= 0:
                 inimigo.image = pygame.Surface((32, 32), pygame.SRCALPHA)
                 inimigo.remover_todas_balas()
                 inimigos.remove(inimigo)
                 all_sprites.remove(inimigo)
             if inimigo.rect.colliderect(player.range_melee) and player.atacando_melee:
-                if contador_ataque_melee % 120 ==0:
-                    contador_ataque_melee+=1
-                    print("HIT MELEE")
-                    inimigo.HP -=1
+                if player.sheet_sec.tile_rect in [player.sheet_sec.cells[player.sheet_sec.action][-3],player.sheet_sec.cells[player.sheet_sec.action][-2],player.sheet_sec.cells[player.sheet_sec.action][-1]]:
+                    print(True)
+                    inimigo.get_hit(1)
                     inimigo.rect.x, inimigo.rect.y = inimigo.old_pos_x, inimigo.old_pos_y
-                elif player.super_range.colliderect(inimigo.rect):
-                        contador_ataque_melee = 1
-                else:
-                    contador_ataque_melee = 0
-
-            
             
 
 

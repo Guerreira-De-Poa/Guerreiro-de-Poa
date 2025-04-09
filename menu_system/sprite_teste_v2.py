@@ -106,22 +106,22 @@ class Personagem(pygame.sprite.Sprite):
             if -math.pi / 4 <= self.angle < math.pi / 4:
                 #DIREITA
                 self.sheet_sec.action = 3
-                print("DIREITA")
+                #print("DIREITA")
 
             elif self.angle >= 3 * math.pi / 4 or self.angle < -3 * math.pi / 4:
                 #ESQUERDA
                 self.sheet_sec.action = 1
-                print("ESQUERDA")
+                #print("ESQUERDA")
 
             elif math.pi / 4 <= self.angle < 3 * math.pi / 4:
                 #BAIXO
                 self.sheet_sec.action = 2
-                print("BAIXO")
+                #print("BAIXO")
 
             else:
                 #Cima
                 self.sheet_sec.action = 0
-                print("CIMA")
+                #print("CIMA")
 
         elif not self.atacando:
             if self.direction == 'UP'and self.run == False:
@@ -158,11 +158,6 @@ class Personagem(pygame.sprite.Sprite):
                 self.rect.x += self.speed  # Move para a direita
                 self.moving = True
 
-        elif self.atacando:
-            if self.sheet.tile_rect == self.sheet.cells[self.sheet.action][-3]:
-                self.segurando = True
-
-
         if not self.atacando:
             if self.run:
                 if self.direction == 'UP':
@@ -181,149 +176,46 @@ class Personagem(pygame.sprite.Sprite):
                     self.sheet.action = 33
                     self.rect.x += self.speed  # Move para a direita
                     self.moving = True
-            # else:      
-            #     if self.arcoEquipado:
-            #         if self.direction == 'UP'and self.run == False:
-            #             self.sheet.action = 38
-            #             self.rect.y -= self.speed  # Move para cima
-            #             self.moving = True
-            #         elif self.direction == 'DOWN'and self.run == False:
-            #             self.sheet.action = 40
-            #             self.rect.y += self.speed  # Move para baixo
-            #             self.moving = True
-            #         elif self.direction == 'LEFT'and self.run == False:
-            #             self.sheet.action = 39
-            #             self.rect.x -= self.speed  # Move para a esquerda
-            #             self.moving = True
-            #         elif self.direction == 'RIGHT'and self.run == False:
-            #             self.sheet.action = 41
-            #             self.rect.x += self.speed  # Move para a direita
-            #             self.moving = True
-            #     else:
-            #         if self.direction == 'UP'and self.run == False:
-            #             self.sheet.action = 0
-            #             self.rect.y -= self.speed  # Move para cima
-            #             self.moving = True
-            #         elif self.direction == 'DOWN'and self.run == False:
-            #             self.sheet.action = 2
-            #             self.rect.y += self.speed  # Move para baixo
-            #             self.moving = True
-            #         elif self.direction == 'LEFT'and self.run == False:
-            #             self.sheet.action = 1
-            #             self.rect.x -= self.speed  # Move para a esquerda
-            #             self.moving = True
-            #         elif self.direction == 'RIGHT'and self.run == False:
-            #             self.sheet.action = 3
-            #             self.rect.x += self.speed  # Move para a direita
-            #             self.moving = True
 
-        # self.range_melee = pygame.Rect(self.rect.left-32, self.rect.top-32, self.rect.width+64, self.rect.height+64)
-        # self.super_range = pygame.Rect(self.rect.left-40, self.rect.top-40, self.rect.width+80, self.rect.height+80)
-
-        if self.atacando_melee:
+        elif self.atacando:
             if self.sheet.tile_rect == self.sheet.cells[self.sheet.action][-3]:
                 self.segurando = True
 
             if -math.pi / 4 <= self.angle < math.pi / 4:
                 #DIREITA
-                self.sheet.action = 7
+                self.sheet.action = 11
 
             elif self.angle >= 3 * math.pi / 4 or self.angle < -3 * math.pi / 4:
                 #ESQUERDA
-                self.sheet.action = 5
+                self.sheet.action = 9
 
             elif math.pi / 4 <= self.angle < 3 * math.pi / 4:
                 #BAIXO
-                self.sheet.action = 6
+                self.sheet.action = 10
 
             else:
                 #Cima
-                self.sheet.action = 4
+                self.sheet.action = 8
 
-        # if self.atacando:
-        #     if self.arcoEquipado:
-        #         if self.sheet.tile_rect == self.sheet.cells[self.sheet.action][-3]:
-        #             self.segurando = True
-
-        #             if -math.pi / 4 <= self.angle < math.pi / 4:
-        #                 #DIREITA
-        #                 self.sheet.action = 11
-
-        #             elif self.angle >= 3 * math.pi / 4 or self.angle < -3 * math.pi / 4:
-        #                 #ESQUERDA
-        #                 self.sheet.action = 9
-
-        #             elif math.pi / 4 <= self.angle < 3 * math.pi / 4:
-        #                 #BAIXO
-        #                 self.sheet.action = 10
-
-        #             else:
-        #                 #CIMA
-        #                 self.sheet.action = 8
-        #     else:
-        #         now = pygame.time.get_ticks()
-
-        #         # Se ainda está no tempo da animação
-        #         if now < self.attack_ativo_ate:
-
-        #             # Define ação baseada no ângulo apenas UMA vez no início do ataque
-        #             if not self.attack_direction_set:
-        #                 if -math.pi / 4 <= self.angle < math.pi / 4:
-        #                     self.sheet.action = 45  # Direita
-        #                 elif self.angle >= 3 * math.pi / 4 or self.angle < -3 * math.pi / 4:
-        #                     self.sheet.action = 43  # Esquerda
-        #                 elif math.pi / 4 <= self.angle < 3 * math.pi / 4:
-        #                     self.sheet.action = 44  # Baixo
-        #                 else:
-        #                     self.sheet.action = 42  # Cima
-
-        #                 self.attack_direction_set = True
-
-        #         else:
-        #             # Finalizou tempo de ataque
-        #             self.atacando = False
-        #             self.attack_direction_set = False
-        #             self.attack_hitbox = None
-
-
-        # if self.atacando:
-        #     if self.sheet.action == 0 or self.sheet.action == 30:
-        #         self.sheet.action = 8
-        #     elif self.sheet.action == 1 or self.sheet.action == 31:
-        #         self.sheet.action = 9
-        #     elif self.sheet.action == 2 or self.sheet.action == 32:
-        #         self.sheet.action = 10
-        #     elif self.sheet.action == 3 or self.sheet.action == 33:
-        #         self.sheet.action = 11
-
-            #self.sprite_atual = (self.sprite_atual + 1) % 2
-        # A cada 10 frames, troca de sprite para evitar animação rápida demais
 
         if self.moving:
             if self.frame_count % self.frame_change == 0 or self.nova_direcao == True:  
                 self.sheet.update()
                 self.nova_direcao = False
         elif self.atacando_melee:
-            self.usando_sprite2 = True
-            self.usando_sprite2 = True
             if self.frame_count % self.frame_change == 0:  
+                #print(self.sheet.action)
                 self.sheet_sec.update()
-
         elif self.atacando:
-            if self.arcoEquipado:
-                if self.frame_count % self.frame_change == 0:  
-                    #print(self.sheet.action)
-                    if self.sheet.tile_rect != self.sheet.cells[self.sheet.action][-3]:
-                        self.sheet.update()
-            else:
-                if self.frame_count % self.frame_change == 0:
+            if self.frame_count % self.frame_change == 0:  
+                #print(self.sheet.action)
+                if self.sheet.tile_rect != self.sheet.cells[self.sheet.action][-1]:
                     self.sheet.update()
         else:
-            # if self.sheet.action in [30,31,32,33]:
-            #     self.sheet.tile_rect = self.sheet.cells[self.sheet.action-30][0]
-            # else:
-            self.sheet.index = 0
-            self.sheet.tile_rect = self.sheet.cells[self.sheet.action][0]
+            if self.sheet.action in [30,31,32,33]:
+                self.sheet.tile_rect = self.sheet.cells[self.sheet.action-30][0]
+            else:
+                self.sheet.tile_rect = self.sheet.cells[self.sheet.action][0]
 
         for bala in self.balas:
             if not bala.active:
@@ -417,7 +309,7 @@ class Personagem(pygame.sprite.Sprite):
         #         self.atacar = False
         #     return
         
-        self.hold_arrow(mouse_pos)
+        #self.hold_arrow(mouse_pos)
         # self.atacando = True
 
         #FIM TESTE
@@ -458,12 +350,13 @@ class Personagem(pygame.sprite.Sprite):
         pygame.draw.rect(screen, (0, 255, 0), (20, 20, self.health_ratio, self.health_height), 0, 3)
 
     def get_hit(self, dano):
-        # print(self.HP)
-        # if self.ivuln == False:
-            # self.contador_iframes = 0
-        self.HP -= max(dano - self.defesa, 0)
-        self.HP = max(self.HP, 0)
-        #     self.ivuln = True
+        #print(self.HP)
+        if self.ivuln == False:
+            self.contador_iframes = 0
+            self.HP -= max(dano - self.defesa, 0)
+            self.HP = max(self.HP, 0)
+            self.ivuln = True
+
             # self.ivuln = True
             # #print(self.HP)
             # self.rect.width = 0  # "Desativa" a hitbox (remove colisão)
@@ -499,23 +392,23 @@ class Personagem(pygame.sprite.Sprite):
         pygame.draw.rect(screen, (255, 0, 0), (20, 20, self.health_width, self.health_height), 0, 3)
         pygame.draw.rect(screen, (0, 255, 0), (20, 20, self.health_ratio, self.health_height), 0, 3)
 
-    def generate_attack_hitbox(self):
-        # distância à frente do player
-        distance = 10
-        width = 96
-        height = 48
+    # def generate_attack_hitbox(self):
+    #     # distância à frente do player
+    #     distance = 10
+    #     width = 96
+    #     height = 48
 
-        offset_x = math.cos(self.angle) * distance
-        offset_y = math.sin(self.angle) * distance
+    #     offset_x = math.cos(self.angle) * distance
+    #     offset_y = math.sin(self.angle) * distance
 
-        hitbox_center = (
-            self.rect.centerx + offset_x,
-            self.rect.centery + offset_y
-        )
+    #     hitbox_center = (
+    #         self.rect.centerx + offset_x,
+    #         self.rect.centery + offset_y
+    #     )
 
-        hitbox_rect = pygame.Rect(0, 0, width, height)
-        hitbox_rect.center = hitbox_center
-        return hitbox_rect
+    #     hitbox_rect = pygame.Rect(0, 0, width, height)
+    #     hitbox_rect.center = hitbox_center
+    #     return hitbox_rect
 
     def attack(self, mouse_pos, camera):
         now = pygame.time.get_ticks()
