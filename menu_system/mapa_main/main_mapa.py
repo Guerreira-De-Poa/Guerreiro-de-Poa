@@ -11,6 +11,9 @@ sys.path.append(pasta_pai)
 # Agora podemos importar diretamente a função 'inicio' do arquivo 'main_luta.py'
 from boss_fight.main_luta import inicio as boss_fight
 
+# chama ultimo nivel
+from ultimo_nivel.ultimo import inicio as ultimo_nivel
+
 # Chamando a função importada
 
 from spritesheet_explicada import SpriteSheet
@@ -290,16 +293,24 @@ def inicio():
         'texto_2':['Me leve até lá']
         }
     
+    texto_3 = {
+        'personagem':'Morador de Poá',
+        'texto_1':['Muito obrigado por nos salvar!', 'Mas agora, é a sua hora de brilhar...', 'Gabriel está neste castelo', 'pronto para aniquilar Poá', 'Apenas você pode derrotá-lo', 'Boa sorte'],
+        'personagem_1': "Guerreiro de Poá",
+        'texto_2':['Me leve até lá']
+        }
+    
     ########### 
     # de alguma forma, agora te que deixar o dicionario texto...
     ###########
 
     npc0 = NPC(omori,screen,1248,545,texto_2, 2)
     npc1 = NPC(omori,screen,2115, 2150,texto, 3)
+    npc2 = NPC(omori,screen,2110, 605,texto_3, 4)
 
     all_sprites.add(npc0,npc1)
     npcs = pygame.sprite.Group()
-    npcs.add(npc0,npc1) 
+    npcs.add(npc0,npc1,npc2 ) 
 
     dialogo_group = []
 
@@ -347,7 +358,15 @@ def inicio():
 
         missao_1 = npc1.dialogo.missao_ativada
         missao_2 = npc0.dialogo.missao_ativada
+        missao_3 = npc2.dialogo.missao_ativada
 
+        if missao_3 == True:
+            running = False
+            screen.fill((0, 0, 0))
+            pygame.display.flip()
+            pygame.time.delay(500)
+            print('ok')
+            ultimo_nivel() # AQUI É MELHOR
         if missao_2 == True:
             ####################
             #
