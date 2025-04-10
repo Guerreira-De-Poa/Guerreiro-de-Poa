@@ -349,7 +349,29 @@ def inicio():
         missao_2 = npc0.dialogo.missao_ativada
 
         if missao_2 == True:
+            ####################
+            #
+            # ADICIONA NIVEL 1 - BOSS FIGHT "CHEFE 1"
+            #
+            ####################
             running = False
+            ####################
+            #
+            #PARA ADICIONAR CUTSCENES
+            #
+            ####################
+            screen.fill((0, 0, 0))
+            # fonte = pygame.font.Font('8-BIT WONDER.TTF',30)
+            # text_surface = fonte.render("O Ligeiro", True, (255, 255, 255))
+            # screen.blit(text_surface, (288,68,400,100))
+
+            # fonte2 = pygame.font.Font('8-BIT WONDER.TTF',30)
+            # text_surface = fonte2.render("O Ligeiro", True, (0, 0, 0))
+            # screen.blit(text_surface, (290,70,400,100))
+            pygame.display.flip()
+            pygame.time.delay(500)
+            print('ok')
+            boss_fight() # AQUI É MELHOR
 
         if missao_1 == True and iterado_teste == 0:
             iterado_teste+=1

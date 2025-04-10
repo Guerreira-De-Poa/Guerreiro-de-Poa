@@ -556,6 +556,26 @@ def inicio():
             fonte2 = pygame.font.Font('8-BIT WONDER.TTF',30)
             text_surface = fonte2.render("O Ligeiro", True, (0, 0, 0))
             screen.blit(text_surface, (290,70,400,100))
+        else:
+            ##############
+
+            # ADICIONAMOS A FUNÇÃO DE FIM DE JOGO, O BOSS MORREU
+
+            ##############
+
+            running = False
+            screen.fill((0, 0, 0))
+            # fonte = pygame.font.Font('8-BIT WONDER.TTF',30)
+            # text_surface = fonte.render("O Ligeiro", True, (255, 255, 255))
+            # screen.blit(text_surface, (288,68,400,100))
+
+            # fonte2 = pygame.font.Font('8-BIT WONDER.TTF',30)
+            # text_surface = fonte2.render("O Ligeiro", True, (0, 0, 0))
+            # screen.blit(text_surface, (290,70,400,100))
+            pygame.display.flip()
+            pygame.time.delay(500)
+            from mapa_main.main_mapa import inicio as mapa_principal # PARA CORRIGIR O PROBLEMA DE IMPORTAÇÃO CIRCULAR
+            mapa_principal()
 
         # Desenhar os inventários e o botão
         if inventario1.inventory_open:
