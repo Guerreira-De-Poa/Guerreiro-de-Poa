@@ -26,6 +26,11 @@ class Game():
                 break
             if self.START_KEY: # quando clicamos em começar
                 self.playing = False # quebramos o loop, não o jogo em si, tipo, ainda roda, mas o loop do menu nãop
+
+                ###
+                # PARAR A MUSICA
+                ###
+                pygame.mixer.music.stop()
                 inicio_real()
 
             self.display.blit(fundo_historia, (0,0)) # ATUALIZAMOS A TELA, pra que não fica tudo junto na mesma tela

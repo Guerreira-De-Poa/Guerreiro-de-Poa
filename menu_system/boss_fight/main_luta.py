@@ -19,9 +19,14 @@ from XP import XP
 from menu_status import Menu
 
 pause = False
+pygame.mixer.music.stop()
+
 
 def inicio():
-    
+    pygame.mixer.music.load("musicas/In the Hall of the Mountain King.mp3")
+    pygame.mixer.music.play(-1)  # -1 significa que a música vai tocar em loop
+    pygame.mixer.music.set_volume(0.5)  # 50% do volume máximo
+        
     boss_parado=False
     global pause
     # Inicialização do Pygame
@@ -563,6 +568,7 @@ def inicio():
 
             ##############
 
+            pygame.mixer.music.stop()
             running = False
             screen.fill((0, 0, 0))
             # fonte = pygame.font.Font('8-BIT WONDER.TTF',30)

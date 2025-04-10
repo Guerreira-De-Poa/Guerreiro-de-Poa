@@ -31,7 +31,14 @@ from menu_status import Menu
 
 pause = False
 
+pygame.mixer.music.stop()
+
 def inicio():
+    ####
+    # PRA MUSICA FUNCIONAR: ANTES DO LOOP, QUEBRE O SOM, COMEÇOU? PEGA A MUSICA
+    pygame.mixer.music.load("musicas/The Four Seasons, Winter - Vivaldi.mp3")
+    pygame.mixer.music.play(-1)  # -1 significa que a música vai tocar em loop
+    pygame.mixer.music.set_volume(0.2)  # 50% do volume máximo
     
     boss_parado=False
     global pause
@@ -361,6 +368,7 @@ def inicio():
         missao_3 = npc2.dialogo.missao_ativada
 
         if missao_3 == True:
+            pygame.mixer.music.stop()
             # ULTIMO NIVEL!
             running = False
             screen.fill((0, 0, 0))
@@ -369,6 +377,7 @@ def inicio():
             print('ok')
             ultimo_nivel() # AQUI É MELHOR
         if missao_2 == True:
+            pygame.mixer.music.stop()
             ####################
             #
             # ADICIONA NIVEL 1 - BOSS FIGHT "CHEFE 1"
