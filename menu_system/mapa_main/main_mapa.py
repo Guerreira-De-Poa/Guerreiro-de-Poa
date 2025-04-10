@@ -369,6 +369,9 @@ def inicio():
 
         if missao_3 == True:
             pygame.mixer.music.stop()
+            pygame.mixer.music.load("musicas/sfx-menu12.mp3")
+            pygame.mixer.music.play(1)  # -1 significa que a música vai tocar em loop
+            pygame.mixer.music.set_volume(0.2)  # 50% do volume máximo
             # ULTIMO NIVEL!
             running = False
             screen.fill((0, 0, 0))
@@ -378,6 +381,9 @@ def inicio():
             ultimo_nivel() # AQUI É MELHOR
         if missao_2 == True:
             pygame.mixer.music.stop()
+            pygame.mixer.music.load("musicas/sfx-menu12.mp3")
+            pygame.mixer.music.play(1)  # -1 significa que a música vai tocar em loop
+            pygame.mixer.music.set_volume(0.2)  # 50% do volume máximo
             ####################
             #
             # ADICIONA NIVEL 1 - BOSS FIGHT "CHEFE 1"
