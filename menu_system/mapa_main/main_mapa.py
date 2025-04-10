@@ -361,6 +361,7 @@ def inicio():
         missao_3 = npc2.dialogo.missao_ativada
 
         if missao_3 == True:
+            # ULTIMO NIVEL!
             running = False
             screen.fill((0, 0, 0))
             pygame.display.flip()
@@ -380,15 +381,10 @@ def inicio():
             #
             ####################
             screen.fill((0, 0, 0))
-            # fonte = pygame.font.Font('8-BIT WONDER.TTF',30)
-            # text_surface = fonte.render("O Ligeiro", True, (255, 255, 255))
-            # screen.blit(text_surface, (288,68,400,100))
-
-            # fonte2 = pygame.font.Font('8-BIT WONDER.TTF',30)
-            # text_surface = fonte2.render("O Ligeiro", True, (0, 0, 0))
-            # screen.blit(text_surface, (290,70,400,100))
+            fundo_loading = pygame.image.load('tela_loading_ligeiro.png')
+            screen.blit(fundo_loading, (0, 0))
             pygame.display.flip()
-            pygame.time.delay(500)
+            pygame.time.delay(1500)
             print('ok')
             boss_fight() # AQUI É MELHOR
 
