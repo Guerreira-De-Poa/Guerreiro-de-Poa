@@ -19,11 +19,15 @@ class Game():
         self.credits = CreditsMenu(self) # menu de créditos
         self.curr_menu = self.main_menu 
 
+
+
     def game_loop(self): # loop do jogo em si
         while self.playing: # quando estiver jogando
             self.check_events() # analisa o seventos
             if self.BACK_KEY:
+                self.playing = False
                 break
+                
             if self.START_KEY: # quando clicamos em começar
                 self.playing = False # quebramos o loop, não o jogo em si, tipo, ainda roda, mas o loop do menu nãop
 
