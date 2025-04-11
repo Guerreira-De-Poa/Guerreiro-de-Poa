@@ -1,6 +1,7 @@
 import pygame
 fundo_menu = pygame.image.load('fundo_menu.png')
 fundo_creditos = pygame.image.load('fundo_creditos.png')
+
 class Menu():
     def __init__(self, game): # chamamos a classe do game.py
         self.game = game
@@ -17,6 +18,15 @@ class Menu():
         pygame.display.update()
         self.game.reset_keys()
 
+    
+
+def tocar_musica(): # função pra tocar a música
+        
+        som = pygame.mixer.Sound("musicas/altera-opcao.mp3") # ABAIXO SÃO OS 3 PARANAUE PARA COMEÇAR A MUSICA
+        pygame.mixer.stop() # para o som anterior
+        som.set_volume(1)
+        som.play(1, 10000, 1000)  
+         # 50% do volume máximo
 
 class MainMenu(Menu):
     def __init__(self, game):
@@ -42,23 +52,29 @@ class MainMenu(Menu):
     def move_cursor(self):
         if self.game.DOWN_KEY: # VAI ALTERANDO A POSIÇÃO
             if self.state == 'Start':
+                tocar_musica()
                 self.cursor_rect.midtop = (self.optionsx + self.offset, self.optionsy)
                 self.state = 'Options'
             elif self.state == 'Options':
+                tocar_musica()
                 self.cursor_rect.midtop = (self.creditsx + self.offset, self.creditsy)
                 self.state = 'Credits'
             elif self.state == 'Credits':
+                tocar_musica()
                 self.cursor_rect.midtop = (self.startx + self.offset, self.starty)
                 self.state = 'Start' 
 
         if self.game.UP_KEY: # VAI ALTERANDO A POSIÇÃO
             if self.state == 'Start':
+                tocar_musica()
                 self.cursor_rect.midtop = (self.creditsx + self.offset, self.creditsy)
                 self.state = 'Credits'
             elif self.state == 'Credits':
+                tocar_musica()
                 self.cursor_rect.midtop = (self.optionsx + self.offset, self.optionsy)
                 self.state = 'Options'
             elif self.state == 'Options':
+                tocar_musica()
                 self.cursor_rect.midtop = (self.startx + self.offset, self.starty)
                 self.state = 'Start' 
 
