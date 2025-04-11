@@ -2,6 +2,10 @@ import pygame
 import sys
 import json
 import os
+import cv2
+
+os.environ['SDL_VIDEO_CENTERED'] = '1'
+
 
 pasta_pai = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
@@ -33,6 +37,48 @@ pause = False
 
 pygame.mixer.music.stop()
 
+SCREEN_WIDTH = 1152
+SCREEN_HEIGHT = 648
+
+def tocar_cutscene_cv2(video_path, audio_path, screen):
+    # Inicializa o mixer de som do pygame
+    pygame.mixer.init()
+    pygame.mixer.music.load(audio_path)
+    pygame.mixer.music.play()
+
+    # Abre o vídeo com OpenCV
+    cap = cv2.VideoCapture(video_path)
+
+    clock = pygame.time.Clock()
+
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        # Redimensiona para o tamanho da tela
+        frame = cv2.resize(frame, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        surface = pygame.surfarray.make_surface(frame.swapaxes(0, 1))
+
+        screen.blit(surface, (0, 0))
+        pygame.display.update()
+        clock.tick(30)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                cap.release()
+                pygame.quit()
+                exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE or event.key == pygame.K_SPACE:
+                    cap.release()
+                    pygame.mixer.music.stop()
+                    return
+
+    cap.release()
+    pygame.mixer.music.stop()
+
 def inicio():
     ####
     # PRA MUSICA FUNCIONAR: ANTES DO LOOP, QUEBRE O SOM, COMEÇOU? PEGA A MUSICA
@@ -46,8 +92,6 @@ def inicio():
     pygame.init()
 
     # Configurações da tela
-    SCREEN_WIDTH = 800
-    SCREEN_HEIGHT = 600
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Jogo com Mapa e Colisões")
 
@@ -396,11 +440,13 @@ def inicio():
             #
             ####################
             screen.fill((0, 0, 0))
-            fundo_loading = pygame.image.load('tela_loading_ligeiro.png')
+            fundo_loading = pygame.image.load('tela_loading_ligeiro.png').convert_alpha()
+            fundo_loading = pygame.transform.scale(fundo_loading, (1152, 648))
             screen.blit(fundo_loading, (0, 0))
             pygame.display.flip()
             pygame.time.delay(1500)
             print('ok')
+            tocar_cutscene_cv2('cutscenes/cutscene_boss1.mp4', 'cutscenes/cutscene_boss1.mp3', screen)
             boss_fight() # AQUI É MELHOR
 
         if missao_1 == True and iterado_teste == 0:
