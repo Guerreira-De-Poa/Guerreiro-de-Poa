@@ -46,6 +46,10 @@ class Inimigo(pygame.sprite.Sprite):
 
         self.frame_change = 10 #Quantidade de frames até a troca de sprite
 
+        self.ivuln = False
+        self.iframes = 30
+        self.contador_iframes = 0
+
 
     def shoot(self,player_rect):
         # if len(self.balas) > 0:
@@ -130,6 +134,11 @@ class Inimigo(pygame.sprite.Sprite):
                 else:
                     pass
 
+        if self.ivuln == True:
+            self.contador_iframes +=1
+            if self.contador_iframes == self.iframes:
+                self.ivuln = False
+
         if self.frame_count % self.frame_change == 0:
             self.sheet.update()
 
@@ -151,3 +160,10 @@ class Inimigo(pygame.sprite.Sprite):
     def atacar(self):
         if self.ataque:
             self.shoot(self.player_rect)
+
+    def get_hit(self, dano):
+        if self.ivuln == False:
+            print(self.HP)
+            self.contador_iframes = 0
+            self.HP -= dano
+            self.ivuln = True

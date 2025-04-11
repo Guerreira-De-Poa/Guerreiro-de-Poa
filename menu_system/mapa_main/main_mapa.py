@@ -204,6 +204,7 @@ def inicio():
 
     lista_1 = [7 for i in range(4)]
     lista_2 = [4 for i in range(4)]
+    lista_2_alt = [6 for i in range (4)]
     lista_3 = [6 for i in range(8)]
     lista_4 = [13 for j in range(4)]
     lista_5 = [7 for k in range(14)]
@@ -249,12 +250,12 @@ def inicio():
 
 
     spritesheet_inimigo_arco_png = pygame.image.load("inimigo_com_arco.png")
-    spritesheet_inimigo_arco = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco0 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco1 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco3 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco4 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco0 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco1 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco3 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco4 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
     inimigos = pygame.sprite.Group()
 
     player_group = pygame.sprite.Group()
@@ -349,7 +350,7 @@ def inicio():
     dragging_from = None
 
     # Criar as instâncias dos inventários
-    inventario1 = Inventario((50, 50, 50), 50, ["Espada", "Poção", "Escudo"])
+    inventario1 = Inventario((50, 50, 50), 50, ["Espada", "Poção", "Escudo", "Armadura", 'Capacete', 'Adaga', 'Botas'])
     inventario2 = Inventario((0, 100, 0), 400)
 
     baus = pygame.sprite.Group()
@@ -362,6 +363,83 @@ def inicio():
 
     while running:
         player.atualizar_stamina()
+
+        click = pygame.mouse.get_pressed()[0]
+
+        click_mouse_2 = pygame.mouse.get_pressed()[2]
+
+        mouse_errado = pygame.mouse.get_pos()
+
+        mouse_pos =[0,0]
+
+        if camera.left > 0:
+            mouse_pos[0] = mouse_errado[0]+camera.left
+        else:
+            mouse_pos[0] = mouse_errado[0]-camera.left
+
+        mouse_pos[1] = mouse_errado[1]+camera.top
+
+        # if click:
+        #     player.shoot(mouse_pos)
+        # else:
+        #     if click_hold > 0:
+        #         player.shoot(mouse_pos)
+        #         print(mouse_pos)
+        #     click_hold = 0
+        #     player.atacando = False
+
+        if click or click_mouse_2:
+            #print("DMSALDML")
+            if inventario1.inventory_open or bau_perto:
+                if bau_perto:
+                    bau_perto.pressed_counter +=1
+                else:
+                    inventario1.pressed_counter +=1
+
+                if dragging_item == None:
+                    if inventario1.inventory_open and inventario1.pressed_counter >= 10:
+                        item = inventario1.get_item_at(pygame.mouse.get_pos())
+
+                        if item:
+                            dragging_item = item
+                            dragging_from = "inventory1"
+
+                    if bau_perto:
+                        if bau_perto.inventario.inventory_open and inventario1.pressed_counter >= 10:
+                            item = bau_perto.inventario.get_item_at(pygame.mouse.get_pos())
+                            if item:
+                                dragging_item = item
+                                dragging_from = "inventory2"
+            
+
+        print(inventario1.pressed_counter)
+
+        if not player.atacando_melee:
+            if click:
+                click_hold +=1
+                player.atacando = True
+                player.hold_arrow(mouse_pos,camera)
+                player.atacando_melee = False
+            elif click_mouse_2:
+                player.atacando_melee = True
+                player.hold_arrow(mouse_pos,camera)
+            elif click_hold > 30:
+                player.shoot(mouse_pos)
+                click_hold = 0
+                player.atacando = False
+                player.atacando_melee = False
+        else:
+            contador_melee += 1
+            if contador_melee != 7*7:
+                player.atacando_melee = True
+            else:
+                contador_melee = 0
+                player.sheet_sec.index = 0
+                if not click_mouse_2:
+                    player.atacando_melee = False
+                else:
+                    player.atacando_melee = True
+                    player.hold_arrow(mouse_pos,camera)
 
         missao_1 = npc1.dialogo.missao_ativada
         missao_2 = npc0.dialogo.missao_ativada
@@ -475,6 +553,7 @@ def inicio():
             player.direction = None  # Nenhuma direção se nenhuma tecla for pressionada
 
         for event in pygame.event.get():
+            
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -506,6 +585,13 @@ def inicio():
                     #COMANDOS INVENTARIO
                 elif event.key in (pygame.K_LALT, pygame.K_RALT):
                     inventario1.inventory_open = not inventario1.inventory_open
+                elif event.key == pygame.K_DOWN and inventario1.scroll_index < len(inventario1.items) - inventario1.visible_items:
+                    inventario1.scroll_index += 1
+                elif event.key == pygame.K_UP and inventario1.scroll_index > 0:
+                    inventario1.scroll_index -= 1
+
+
+
                 elif event.key == pygame.K_ESCAPE:
                     running = False
 
@@ -573,36 +659,40 @@ def inicio():
                                 menu.valores[atributo] = menu.valores_max[atributo]
                                 xp.pontos_disponiveis = xp.pontos_disponiveis
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if button_rect.collidepoint(event.pos) and botao_ativo == True:
-                    if bau_perto:
-                        bau_perto.inventario.inventory_open = not bau_perto.inventario.inventory_open
-
-                if inventario1.inventory_open:
-                    item = inventario1.get_item_at(event.pos)
-                    if item:
-                        dragging_item = item
-                        dragging_from = "inventory1"
-
-                if bau_perto:
-                    if bau_perto.inventario.inventory_open:
-                        item = bau_perto.inventario.get_item_at(event.pos)
-                        if item:
-                            dragging_item = item
-                            dragging_from = "inventory2"
 
             if event.type == pygame.MOUSEBUTTONUP:
                 # Handle mouse button release
-                if bau_perto:
+
+                #print(inventario1.pressed_counter)
+                
+                if event.button == 1:
+                    if bau_perto:
+                        if dragging_item:
+                            if bau_perto.inventario.inventory_open and bau_perto.inventario.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory1":
+                                inventario1.remove(dragging_item)
+                                bau_perto.inventario.items.append(dragging_item)
+                            elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory2":
+                                bau_perto.inventario.remove(dragging_item)
+                                inventario1.items.append(dragging_item)
+                            elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory1":
+                                inventario1.items.append(dragging_item)
+                            dragging_item = None
+                            dragging_from = None
+                            if bau_perto.inventario.inventory_open and inventario1.pressed_counter <= 10:
+                                bau_perto.remove(inventario1.get_item_at(event.pos))
+
+                    elif inventario1.inventory_open and inventario1.pressed_counter < 10:
+                        inventario1.remove(inventario1.get_item_at(event.pos))
+
                     if dragging_item:
-                        if bau_perto.inventario.inventory_open and bau_perto.inventario.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory1":
-                            inventario1.items.remove(dragging_item)
-                            bau_perto.inventario.items.append(dragging_item)
-                        elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory2":
-                            bau_perto.inventario.items.remove(dragging_item)
-                            inventario1.items.append(dragging_item)
                         dragging_item = None
-                        dragging_from = None
+
+                elif event.button == 3:
+                    if inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos):
+                        inventario1.remove(inventario1.get_item_at(event.pos))
+                    dragging_item = None
+                print("DNSKLANDKLSANDLKASNDKLSANKLDNSAKL")
+                inventario1.pressed_counter = 0
 
         contador+=1
 
@@ -638,9 +728,8 @@ def inicio():
             for value in b:
                 for item in inimigos:
                     if value[0] == item:
-                        item.HP -= player.dano
-                        print(enemy0.HP)
-                        print(enemy1.HP)
+                        item.get_hit(player.dano)
+                        print(item.HP)
             i = 0
             for inimigo in inimigos:
                 i+=1
@@ -654,8 +743,8 @@ def inicio():
                 all_sprites.remove(inimigo)
             if inimigo.rect.colliderect(player.range_melee) and player.atacando_melee:
                 if player.sheet_sec.tile_rect in [player.sheet_sec.cells[player.sheet_sec.action][-3],player.sheet_sec.cells[player.sheet_sec.action][-2],player.sheet_sec.cells[player.sheet_sec.action][-1]]:
-                    print(True)
-                    inimigo.get_hit(1)
+                    #print(True)
+                    inimigo.get_hit(player.dano)
                     inimigo.rect.x, inimigo.rect.y = inimigo.old_pos_x, inimigo.old_pos_y
 
         # Salvar a posição anterior para colisão
@@ -694,57 +783,6 @@ def inicio():
         camera.top = max(0, camera.top)
         camera.right = min(MAP_WIDTH * TILE_SIZE, camera.right)
         camera.bottom = min(MAP_HEIGHT * TILE_SIZE, camera.bottom)
-
-        click = pygame.mouse.get_pressed()[0]
-
-        click_mouse_2 = pygame.mouse.get_pressed()[2]
-
-        mouse_errado = pygame.mouse.get_pos()
-
-        mouse_pos =[0,0]
-
-        if camera.left > 0:
-            mouse_pos[0] = mouse_errado[0]+camera.left
-        else:
-            mouse_pos[0] = mouse_errado[0]-camera.left
-
-        mouse_pos[1] = mouse_errado[1]+camera.top
-
-        # if click:
-        #     player.shoot(mouse_pos)
-        # else:
-        #     if click_hold > 0:
-        #         player.shoot(mouse_pos)
-        #         print(mouse_pos)
-        #     click_hold = 0
-        #     player.atacando = False
-
-        if not player.atacando_melee:
-            if click:
-                click_hold +=1
-                player.atacando = True
-                player.hold_arrow(mouse_pos,camera)
-                player.atacando_melee = False
-            elif click_mouse_2:
-                player.atacando_melee = True
-                player.hold_arrow(mouse_pos,camera)
-            elif click_hold > 30:
-                player.shoot(mouse_pos)
-                click_hold = 0
-                player.atacando = False
-                player.atacando_melee = False
-        else:
-            contador_melee += 1
-            if contador_melee != 7*7:
-                player.atacando_melee = True
-            else:
-                contador_melee = 0
-                player.sheet_sec.index = 0
-                if not click_mouse_2:
-                    player.atacando_melee = False
-                else:
-                    player.atacando_melee = True
-                    player.hold_arrow(mouse_pos,camera)
         
         # Renderização
         screen.fill((0, 0, 0))  # Fundo preto
@@ -758,11 +796,12 @@ def inicio():
 
         for inimigo in inimigos:
             if inimigo.rect.colliderect(player.rect):
-                player.get_hit(inimigo.dano)
+                if inimigo.sheet.tile_rect in [inimigo.sheet.cells[inimigo.sheet.action][-1]]:
+                    player.get_hit(inimigo.dano)
+
                 inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
-                player.rect.topleft = (old_x,old_y)
                 inimigo.atacando_melee = True
-                inimigo.frame_change = 4
+                inimigo.frame_change = 10
             else:
                 inimigo.atacando_melee = False
                 inimigo.frame_change = 10

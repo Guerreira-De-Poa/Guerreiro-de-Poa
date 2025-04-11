@@ -357,7 +357,7 @@ class Personagem(pygame.sprite.Sprite):
         self.health_width = 10
         self.health_height = 20
         self.health_ratio = (self.HP / self.MAX_HP) * self.health_width
-        print(self.MAX_HP, self.HP)
+        #print(self.MAX_HP, self.HP)
 
         pygame.draw.rect(screen, (255, 0, 0), (20, 20, self.health_width*self.MAX_HP, self.health_height), 0, 3)
         pygame.draw.rect(screen, (0, 255, 0), (20, 20, self.health_ratio*self.HP, self.health_height), 0, 3)
