@@ -37,8 +37,9 @@ pause = False
 
 pygame.mixer.music.stop()
 
-SCREEN_WIDTH = 1152
-SCREEN_HEIGHT = 648
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = 800
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 def tocar_cutscene_cv2(video_path, audio_path, screen):
     # Inicializa o mixer de som do pygame
@@ -71,7 +72,7 @@ def tocar_cutscene_cv2(video_path, audio_path, screen):
                 pygame.quit()
                 exit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE or event.key == pygame.K_SPACE:
+                if event.key == pygame.K_ESCAPE:
                     cap.release()
                     pygame.mixer.music.stop()
                     return
@@ -92,7 +93,6 @@ def inicio():
     pygame.init()
 
     # Configurações da tela
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Jogo com Mapa e Colisões")
 
     # Obter caminhos dos arquivos
@@ -615,9 +615,9 @@ def inicio():
                             if atributo == "velocidade" and menu.valores["velocidade"] <= 6:
                                 menu.atributos[atributo] += 2
                                 player.velocidade_corrida = menu.atributos[atributo]
-                            else:
-                                menu.valores[atributo] = menu.valores_max[atributo]
-                                xp.pontos_disponiveis = xp.pontos_disponiveis
+                            # else:
+                                # menu.valores[atributo] = menu.valores_max[atributo]
+                                # xp.pontos_disponiveis = xp.pontos_disponiveis
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if button_rect.collidepoint(event.pos) and botao_ativo == True:
@@ -895,4 +895,5 @@ def inicio():
     boss_fight()
 
 if __name__ == "__main__":
+    tocar_cutscene_cv2('cutscenes/cutscene_inicio.mp4', 'cutscenes/cutscene_boss1.mp3', screen)
     inicio()
