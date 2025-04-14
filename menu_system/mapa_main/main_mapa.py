@@ -61,7 +61,7 @@ def inicio():
         with open(map_path, 'r') as f:
             map_data = json.load(f)
     except Exception as e:
-        print(f"Erro ao carregar mapa: {e}")
+        # print(f"Erro ao carregar mapa: {e}")
         pygame.quit()
         sys.exit()
 
@@ -78,9 +78,9 @@ def inicio():
         def __init__(self, filename):
             try:
                 self.sheet = pygame.image.load(filename).convert_alpha()
-                print(f"Spritesheet {filename} carregada com sucesso!")
+                # print(f"Spritesheet {filename} carregada com sucesso!")
             except Exception as e:
-                print(f"Erro ao carregar spritesheet: {e}")
+                # print(f"Erro ao carregar spritesheet: {e}")
                 self.sheet = None
         
         def get_sprite(self, x, y, width, height):
@@ -334,8 +334,8 @@ def inicio():
 
     #################
 
-    print(dialogo_group)
-    print(f"Total de tiles carregados: {len(map_tiles)}")
+    # print(dialogo_group)
+    # print(f"Total de tiles carregados: {len(map_tiles)}")
 
     #CONFIG INVENTARIO
 
@@ -377,7 +377,7 @@ def inicio():
             screen.fill((0, 0, 0))
             pygame.display.flip()
             pygame.time.delay(500)
-            print('ok')
+            # print('ok')
             ultimo_nivel() # AQUI É MELHOR
         if missao_2 == True:
             pygame.mixer.music.stop()
@@ -400,7 +400,7 @@ def inicio():
             screen.blit(fundo_loading, (0, 0))
             pygame.display.flip()
             pygame.time.delay(1500)
-            print('ok')
+            # print('ok')
             boss_fight() # AQUI É MELHOR
 
         if missao_1 == True and iterado_teste == 0:
@@ -551,27 +551,30 @@ def inicio():
                         if botoes["aumentar"]["rect"].collidepoint(event.pos) and xp.pontos_disponiveis > 0:
                             menu.valores[atributo] += 1
                             botoes["aumentar"]["pressionado"] = True
-                            xp.pontos_disponiveis -= 1  # Gasta um ponto
 
-                            if atributo == "ataque":
-                                menu.atributos[atributo] += 1.25
-                                player.dano = menu.atributos[atributo]
-                            if atributo == "defesa":
-                                menu.atributos[atributo] += 1
-                                player.defesa = menu.atributos[atributo]
-                            if atributo == "vida":
-                                menu.atributos[atributo] += 3
-                                player.MAX_HP = menu.atributos[atributo]
-                                player.HP += 3
-                            if atributo == "stamina":
-                                menu.atributos[atributo] += 1.25
-                                player.max_stamina = menu.atributos[atributo]
-                            if atributo == "velocidade" and menu.valores["velocidade"] <= 6:
-                                menu.atributos[atributo] += 2
-                                player.velocidade_corrida = menu.atributos[atributo]
-                            else:
+                            if menu.valores[atributo] > menu.valores_max[atributo]:
                                 menu.valores[atributo] = menu.valores_max[atributo]
-                                xp.pontos_disponiveis = xp.pontos_disponiveis
+                                menu.atributos[atributo] = menu.atributos_max[atributo]
+                                # xp.pontos_disponiveis += 0
+                            else:
+                                xp.pontos_disponiveis -= 1  # Gasta um ponto
+
+                                if atributo == "ataque":
+                                    menu.atributos[atributo] += 1.25
+                                    player.dano = menu.atributos[atributo]
+                                if atributo == "defesa":
+                                    menu.atributos[atributo] += 1
+                                    player.defesa = menu.atributos[atributo]
+                                if atributo == "vida":
+                                    menu.atributos[atributo] += 3
+                                    player.MAX_HP = menu.atributos[atributo]
+                                    player.HP += 3
+                                if atributo == "stamina":
+                                    menu.atributos[atributo] += 1.25
+                                    player.max_stamina = menu.atributos[atributo]
+                                if atributo == "velocidade":
+                                    menu.atributos[atributo] += 2
+                                    player.velocidade_corrida = menu.atributos[atributo]
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if button_rect.collidepoint(event.pos) and botao_ativo == True:
@@ -639,8 +642,8 @@ def inicio():
                 for item in inimigos:
                     if value[0] == item:
                         item.HP -= player.dano
-                        print(enemy0.HP)
-                        print(enemy1.HP)
+                        # print(enemy0.HP)
+                        # print(enemy1.HP)
             i = 0
             for inimigo in inimigos:
                 i+=1
@@ -654,7 +657,7 @@ def inicio():
                 all_sprites.remove(inimigo)
             if inimigo.rect.colliderect(player.range_melee) and player.atacando_melee:
                 if player.sheet_sec.tile_rect in [player.sheet_sec.cells[player.sheet_sec.action][-3],player.sheet_sec.cells[player.sheet_sec.action][-2],player.sheet_sec.cells[player.sheet_sec.action][-1]]:
-                    print(True)
+                    # print(True)
                     inimigo.get_hit(1)
                     inimigo.rect.x, inimigo.rect.y = inimigo.old_pos_x, inimigo.old_pos_y
 
