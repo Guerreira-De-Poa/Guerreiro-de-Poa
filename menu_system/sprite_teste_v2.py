@@ -87,6 +87,9 @@ class Personagem(pygame.sprite.Sprite):
 
         self.usando_sprite2 = False
 
+        self.arma_equipada = False
+        self.armadura_equipada = False 
+
     def update(self, dialogo_open):
         if dialogo_open:
             return

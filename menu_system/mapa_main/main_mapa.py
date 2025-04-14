@@ -23,6 +23,7 @@ from npcs import *
 from dialogo import *
 from inimigo_teste import *
 from inventario1 import Inventario
+from itens import Item
 from boss import Boss1
 from bau import Bau
 
@@ -349,8 +350,20 @@ def inicio():
     dragging_item = None
     dragging_from = None
 
+
+    espada = Item('Arma', 'Espada', {'dano': 10}, True ,player)    
+    pocao = Item('Consumivel', 'Poção', {'HP': 10}, False ,player)    
+    escudo = Item('Armadura', 'Escudo', {'defesa': 3}, True ,player)    
+    capacete = Item('Armadura', 'Capacete', {'defesa': 1}, False ,player)    
+    adaga = Item('Arma', 'Adaga', {'dano': 3}, False ,player)    
+    botas = Item('Armadura', 'Botas', {'defesa': 1}, False ,player)
+    armadura = Item('Armadura', 'Armadura', {'defesa': 10}, True, player)
+
+
     # Criar as instâncias dos inventários
-    inventario1 = Inventario((50, 50, 50), 50, ["Espada", "Poção", "Escudo", "Armadura", 'Capacete', 'Adaga', 'Botas'])
+    inventario1 = Inventario((50, 50, 50), 50, [espada,pocao,escudo,capacete,adaga,botas,armadura])
+
+
     inventario2 = Inventario((0, 100, 0), 400)
 
     baus = pygame.sprite.Group()
@@ -412,7 +425,7 @@ def inicio():
                                 dragging_from = "inventory2"
             
 
-        print(inventario1.pressed_counter)
+        #print(inventario1.pressed_counter)
 
         if not player.atacando_melee:
             if click:
@@ -586,10 +599,24 @@ def inicio():
                 elif event.key in (pygame.K_LALT, pygame.K_RALT):
                     inventario1.inventory_open = not inventario1.inventory_open
                 elif event.key == pygame.K_DOWN and inventario1.scroll_index < len(inventario1.items) - inventario1.visible_items:
+                    inventario1.item_index +=1
                     inventario1.scroll_index += 1
                 elif event.key == pygame.K_UP and inventario1.scroll_index > 0:
+                    inventario1.item_index -=1
                     inventario1.scroll_index -= 1
 
+                elif event.key == pygame.K_DOWN and inventario1.item_index < len(inventario1.items)-1:
+                    inventario1.item_index +=1
+                elif event.key == pygame.K_UP and inventario1.item_index > 0:
+                    inventario1.item_index -=1
+
+                elif event.key == pygame.K_RETURN:
+                    if inventario1.inventory_open:
+                        if inventario1.items[inventario1.item_index].tipo != 'consumivel':
+                            inventario1.items[inventario1.item_index].equipar()
+                        else:
+                            inventario1.items[inventario1.item_index].utilizar()
+                            inventario1.remove(inventario1.items[inventario1.item_index])
 
 
                 elif event.key == pygame.K_ESCAPE:
@@ -691,8 +718,10 @@ def inicio():
                     if inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos):
                         inventario1.remove(inventario1.get_item_at(event.pos))
                     dragging_item = None
-                print("DNSKLANDKLSANDLKASNDKLSANKLDNSAKL")
+                #print("DNSKLANDKLSANDLKASNDKLSANKLDNSAKL")
                 inventario1.pressed_counter = 0
+
+        #print(inventario1.item_index)
 
         contador+=1
 
