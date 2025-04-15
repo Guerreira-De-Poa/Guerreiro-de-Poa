@@ -20,6 +20,8 @@ class Personagem(pygame.sprite.Sprite):
 
         self.atacando = False
 
+        self.anim_dash = True
+
         # Atributos para geração de hitbox
         self.attack_cooldown = 1000  # ms entre ataques
         self.attack_duration = 1000  # ms de duração do golpe
@@ -91,6 +93,8 @@ class Personagem(pygame.sprite.Sprite):
         self.armadura_equipada = False 
 
     def update(self, dialogo_open):
+        self.image2 = self.image
+        self.image2.set_alpha(128)
         if dialogo_open:
             return
         self.balas.update(dialogo_open)
@@ -102,6 +106,7 @@ class Personagem(pygame.sprite.Sprite):
         self.range_melee = pygame.Rect(self.rect.left-32, self.rect.top-32, self.rect.width+64, self.rect.height+64)
         self.super_range = pygame.Rect(self.rect.left-40, self.rect.top-40, self.rect.width+80, self.rect.height+80)
 
+        #print(self.anim_dash)
 
         if self.atacando_melee:
             self.usando_sprite2 = True
@@ -401,3 +406,8 @@ class Personagem(pygame.sprite.Sprite):
             self.sheet_sec.draw(screen, x, y)
         else:
             self.sheet.draw(screen, x, y)
+
+    def draw_dash(self, screen, camera):
+        x = self.rect.x - camera.left
+        y = self.rect.y - camera.top
+        self.sheet.draw(screen, x, y-10)

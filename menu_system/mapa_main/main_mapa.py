@@ -71,8 +71,13 @@ def inicio():
     MAP_WIDTH = map_data['mapWidth']
     MAP_HEIGHT = map_data['mapHeight']
 
-    xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
-    menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0)
+    atributos = {
+            "ataque": 6.25,
+            "defesa": 5.0,
+            "vida": 20,
+            "stamina": 6.25,
+            "velocidade": 10
+    }
 
     # Classe para carregar a spritesheet do mapa
     class MapSpriteSheet:
@@ -219,11 +224,14 @@ def inicio():
         player_sprite_ataques = SpriteSheet(player_sprite_path2, 18, 38, 128, 128, 12,[6,6,6,6], (255,255,255))
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
-        player = Personagem(player_sprite, menu.atributos["ataque"], menu.atributos["defesa"], menu.atributos["vida"], menu.atributos["stamina"], menu.atributos["velocidade"],player_sprite_ataques)
+        player = Personagem(player_sprite, atributos["ataque"], atributos["defesa"], atributos["vida"], atributos["stamina"], atributos["velocidade"],player_sprite_ataques)
     except Exception as e:
         print(f"Erro ao carregar sprite do jogador: {e}")
         pygame.quit()
         sys.exit()
+
+    xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+    menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
 
     # Posicionar o jogador em uma posição válida no mapa
     player.rect.x = 33 * TILE_SIZE
@@ -351,13 +359,13 @@ def inicio():
     dragging_from = None
 
 
-    espada = Item('Arma', 'Espada', {'dano': 10}, True ,player)    
-    pocao = Item('Consumivel', 'Poção', {'HP': 10}, False ,player)    
-    escudo = Item('Armadura', 'Escudo', {'defesa': 3}, True ,player)    
-    capacete = Item('Armadura', 'Capacete', {'defesa': 1}, False ,player)    
-    adaga = Item('Arma', 'Adaga', {'dano': 3}, False ,player)    
+    espada = Item('Arma', 'Espada', {'dano': 10}, False ,player)
+    pocao = Item('Consumivel', 'Poção', {'HP': 10}, False ,player)
+    escudo = Item('Armadura', 'Escudo', {'defesa': 3}, False ,player)
+    capacete = Item('Armadura', 'Capacete', {'defesa': 1}, False ,player)
+    adaga = Item('Arma', 'Adaga', {'dano': 3}, False ,player)
     botas = Item('Armadura', 'Botas', {'defesa': 1}, False ,player)
-    armadura = Item('Armadura', 'Armadura', {'defesa': 10}, True, player)
+    armadura = Item('Armadura', 'Armadura', {'defesa': 10}, False, player)
 
 
     # Criar as instâncias dos inventários
@@ -375,6 +383,7 @@ def inicio():
     contador_melee = 0
 
     while running:
+        menu.update()
         player.atualizar_stamina()
 
         click = pygame.mouse.get_pressed()[0]
@@ -590,6 +599,7 @@ def inicio():
                     elif botao_ativo:
                         if bau_perto:
                             bau_perto.inventario.inventory_open = not bau_perto.inventario.inventory_open
+                            inventario1.inventory_open = True
                 elif keys[pygame.K_z]:
                     DEBUG_MODE = not DEBUG_MODE
                 elif event.key == pygame.K_p:
@@ -603,7 +613,9 @@ def inicio():
                     inventario1.scroll_index += 1
                 elif event.key == pygame.K_UP and inventario1.scroll_index > 0:
                     inventario1.item_index -=1
-                    inventario1.scroll_index -= 1
+                    if inventario1.item_index < inventario1.visible_items-1:
+                        print(inventario1.item_index,inventario1.visible_items + 2)
+                        inventario1.scroll_index -= 1
 
                 elif event.key == pygame.K_DOWN and inventario1.item_index < len(inventario1.items)-1:
                     inventario1.item_index +=1
@@ -664,27 +676,30 @@ def inicio():
                         if botoes["aumentar"]["rect"].collidepoint(event.pos) and xp.pontos_disponiveis > 0:
                             menu.valores[atributo] += 1
                             botoes["aumentar"]["pressionado"] = True
-                            xp.pontos_disponiveis -= 1  # Gasta um ponto
 
-                            if atributo == "ataque":
-                                menu.atributos[atributo] += 1.25
-                                player.dano = menu.atributos[atributo]
-                            if atributo == "defesa":
-                                menu.atributos[atributo] += 1
-                                player.defesa = menu.atributos[atributo]
-                            if atributo == "vida":
-                                menu.atributos[atributo] += 3
-                                player.MAX_HP = menu.atributos[atributo]
-                                player.HP += 3
-                            if atributo == "stamina":
-                                menu.atributos[atributo] += 1.25
-                                player.max_stamina = menu.atributos[atributo]
-                            if atributo == "velocidade" and menu.valores["velocidade"] <= 6:
-                                menu.atributos[atributo] += 2
-                                player.velocidade_corrida = menu.atributos[atributo]
-                            else:
+                            if menu.valores[atributo] > menu.valores_max[atributo]:
                                 menu.valores[atributo] = menu.valores_max[atributo]
-                                xp.pontos_disponiveis = xp.pontos_disponiveis
+                                menu.atributos[atributo] = menu.atributos_max[atributo]
+                                # xp.pontos_disponiveis += 0
+                            else:
+                                xp.pontos_disponiveis -= 1  # Gasta um ponto
+
+                                if atributo == "ataque":
+                                    menu.atributos[atributo] += 1.25
+                                    player.dano = menu.atributos[atributo]
+                                if atributo == "defesa":
+                                    menu.atributos[atributo] += 1
+                                    player.defesa = menu.atributos[atributo]
+                                if atributo == "vida":
+                                    menu.atributos[atributo] += 3
+                                    player.MAX_HP = menu.atributos[atributo]
+                                    player.HP += 3
+                                if atributo == "stamina":
+                                    menu.atributos[atributo] += 1.25
+                                    player.max_stamina = menu.atributos[atributo]
+                                if atributo == "velocidade":
+                                    menu.atributos[atributo] += 2
+                                    player.velocidade_corrida = menu.atributos[atributo]
 
 
             if event.type == pygame.MOUSEBUTTONUP:
@@ -706,10 +721,19 @@ def inicio():
                             dragging_item = None
                             dragging_from = None
                             if bau_perto.inventario.inventory_open and inventario1.pressed_counter <= 10:
-                                bau_perto.remove(inventario1.get_item_at(event.pos))
+                                if inventario1.get_item_at(event.pos) == None:
+                                    inventario1.inventory_open = False
+                                else:
+                                    bau_perto.remove(inventario1.get_item_at(event.pos))
 
                     elif inventario1.inventory_open and inventario1.pressed_counter < 10:
-                        inventario1.remove(inventario1.get_item_at(event.pos))
+                        if inventario1.get_item_at(event.pos) == None:
+                            inventario1.inventory_open = False
+                        elif inventario1.get_item_at(event.pos).tipo != 'consumivel':
+                            inventario1.get_item_at(event.pos).equipar()
+                        else:
+                            inventario1.get_item_at(event.pos).utilizar()
+                            inventario1.remove(inventario1.get_item_at(event.pos))
 
                     if dragging_item:
                         dragging_item = None
@@ -785,7 +809,7 @@ def inicio():
 
         if dialogo_a_abrir:
             all_sprites.update(dialogo_a_abrir.texto_open)
-        elif xp.show_menu:
+        elif inventario1.inventory_open or xp.show_menu:
             all_sprites.update(True)
         else:
             all_sprites.update(False)
@@ -908,6 +932,8 @@ def inicio():
         player.draw_health(screen)
         player.draw_stamina(screen)
         xp.render()
+
+        #print(menu.atributos,menu.valores)
 
         for npc in npcs:
             npc.dialogo.coisa()

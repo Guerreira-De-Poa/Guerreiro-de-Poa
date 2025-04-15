@@ -5,7 +5,7 @@ import pygame
 pygame.init()
 
 class Menu():
-    def __init__(self, valor_ataque, valor_defesa, valor_vida, valor_stamina, valor_velocidade, atr_ataque, atr_defesa, atr_vida, atr_stamina, atr_velocidade):  
+    def __init__(self, valor_ataque, valor_defesa, valor_vida, valor_stamina, valor_velocidade, atr_ataque, atr_defesa, atr_vida, atr_stamina, atr_velocidade, player):  
         self.valores = {
             "ataque": valor_ataque,
             "defesa": valor_defesa,
@@ -31,6 +31,8 @@ class Menu():
         }
 
         self.valores_copy = 0
+
+        self.player = player
 
         self.tamanho_menu_img_x = 0
         self.tamanho_menu_img_y = 0
@@ -90,6 +92,15 @@ class Menu():
             botoes["aumentar"]["pressionado"] = False
             botoes["diminuir"]["pressionado"] = False
         self.atualizar_sprites()  # Garante que os sprites são atualizados
+
+    def update(self):
+        self.atributos = {
+            "ataque": self.player.dano,
+            "defesa": self.player.defesa,
+            "vida": self.player.MAX_HP,
+            "stamina": self.player.max_stamina,
+            "velocidade": self.player.velocidade_corrida
+        }
 
 
 # Inicialização do Pygame
