@@ -34,6 +34,10 @@ pause = False
 
 pygame.mixer.music.stop()
 
+# Ler
+# with open('save.json', 'r') as f:
+#     estado = json.load(f)
+
 def inicio():
     ####
     # PRA MUSICA FUNCIONAR: ANTES DO LOOP, QUEBRE O SOM, COMEÇOU? PEGA A MUSICA
@@ -367,9 +371,37 @@ def inicio():
     botas = Item('Armadura', 'Botas', {'defesa': 1}, False ,player)
     armadura = Item('Armadura', 'Armadura', {'defesa': 10}, False, player)
 
-
     # Criar as instâncias dos inventários
     inventario1 = Inventario((50, 50, 50), 50, [espada,pocao,escudo,capacete,adaga,botas,armadura])
+
+    itens = []
+
+    for item in inventario1.items:
+        item_ = [item.tipo,item.nome,item.atributos,item.equipado]
+        itens.append(item_)
+
+    Dicionario_para_save = {
+        
+        'atributos':[
+            player.dano,
+            player.MAX_HP,
+            player.HP,
+            player.velocidade_corrida,
+            player.max_stamina,
+            player.defesa
+        ],
+
+        'itens': itens,
+
+        'menu_valores': menu.valores,
+
+        'menu_atributos': menu.atributos,
+
+    }
+        # Salvar
+    with open("save.txt", "w") as f:
+        json.dump(Dicionario_para_save, f, indent=4)
+
 
 
     inventario2 = Inventario((0, 100, 0), 400)
