@@ -1,7 +1,31 @@
 import pygame
+from game import *
 fundo_menu = pygame.image.load('fundo_menu.png')
 fundo_creditos = pygame.image.load('fundo_creditos.png')
+import cv2
+import numpy as np
+fundo_historia = pygame.image.load('fundo_historia.png')
 
+class VideoBackground:
+    def __init__(self, video_path, size):
+        self.cap = cv2.VideoCapture(video_path)
+        self.size = size  # (width, height)
+
+    def get_frame(self):
+        ret, frame = self.cap.read()
+        if not ret:
+            # Reinicia o vídeo ao chegar no final
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            ret, frame = self.cap.read()
+        # Converte de BGR para RGB
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        # Redimensiona para o tamanho da tela
+        frame = cv2.resize(frame, self.size)
+        # Opcional: ajuste de rotação se necessário (alguns vídeos podem precisar)
+        # frame = np.rot90(frame)
+        # Cria uma surface do Pygame a partir do frame
+        surface = pygame.surfarray.make_surface(np.transpose(frame, (1, 0, 2)))
+        return surface
 class Menu():
     def __init__(self, game): # chamamos a classe do game.py
         self.game = game
@@ -30,25 +54,29 @@ def tocar_musica(): # função pra tocar a música
 
 class MainMenu(Menu):
     def __init__(self, game):
-        Menu.__init__(self, game) # significa: um argumento que envia as variaveis da classe game, em __init__
+        Menu.__init__(self, game)
         self.state = "Start"
-        self.startx, self.starty = self.mid_w, self.mid_h + 30 # olha que coisa linda, criou as posições de cada opção do menu
+        self.startx, self.starty = self.mid_w, self.mid_h + 30
         self.optionsx, self.optionsy = self.mid_w, self.mid_h + 90
         self.creditsx, self.creditsy = self.mid_w, self.mid_h + 150
-        self.cursor_rect.midtop = (self.startx + self.offset, self.starty) # alinha
+        self.cursor_rect.midtop = (self.startx + self.offset, self.starty)
+        # Cria o background de vídeo com o tamanho da tela
+        self.video_bg = VideoBackground("fundo_menu_animado.mp4", (self.game.DISPLAY_W, self.game.DISPLAY_H))
 
     def display_menu(self):
         self.run_display = True
-        while self.run_display: # mostrar o menu
+        while self.run_display:
             self.game.check_events()
-            self.check_input() # checaimput
-            self.game.display.blit(fundo_menu, (0,0)) # fundo
-            self.game.draw_text('START', 35, self.startx, self.starty) # adicionamos os textos, que coisa linda
+            self.check_input()
+            # Pega o frame atual do vídeo e desenha como fundo
+            frame_surface = self.video_bg.get_frame()
+            self.game.display.blit(frame_surface, (0, 0))
+            # Desenha os textos do menu
+            self.game.draw_text('START', 35, self.startx, self.starty)
             self.game.draw_text('OPTIONS', 35, self.optionsx, self.optionsy)
             self.game.draw_text('CREDITS', 35, self.creditsx, self.creditsy)
             self.draw_cursor()
-            self.blit_screen() # mostra na tela
-
+            self.blit_screen()
     def move_cursor(self):
         if self.game.DOWN_KEY: # VAI ALTERANDO A POSIÇÃO
             if self.state == 'Start':

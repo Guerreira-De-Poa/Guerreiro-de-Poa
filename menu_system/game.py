@@ -2,8 +2,31 @@ import pygame
 from menu import *
 from nivel_1.player_move_com_spritesheet import *
 from mapa_main.main_mapa import inicio as inicio_real
-
+import cv2
+import numpy as np
 fundo_historia = pygame.image.load('fundo_historia.png')
+
+class VideoBackground:
+    def __init__(self, video_path, size):
+        self.cap = cv2.VideoCapture(video_path)
+        self.size = size  # (width, height)
+
+    def get_frame(self):
+        ret, frame = self.cap.read()
+        if not ret:
+            # Reinicia o vídeo ao chegar no final
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            ret, frame = self.cap.read()
+        # Converte de BGR para RGB
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        # Redimensiona para o tamanho da tela
+        frame = cv2.resize(frame, self.size)
+        # Opcional: ajuste de rotação se necessário (alguns vídeos podem precisar)
+        # frame = np.rot90(frame)
+        # Cria uma surface do Pygame a partir do frame
+        surface = pygame.surfarray.make_surface(np.transpose(frame, (1, 0, 2)))
+        return surface
+    
 class Game():
     def __init__(self):
         pygame.init() # acessar as "ferramentas" pyggame
