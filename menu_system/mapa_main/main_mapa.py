@@ -422,6 +422,7 @@ def inicio():
             pygame.display.flip()
             pygame.time.delay(500)
             print('ok')
+            tocar_cutscene_cv2('cutscenes/cutscene_bossFinal.mp4', 'cutscenes/cutscene_boss1.mp3', screen)
             ultimo_nivel() # AQUI É MELHOR
         if missao_2 == True:
             pygame.mixer.music.stop()
