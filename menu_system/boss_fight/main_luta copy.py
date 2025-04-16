@@ -147,7 +147,7 @@ def inicio():
 
     atributos = {
             "ataque": 6.25,
-            "defesa": 5.0,
+            "defesa": 1.0,
             "vida": 20,
             "stamina": 6.25,
             "velocidade": 10
@@ -156,7 +156,7 @@ def inicio():
     # Criar o jogador
     try:
         player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha(2)(1)(1).png')
-        player_sprite_path2 = os.path.join(current_dir, '..', '..', 'WhatsApp Image 2025-04-15 at 15.02.21.jpeg')
+        player_sprite_path2 = os.path.join(current_dir, '..', '..', 'sprites_ataque_espada.png')
         
         player_sprite = SpriteSheet(player_sprite_path, 0, 514, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
         player_sprite_ataques = SpriteSheet(player_sprite_path2, 8, 38, 128, 128, 12,[6,6,6,6], (255,255,255))
@@ -169,7 +169,7 @@ def inicio():
         sys.exit()
 
     xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
-    menu = Menu(5, 5, 5, 5, 5, 6.25, 0.0, 10, 6.25, 5.0,player)
+    menu = Menu(5, 5, 5, 5, 5, 0.25, 0.0, 10, 0.25, 0.0,player)
 
     # Posicionar o jogador em uma posição válida no mapa
 
@@ -418,7 +418,7 @@ def inicio():
                 a = (enemy_hits.keys())
                 inimigo.balas.remove(a)
                 
-                player.get_hit(2.5)
+                player.get_hit(10.5)
 
         if len(player_hits) > 0:
             a = (player_hits.keys())
@@ -546,8 +546,6 @@ def inicio():
                 inimigo.atacando_melee = False
                 inimigo.frame_change = 8
 
-        if player.dash:
-            player.draw_dash(screen,camera)
         player.draw(screen, camera)
         #print(player.rect.x)
 

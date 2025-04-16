@@ -28,9 +28,11 @@ class Inventario:
         self.imagem_espada = pygame.image.load('sword.png')
         self.imagem_armadura = pygame.image.load('icons8-peitoral-blindado-24(1).png')
         self.imagem_pocao = pygame.image.load('icons8-poção-24.png')
+        self.imagem_fundo = pygame.image.load("My ChatGPT image1.png")
 
     def draw_inventory(self, screen):
-        pygame.draw.rect(screen, self.Cor_fundo, self.inventory_rect, border_radius=15)
+        #pygame.draw.rect(screen, self.Cor_fundo, self.inventory_rect, border_radius=15)
+        screen.blit(self.imagem_fundo,(self.inventory_rect[0]-15,self.inventory_rect[1],self.inventory_rect[2],self.inventory_rect[3]))
 
         #print(self.items)
 

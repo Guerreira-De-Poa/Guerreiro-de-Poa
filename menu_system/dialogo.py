@@ -50,6 +50,9 @@ class Dialogo():
             elif self.texto_index == self.qtd_textos-1:
                 self.texto_open = False
 
+                self.letra_index = 0
+                self.frase = ''
+
                 ##########
                 # Dai caso a missão seja true, começa, essa parte funciona!
                 ##########
