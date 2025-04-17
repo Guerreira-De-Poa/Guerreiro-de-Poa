@@ -2,37 +2,14 @@ import pygame
 from menu import *
 from nivel_1.player_move_com_spritesheet import *
 from mapa_main.main_mapa import inicio as inicio_real
-import cv2
-import numpy as np
 fundo_historia = pygame.image.load('fundo_historia.png')
-
-class VideoBackground:
-    def __init__(self, video_path, size):
-        self.cap = cv2.VideoCapture(video_path)
-        self.size = size  # (width, height)
-
-    def get_frame(self):
-        ret, frame = self.cap.read()
-        if not ret:
-            # Reinicia o vídeo ao chegar no final
-            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-            ret, frame = self.cap.read()
-        # Converte de BGR para RGB
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        # Redimensiona para o tamanho da tela
-        frame = cv2.resize(frame, self.size)
-        # Opcional: ajuste de rotação se necessário (alguns vídeos podem precisar)
-        # frame = np.rot90(frame)
-        # Cria uma surface do Pygame a partir do frame
-        surface = pygame.surfarray.make_surface(np.transpose(frame, (1, 0, 2)))
-        return surface
     
 class Game():
     def __init__(self):
         pygame.init() # acessar as "ferramentas" pyggame
         self.running, self.playing = True, False # running -> jogo roda, uma verdade, mesmo que voce não faça nada '-' | playing -> ação do player!
         self.UP_KEY, self.DOWN_KEY, self.START_KEY, self.BACK_KEY = False,False,False,False # controles pro menu, pra organizar as açoes
-        self.DISPLAY_W, self.DISPLAY_H = 800, 600 # Largura e altura da tela uai
+        self.DISPLAY_W, self.DISPLAY_H = 1200, 800 # Largura e altura da tela uai
         self.display = pygame.Surface((self.DISPLAY_W, self.DISPLAY_H)) # A TELA EM SI, só não conhecia este surface ->
         self.window = pygame.display.set_mode((self.DISPLAY_W, self.DISPLAY_H)) # a janela...
         self.font_file = '8-BIT WONDER.TTF' # caso instalarmos, usa o nome do arquivo, tipo 'fonte.tif'

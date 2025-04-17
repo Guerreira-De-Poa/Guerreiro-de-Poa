@@ -14,7 +14,7 @@ class VideoBackground:
     def get_frame(self):
         ret, frame = self.cap.read()
         if not ret:
-            # Reinicia o vídeo ao chegar no final
+            # Reinicia o vídeo ao chegar no final        
             self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
             ret, frame = self.cap.read()
         # Converte de BGR para RGB
@@ -26,6 +26,7 @@ class VideoBackground:
         # Cria uma surface do Pygame a partir do frame
         surface = pygame.surfarray.make_surface(np.transpose(frame, (1, 0, 2)))
         return surface
+    
 class Menu():
     def __init__(self, game): # chamamos a classe do game.py
         self.game = game
@@ -127,13 +128,15 @@ class OptionsMenu(Menu):
         self.volx, self.voly = self.mid_w, self.mid_h + 30
         self.controlsx, self.controlsy = self.mid_w, self.mid_h + 90
         self.cursor_rect.midtop = (self.volx + self.offset, self.voly)
+        self.video_bg = VideoBackground("fundo_menu_animado.mp4", (self.game.DISPLAY_W, self.game.DISPLAY_H))
 
     def display_menu(self):
         self.run_display = True
         while self.run_display:
             self.game.check_events()
             self.check_input()
-            self.game.display.blit(fundo_creditos, (0,0))
+            frame_surface = self.video_bg.get_frame()
+            self.game.display.blit(frame_surface, (0, 0))
             # self.game.draw_text('OPTIONS', 35, self.game.DISPLAY_W / 2, self.game.DISPLAY_H / 2 - 20)
             self.game.draw_text('VOLUME', 35, self.volx, self.voly)
             self.game.draw_text('CONTROLS', 35, self.controlsx, self.controlsy)
@@ -162,6 +165,7 @@ class OptionsMenu(Menu):
 class CreditsMenu(Menu):
     def __init__(self, game): # pelo que eu entendi, essa "função dunder, com dois '_'" é pra chamar funções, variaveis, que estão em outras artes, como a de créditos não tem muita coisa, só precisamos dela!
         Menu.__init__(self, game)
+        self.video_bg = VideoBackground("fundo_menu_animado.mp4", (self.game.DISPLAY_W, self.game.DISPLAY_H))
     
     def display_menu(self):
         self.run_display = True
@@ -170,7 +174,8 @@ class CreditsMenu(Menu):
             if self.game.BACK_KEY or self.game.START_KEY:
                 self.game.curr_menu = self.game.main_menu
                 self.run_display = False
-            self.game.display.blit(fundo_creditos, (0,0))
+            frame_surface = self.video_bg.get_frame()
+            self.game.display.blit(frame_surface, (0, 0))
             # self.game.draw_text('CREDITS', 35, self.game.DISPLAY_W / 2, self.game.DISPLAY_H / 2 - 20)
             self.game.draw_text('Game design - ', 35, self.game.DISPLAY_W / 3, self.game.DISPLAY_H / 2)
             self.game.draw_text('Programming -  ', 35, self.game.DISPLAY_W / 3, self.game.DISPLAY_H / 2 + 50)
