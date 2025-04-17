@@ -38,7 +38,25 @@ def inicio():
     # PRA MUSICA FUNCIONAR: ANTES DO LOOP, QUEBRE O SOM, COMEÇOU? PEGA A MUSICA
     pygame.mixer.music.load("musicas/The Four Seasons, Winter - Vivaldi.mp3")
     pygame.mixer.music.play(-1)  # -1 significa que a música vai tocar em loop
-    pygame.mixer.music.set_volume(0.2)  # 50% do volume máximo
+    pygame.mixer.music.set_volume(0.05)  # 50% do volume máximo
+
+    # Efeitos Sonoros
+    som_andar = pygame.mixer.Sound("musicas/Efeitos sonoros/Passos.mp3")
+    canal_andar = pygame.mixer.Channel(0)
+    teclas_movimento = {pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d}
+    teclas_pressionadas = set()
+    
+    som_balançar_espada = pygame.mixer.Sound("musicas/Efeitos sonoros/Balançar espada.mp3")
+    canal_balançar_espada = pygame.mixer.Channel(1)
+    cooldown_som_balançar_espada = 0
+    delay_som_balançar_espada = 400
+    primeiro_ataque_espada = 0
+
+    som_carregar_arco = pygame.mixer.Sound("musicas/Efeitos sonoros/carregando_arco_flecha.mp3")
+    canal_carregar_arco = pygame.mixer.Channel(2)
+
+    som_atirar_flecha = pygame.mixer.Sound("musicas/Efeitos sonoros/Arco e flecha.mp3")
+    canal_atirar_flecha = pygame.mixer.Channel(3)
     
     boss_parado=False
     global pause
@@ -480,6 +498,16 @@ def inicio():
                 sys.exit()
 
             if event.type == pygame.KEYDOWN:
+                # ativar efeitos sonoros
+                if event.key in teclas_movimento:
+                    teclas_pressionadas.add(event.key)
+                    
+                    if not canal_andar.get_busy():
+                        som_andar.set_volume(0.5)
+                        canal_andar.play(som_andar, loops=-1)
+
+                # if event.key in [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d] and event.key == pygame.K_LSHIFT:
+                
                 if event.key == pygame.K_w:
                     player.nova_direcao = True
                 elif event.key == pygame.K_s:
@@ -513,6 +541,12 @@ def inicio():
                     xp.show_menu = not xp.show_menu
                     if xp.show_menu:
                         menu.valores_copy = menu.valores.copy()
+            
+            elif event.type == pygame.KEYUP and not event.type == pygame.KEYDOWN:
+                if event.key in teclas_movimento:
+                    teclas_pressionadas.discard(event.key)
+                    if len(teclas_pressionadas) == 0:
+                        canal_andar.stop()
 
             if not player.arcoEquipado:
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -724,20 +758,42 @@ def inicio():
 
         if not player.atacando_melee:
             if click:
-                click_hold +=1
+                click_hold += 1
+                if not canal_carregar_arco.get_busy() and click_hold <= 30:
+                    som_carregar_arco.set_volume(1)
+                    canal_carregar_arco.play(som_carregar_arco, loops=0)
+                elif click_hold > 30:
+                    canal_carregar_arco.stop()
                 player.atacando = True
                 player.hold_arrow(mouse_pos,camera)
                 player.atacando_melee = False
             elif click_mouse_2:
                 player.atacando_melee = True
                 player.hold_arrow(mouse_pos,camera)
+                cooldown_som_balançar_espada = pygame.time.get_ticks()
             elif click_hold > 30:
                 player.shoot(mouse_pos)
+                if not canal_atirar_flecha.get_busy():
+                    som_atirar_flecha.set_volume(0.05)
+                    canal_atirar_flecha.play(som_atirar_flecha, loops=0)
                 click_hold = 0
                 player.atacando = False
                 player.atacando_melee = False
         else:
             contador_melee += 1
+
+            tempo_atual = pygame.time.get_ticks()
+            if tempo_atual - cooldown_som_balançar_espada >= delay_som_balançar_espada and primeiro_ataque_espada == 0:
+                som_balançar_espada.set_volume(0.5)
+                canal_balançar_espada.play(som_balançar_espada, loops=0)
+                cooldown_som_balançar_espada = tempo_atual
+                primeiro_ataque_espada = 1
+
+            elif tempo_atual - cooldown_som_balançar_espada >= delay_som_balançar_espada + 335 and primeiro_ataque_espada == 1:
+                som_balançar_espada.set_volume(0.5)
+                canal_balançar_espada.play(som_balançar_espada, loops=0)
+                cooldown_som_balançar_espada = tempo_atual
+
             if contador_melee != 7*7:
                 player.atacando_melee = True
             else:
@@ -745,6 +801,7 @@ def inicio():
                 player.sheet_sec.index = 0
                 if not click_mouse_2:
                     player.atacando_melee = False
+                    primeiro_ataque_espada = 0
                 else:
                     player.atacando_melee = True
                     player.hold_arrow(mouse_pos,camera)
