@@ -4,6 +4,8 @@ import json
 import os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
 
 from spritesheet_explicada import SpriteSheet
 from sprite_teste_v2 import Personagem
@@ -16,18 +18,22 @@ from bau import Bau
 from XP import XP
 from menu_status import Menu
 
+from cutscenes.tocar_cutscene import tocar_cutscene_cv2
+
 pause = False
 
 def inicio():
     boss_parado = False
     global pause
+    global cutscene_final_rodada
+    cutscene_final_rodada = False
     
     # Inicialização do Pygame
     pygame.init()
 
     # Configurações da tela
-    SCREEN_WIDTH = 800
-    SCREEN_HEIGHT = 600
+    SCREEN_WIDTH = 1200
+    SCREEN_HEIGHT = 800
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Jogo com Mapa e Colisões")
 
@@ -478,6 +484,11 @@ def inicio():
             fonte2 = pygame.font.Font('8-BIT WONDER.TTF', 30)
             text_surface = fonte2.render("O Ligeiro", True, (0, 0, 0))
             screen.blit(text_surface, (290, 70, 400, 100))
+
+        else:
+            if not cutscene_final_rodada:
+                tocar_cutscene_cv2('cutscenes/cutscene_final.mp4', 'cutscenes/cutscene_boss1.mp3', screen)
+                cutscene_final_rodada = True
 
         if inventario1.inventory_open:
             inventario1.draw_inventory(screen)
