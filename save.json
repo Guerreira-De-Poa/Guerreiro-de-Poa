@@ -1,0 +1,82 @@
+{
+    "atributos": [
+        6.25,
+        5.0,
+        20,
+        20,
+        6.25,
+        10
+    ],
+    "itens": [
+        [
+            "arma",
+            "Espada",
+            {
+                "dano": 10
+            },
+            false
+        ],
+        [
+            "arma",
+            "Espada 2",
+            {
+                "dano": 10
+            },
+            false
+        ],
+        [
+            "armadura",
+            "Escudo",
+            {
+                "defesa": 3
+            },
+            false
+        ],
+        [
+            "armadura",
+            "Capacete",
+            {
+                "defesa": 1
+            },
+            false
+        ],
+        [
+            "arma",
+            "Adaga",
+            {
+                "dano": 3
+            },
+            false
+        ],
+        [
+            "armadura",
+            "Botas",
+            {
+                "defesa": 1
+            },
+            false
+        ],
+        [
+            "armadura",
+            "Armadura",
+            {
+                "defesa": 10
+            },
+            false
+        ]
+    ],
+    "menu_valores": {
+        "ataque": 5,
+        "defesa": 5,
+        "vida": 5,
+        "stamina": 5,
+        "velocidade": 5
+    },
+    "menu_atributos": {
+        "ataque": 6.25,
+        "defesa": 5.0,
+        "vida": 20,
+        "stamina": 6.25,
+        "velocidade": 10
+    }
+}

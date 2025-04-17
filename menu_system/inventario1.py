@@ -11,13 +11,13 @@ class Inventario:
 
         self.Cor_fundo = cor_fundo
         self.WHITE = (255, 255, 255)
-        self.font = pygame.font.Font(None, 30)
+        self.font = pygame.font.Font(None, 40)
 
         self.inventory_open = False
-        self.inventory_rect = pygame.Rect(pos_x, 100, 300, 400)
+        self.inventory_rect = pygame.Rect(pos_x, 100, 480, 600)
         self.items = items
 
-        self.visible_items = 5
+        self.visible_items = 7
 
         self.scroll_index = 0
 
@@ -28,7 +28,7 @@ class Inventario:
         self.imagem_espada = pygame.image.load('sword.png')
         self.imagem_armadura = pygame.image.load('icons8-peitoral-blindado-24(1).png')
         self.imagem_pocao = pygame.image.load('icons8-poção-24.png')
-        self.imagem_fundo = pygame.image.load("My ChatGPT image1.png")
+        self.imagem_fundo = pygame.image.load("My ChatGPT image_MAIOR.png")
 
     def draw_inventory(self, screen):
         #pygame.draw.rect(screen, self.Cor_fundo, self.inventory_rect, border_radius=15)
@@ -36,8 +36,8 @@ class Inventario:
 
         #print(self.items)
 
-        texto = self.font.render('Tipo      Nome         Atributo',True,self.WHITE)
-        screen.blit(texto,(self.inventory_rect.left+10,self.inventory_rect.top))
+        texto = self.font.render('Tipo      Nome      Atributo',True,self.WHITE)
+        screen.blit(texto,(self.inventory_rect.left+45,self.inventory_rect.top))
 
         for i in range(self.visible_items):
             atributos_nome = 0
@@ -56,16 +56,21 @@ class Inventario:
                     atributos_nome = atributo_nome[0:3].upper()
                     
             if self.items[i+self.scroll_index] == self.items[self.item_index]:
-                x,y = self.inventory_rect.left + 80, self.inventory_rect.top + 40 + i * 80
+                x,y = self.inventory_rect.left + 120, self.inventory_rect.top + 40 + i * 80
+                x2,y2 = self.inventory_rect.left + 290, self.inventory_rect.top + 40 + i * 80
             else:
-                x,y = self.inventory_rect.left + 70, self.inventory_rect.top + 40 + i * 80
+                x,y = self.inventory_rect.left + 110, self.inventory_rect.top + 40 + i * 80
+                x2,y2 = self.inventory_rect.left + 280, self.inventory_rect.top + 40 + i * 80
             x_rect = self.inventory_rect.left + 80
             text = self
             if self.items[self.scroll_index + i].equipado:
-                pygame.draw.rect(screen, (100,100,100), (x_rect-80,y-10,self.inventory_rect.width,40), border_radius=5)
-                text = self.font.render(''+self.items[self.scroll_index + i].nome+ '      +'+ str(atributos)+ f'  {atributos_nome}', True, self.WHITE)
+                pygame.draw.rect(screen, (100,100,100), (x_rect-65,y-10,self.inventory_rect.width-35,40), border_radius=5)
+                text = self.font.render(''+self.items[self.scroll_index + i].nome, True, self.WHITE)
+                text2 = self.font.render(str(atributos)+ f'  {atributos_nome}', True, self.WHITE)
+
             else:
-                text = self.font.render(self.items[self.scroll_index + i].nome+ '      +'+ str(atributos)+ f'  {atributos_nome}', True, self.WHITE)
+                text = self.font.render(self.items[self.scroll_index + i].nome, True, self.WHITE)
+                text2 = self.font.render(str(atributos)+ f'  {atributos_nome}', True, self.WHITE)
 
 
             if self.items[self.scroll_index + i].tipo == 'consumivel':
@@ -76,6 +81,7 @@ class Inventario:
                 screen.blit(self.imagem_armadura, (x-60, y))
 
             screen.blit(text, (x, y))
+            screen.blit(text2, (x2, y2))
 
         # for i, item in enumerate(self.items):
         #     x, y = self.inventory_rect.left + 40, self.inventory_rect.top + 40 + i * 80

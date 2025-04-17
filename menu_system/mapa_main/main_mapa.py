@@ -51,8 +51,8 @@ def inicio():
     pygame.init()
 
     # Configurações da tela
-    SCREEN_WIDTH = 800
-    SCREEN_HEIGHT = 600
+    SCREEN_WIDTH = 1200
+    SCREEN_HEIGHT = 800
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Jogo com Mapa e Colisões")
 
@@ -78,7 +78,8 @@ def inicio():
     atributos = {
             "ataque": 6.25,
             "defesa": 5.0,
-            "vida": 20,
+            "vida_max": 20,
+            "vida_atual": 10,
             "stamina": 6.25,
             "velocidade": 10
     }
@@ -219,6 +220,16 @@ def inicio():
     lista_4 = [13 for j in range(4)]
     lista_5 = [7 for k in range(14)]
 
+    with open('save.json', 'r') as f:
+        try:
+            save_carregado = json.load(f)
+            print(save_carregado)
+        except:
+            save_carregado = False
+            print("ERRO AO CARREGAR SAVE")
+
+    #print(save_carregado)
+
     # Criar o jogador
     try:
         player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha(2).png')
@@ -227,8 +238,21 @@ def inicio():
         player_sprite = SpriteSheet(player_sprite_path, 0, 514, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
         player_sprite_ataques = SpriteSheet(player_sprite_path2, 18, 38, 128, 128, 12,[6,6,6,6], (255,255,255))
         #######
-        # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
-        player = Personagem(player_sprite, atributos["ataque"], atributos["defesa"], atributos["vida"], atributos["stamina"], atributos["velocidade"],player_sprite_ataques)
+        # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ
+        if save_carregado:
+            print("SAVE CARREGADO")
+            player = Personagem(player_sprite, save_carregado['atributos'][0], save_carregado['atributos'][1], save_carregado['atributos'][2], save_carregado['atributos'][3], save_carregado['atributos'][4],save_carregado['atributos'][5],player_sprite_ataques)
+
+            itens_carregados = []
+            for item in save_carregado['itens']:
+                novo_item = Item(item[0],item[1],item[2],item[3],player)
+                itens_carregados.append(novo_item)
+            inventario1 = Inventario((50, 50, 50), 50, [itens_carregados[i] for i in range(len(itens_carregados))])
+            
+        else:
+            print("SAVE NAO CARREGADO")
+            player = Personagem(player_sprite, atributos["ataque"], atributos["defesa"], atributos["vida_max"],atributos['vida_atual'], atributos["stamina"], atributos["velocidade"],player_sprite_ataques)
+            inventario1 = Inventario((50, 50, 50), 50, [])
     except Exception as e:
         print(f"Erro ao carregar sprite do jogador: {e}")
         pygame.quit()
@@ -289,7 +313,7 @@ def inicio():
 
     click_hold = 0
 
-    interagir_bg = pygame.image.load("caixa_dialogo_pequena.jpg")
+    interagir_bg = pygame.image.load("caixa_dialogo_pequena2.png")
 
     omori = pygame.image.load('npc.png')
 
@@ -309,7 +333,7 @@ def inicio():
 
     texto_2 = {
         'personagem':'Morador de Poá',
-        'texto_1':['Você foi o guerreiro que nos salvou certo?', 'Muito obrigado', 'Eu posso te levar ao chefe deles', 'Isso fará com que eles desistam de nos invadir'],
+        'texto_1':['Você foi o guerreiro que nos salvou certo?', 'Muito obrigado', 'Eu posso te levar ao chefe deles', 'Isso fará com que eles desistam'],
         'personagem_1': "Guerreiro de Poá",
         'texto_2':['Me leve até lá']
         }
@@ -363,46 +387,16 @@ def inicio():
     dragging_from = None
 
 
-    espada = Item('Arma', 'Espada', {'dano': 10}, False ,player)
-    pocao = Item('Consumivel', 'Poção', {'HP': 10}, False ,player)
-    escudo = Item('Armadura', 'Escudo', {'defesa': 3}, False ,player)
-    capacete = Item('Armadura', 'Capacete', {'defesa': 1}, False ,player)
-    adaga = Item('Arma', 'Adaga', {'dano': 3}, False ,player)
-    botas = Item('Armadura', 'Botas', {'defesa': 1}, False ,player)
-    armadura = Item('Armadura', 'Armadura', {'defesa': 10}, False, player)
+    # espada = Item('Arma', 'Espada', {'dano': 10}, False ,player)
+    # pocao = Item('Consumivel', 'Poção', {'HP': 10}, False ,player)
+    # escudo = Item('Armadura', 'Escudo', {'defesa': 3}, False ,player)
+    # capacete = Item('Armadura', 'Capacete', {'defesa': 1}, False ,player)
+    # adaga = Item('Arma', 'Adaga', {'dano': 3}, False ,player)
+    # botas = Item('Armadura', 'Botas', {'defesa': 1}, False ,player)
+    # armadura = Item('Armadura', 'Armadura', {'defesa': 10}, False, player)
 
     # Criar as instâncias dos inventários
-    inventario1 = Inventario((50, 50, 50), 50, [espada,pocao,escudo,capacete,adaga,botas,armadura])
-
-    itens = []
-
-    for item in inventario1.items:
-        item_ = [item.tipo,item.nome,item.atributos,item.equipado]
-        itens.append(item_)
-
-    Dicionario_para_save = {
-        
-        'atributos':[
-            player.dano,
-            player.MAX_HP,
-            player.HP,
-            player.velocidade_corrida,
-            player.max_stamina,
-            player.defesa
-        ],
-
-        'itens': itens,
-
-        'menu_valores': menu.valores,
-
-        'menu_atributos': menu.atributos,
-
-    }
-        # Salvar
-    with open("save.txt", "w") as f:
-        json.dump(Dicionario_para_save, f, indent=4)
-
-
+    # inventario1 = Inventario((50, 50, 50), 50, [espada,pocao,escudo,capacete,adaga,botas,armadura])
 
     inventario2 = Inventario((0, 100, 0), 400)
 
@@ -918,8 +912,8 @@ def inicio():
             
             font = pygame.font.Font(None,48)
             render = font.render("Interagir", True, (0,0,0))
-            screen.blit(interagir_bg,(300,450))
-            screen.blit(render,(325,457))
+            screen.blit(interagir_bg,(494,600))
+            screen.blit(render,(525,627))
 
         # Desenhar os inventários e o botão
         if inventario1.inventory_open:
@@ -963,7 +957,12 @@ def inicio():
 
         player.draw_health(screen)
         player.draw_stamina(screen)
-        xp.render()
+        if not dialogo_a_abrir:
+            xp.render()
+        else:
+            if dialogo_a_abrir.texto_open == False:
+                xp.render()
+
 
         #print(menu.atributos,menu.valores)
 
@@ -972,7 +971,34 @@ def inicio():
 
         pygame.display.flip()
 
-    boss_fight()
+
+    itens = []
+
+    for item in inventario1.items:
+        item_ = [item.tipo,item.nome,item.atributos,item.equipado]
+        itens.append(item_)
+
+    Dicionario_para_save = {
+        
+        'atributos':[
+            player.dano,
+            player.defesa,
+            player.MAX_HP,
+            player.HP,
+            player.max_stamina,
+            player.velocidade_corrida,
+        ],
+
+        'itens': itens,
+
+        'menu_valores': menu.valores,
+
+        'menu_atributos': menu.atributos,
+
+    }
+        # Salvar
+    with open("save.json", "w") as f:
+        json.dump(Dicionario_para_save, f, indent=4)
 
 if __name__ == "__main__":
     inicio()

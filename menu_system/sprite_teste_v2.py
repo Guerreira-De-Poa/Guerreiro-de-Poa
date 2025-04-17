@@ -4,7 +4,7 @@ from balas import Bala
 
 # Classe que herda de pygame.sprite.Sprite
 class Personagem(pygame.sprite.Sprite):
-    def __init__(self, sprite_sheet, ataque, defesa, vida, stamina, velocidade,sheet_sec):
+    def __init__(self, sprite_sheet, ataque, defesa, vida_max,vida_atual, stamina, velocidade,sheet_sec):
         super().__init__()  # Chama o inicializador da classe pai
         self.sheet = sprite_sheet
         self.sheet_sec = sheet_sec
@@ -30,8 +30,8 @@ class Personagem(pygame.sprite.Sprite):
         self.attack_hitbox = None
         self.attack_direction_set = False
 
-        self.MAX_HP = vida
-        self.HP = self.MAX_HP
+        self.MAX_HP = vida_max
+        self.HP = vida_atual
         self.velocidade_corrida = velocidade
         self.max_stamina = stamina
         self.dano = ataque
