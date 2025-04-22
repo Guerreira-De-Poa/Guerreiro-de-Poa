@@ -19,7 +19,6 @@ class SpriteSheet:
         self.lista_acoes = lista_acoes
         self.action = 0
         self.cells = []
-        self.largura_sprite = largura_sprite
         
         # Define a cor de transparência se fornecida
         if color_key:
