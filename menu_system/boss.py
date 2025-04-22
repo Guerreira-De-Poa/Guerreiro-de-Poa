@@ -209,14 +209,12 @@ class Boss2(Inimigo):
         self.sheet = sprite_sheet
         self.image = pygame.Surface((64, 64), pygame.SRCALPHA)
         self.rect = self.image.get_rect()
-        self.dangerImage = pygame.image.load('dangerAnimation.png')
-        self.thunderImage = pygame.image.load('thunderBig.png') # Essas duas imagens são spritesheets, ver direito
 
         self.HP = 10
         self.player = player
         self.rect.center = (x, y)
 
-        self.range_pulo = self.rect.inflate(self.rect.width, self.rect.height)
+        self.range_pulo = pygame.Rect(0, 0, 0, 0)
 
         self.speed = 2
         self.pulo_speed = self.speed*2
@@ -292,6 +290,7 @@ class Boss2(Inimigo):
                     else:
                         self.rect.x -= self.speed
                         self.sheet.action = 1
+
         if self.ataque:
             if self.pulando:
                 if self.player_rect.centery-self.rect.centery != 0 and self.player_rect.centerx-self.rect.centerx < 200:
@@ -304,32 +303,29 @@ class Boss2(Inimigo):
                         self.sheet.action = 21
                     else:
                         self.sheet.action = 19
-                if self.pulo_dist_restante > 0:
+                if self.pulo_dist_restante > self.pulo_speed:
                     desloc = self.direction * self.pulo_speed
                     self.rect.centerx += desloc.x
                     self.rect.centery += desloc.y
                     self.pulo_dist_restante -= self.pulo_speed
                 else:
+                    self.rect.center = self.pos_alvo
                     self.pulando = False
+                    self.ataque = False
                     self.colisao_pulo()
+
         if self.contagem_ataques >= 2:
-            if self.contagem_tempo_parado < 179:
-                self.contagem_tempo_parado += 1
                 self.mover = False
                 self.ataque = True
-                if self.contagem_tempo_parado % 60 == 0:
-                    self.atacar()
-            else:
-                self.mover = True
-                self.ataque = False
-                self.contagem_tempo_parado = 0
+                self.atacar()
                 self.contagem_ataques = 0
 
         if self.frame_count % self.frame_change == 0:
             self.sheet.update()
     
-        while (self.rect.centerx, self.rect.centery) == tuple(self.local_a_mover):
+        if pygame.math.Vector2(self.rect.center).distance_to(self.local_a_mover) < self.speed:
             self.contagem_ataques += 1
+            print(f"[DEBUG] o contador de ataques é {self.contagem_ataques}")
             self.gerar_local_a_mover()
 
         if self.ivuln == True:
@@ -363,5 +359,11 @@ class Boss2(Inimigo):
             self.ivuln = True
 
     def colisao_pulo(self):
+        self.range_pulo = self.rect.inflate(self.rect.width, self.rect.height)
+        print(f"[DEBUG] Chamou e o contador de ataques é {self.contagem_ataques}")
         if self.player_rect.colliderect(self.range_pulo):
             self.player.get_hit(5)
+            print('[DEBUG] Colidiu')
+        self.mover = True
+        self.gerar_local_a_mover()
+        print('Gerou local')

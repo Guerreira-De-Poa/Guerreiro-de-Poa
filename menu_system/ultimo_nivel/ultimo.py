@@ -2,6 +2,7 @@ import pygame
 import sys
 import json
 import os
+import random
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -15,6 +16,7 @@ from boss import *
 from bau import Bau
 from XP import XP
 from menu_status import Menu
+from raios import Raios
 
 pause = False
 
@@ -172,6 +174,14 @@ def inicio():
 
     spritesheet_inimigo_arco2 = SpriteSheet('gabrielFase2.png', 0, 522, 64, 64, 4, lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
     boss = Boss2(player.rect, player, 1220, 1000, True, spritesheet_inimigo_arco2, 30, 300, 200)
+
+    spritesheet_danger = SpriteSheet('thunderSpritesheet.png', 0, 0, 128, 256, 0, [5], (0, 0, 0), False)
+    spritesheet_raio = SpriteSheet('dangerAnimation.png', 0, 0, 32, 32, 0, [6], (0, 0, 0), False)
+    
+    raios = pygame.sprite.Group()
+
+    cooldown = 180
+    cooldown_timer = 0
 
     inimigos = pygame.sprite.Group()
     player_group = pygame.sprite.Group()
@@ -336,6 +346,15 @@ def inicio():
                 player.speed = velocidade_anterior
                 dash = 0
 
+        cooldown_timer += 1
+        if cooldown_timer >= cooldown:
+            for _ in range(5):
+                x = random.randint(100, 900)
+                y = random.randint(200, 1000)
+                novo_raio = Raios(spritesheet_danger, spritesheet_raio, (x, y), scale=2)
+                raios.add(novo_raio)
+            cooldown_timer = 0
+
         player_hits = pygame.sprite.groupcollide(player.balas, inimigos, False, False)
         
         for inimigo in inimigos:
@@ -457,7 +476,7 @@ def inicio():
         player.draw_balas(screen, camera)
 
         for inimigo in inimigos:
-            inimigo.sheet.draw(screen, inimigo.rect.x - camera.left, inimigo.rect.y - camera.top)
+            inimigo.sheet.draw(screen, inimigo.rect.x - camera.left, inimigo.rect.y - camera.top, scale=1.3)
 
         for bau in baus:
             screen.blit(bau.image, (bau.rect.x - camera.left, bau.rect.y - camera.top))
@@ -470,7 +489,7 @@ def inicio():
 
         if boss.HP > 0:
             pygame.draw.rect(screen, (0, 0, 0), (200, 45, 400, 25))
-            pygame.draw.rect(screen, (255, 0, 0), (200, 45, 80 * boss.HP, 25))
+            pygame.draw.rect(screen, (255, 0, 0), (200, 45, 80 * (boss.HP/2), 25))
             fonte = pygame.font.Font('8-BIT WONDER.TTF', 30)
             text_surface = fonte.render("O Professor", True, (255, 255, 255))
             screen.blit(text_surface, (288, 68, 400, 100))
@@ -497,6 +516,9 @@ def inicio():
         player.draw_health(screen)
         player.draw_stamina(screen)
         xp.render()
+
+        raios.update()
+        raios.draw(screen)
 
         for npc in npcs:
             npc.dialogo.coisa()
