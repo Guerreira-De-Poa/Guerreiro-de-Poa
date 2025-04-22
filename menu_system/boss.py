@@ -164,7 +164,7 @@ class Boss1(Inimigo):
         if self.frame_count % self.frame_change == 0:
             self.sheet.update()
         
-        while (self.rect.centerx,self.rect.centery)== tuple(self.local_a_mover):
+        if (self.rect.centerx,self.rect.centery)== tuple(self.local_a_mover):
             self.contagem_ataques +=1
             self.ataque = True
             self.atacar()
@@ -202,3 +202,168 @@ class Boss1(Inimigo):
             self.contador_iframes = 0
             self.HP -= dano
             self.ivuln = True
+
+class Boss2(Inimigo):
+    def __init__(self, player_rect, player, x, y, ataque, sprite_sheet, dano, xp, vida):
+        super().__init__(player_rect, player, x, y, ataque, sprite_sheet, dano, xp, vida)
+        self.sheet = sprite_sheet
+        self.image = pygame.Surface((64, 64), pygame.SRCALPHA)
+        self.rect = self.image.get_rect()
+
+        self.HP = 10
+        self.player = player
+        self.rect.center = (x, y)
+
+        self.range_pulo = pygame.Rect(0, 0, 0, 0)
+
+        self.speed = 2
+        self.pulo_speed = self.speed*2
+        self.player_rect = player_rect
+
+        self.raios = pygame.sprite.Group()
+
+        self.mover = True
+        self.gerar_local_a_mover()
+
+        self.ataque = False
+        self.pulando = False
+
+        self.atacar_ranged = ataque
+
+        self.modo_ataque = 1
+
+        self.frame_count = 0
+        self.frame_atual = 0
+        self.direction = 'DOWN'
+
+        self.frame_change = 5
+
+        self.contagem_frames_ataque = 0
+        self.contagem_ataques = 0
+        self.contagem_tempo_parado = 0
+
+        self.ivuln = False
+        self.iframes = 30
+        self.contador_iframes = 0
+
+    def gerar_local_a_mover(self):
+        self.local_a_mover = [randint(200,800),randint(400,1000)]
+
+        for i in range(2):
+            if not self.local_a_mover[i] % 2 == 0:
+                self.local_a_mover[i] += 1
+        while True:
+            for i in range(2):
+                if not self.local_a_mover[i] % self.speed == 0:
+                    self.local_a_mover[i] += 1
+            if self.local_a_mover[0] % self.speed == 0 and self.local_a_mover[1] % self.speed == 0:
+                break
+        self.local_a_mover_x, self.local_a_mover_y = self.local_a_mover
+
+    def pulo(self, player_rect):
+        self.player_rect = player_rect
+        self.pos_inicial = pygame.math.Vector2(self.rect.center)
+        self.pos_alvo = pygame.math.Vector2(self.player_rect.centerx, self.player_rect.centery)
+        self.direction = (self.pos_alvo - self.pos_inicial).normalize() if self.pos_alvo != self.pos_inicial else pygame.math.Vector2(0, 0)
+        self.pulo_dist_restante = (self.pos_alvo - self.pos_inicial).length()
+        self.pulando = True
+    
+    def update(self, dialogo_open):
+        self.old_pos_x, self.old_pos_y = self.rect.topleft[0], self.rect.topleft[1]
+        if dialogo_open:
+            return
+        self.frame_count += 1
+        
+        if not self.contagem_ataques >= 2:
+            if self.mover:
+                if self.local_a_mover_y-self.rect.centery != 0 and self.local_a_mover_x-self.rect.centerx < 200:
+                    if self.local_a_mover_y > self.rect.centery:
+                        self.rect.y += self.speed
+                        self.sheet.action = 2
+                    else:
+                        self.rect.y -= self.speed
+                        self.sheet.action = 0
+                else:
+                    if self.local_a_mover_x > self.rect.centerx:
+                        self.rect.x += self.speed
+                        self.sheet.action = 3
+                    else:
+                        self.rect.x -= self.speed
+                        self.sheet.action = 1
+
+        if self.ataque:
+            if self.pulando:
+                if self.player_rect.centery-self.rect.centery != 0 and self.player_rect.centerx-self.rect.centerx < 200:
+                    if self.player_rect.centery > self.rect.centery:
+                        self.sheet.action = 20
+                    else:
+                        self.sheet.action = 18
+                else:
+                    if self.player_rect.centerx > self.rect.centerx:
+                        self.sheet.action = 21
+                    else:
+                        self.sheet.action = 19
+                if self.pulo_dist_restante > self.pulo_speed:
+                    desloc = self.direction * self.pulo_speed
+                    self.rect.centerx += desloc.x
+                    self.rect.centery += desloc.y
+                    self.pulo_dist_restante -= self.pulo_speed
+                else:
+                    self.rect.center = self.pos_alvo
+                    self.pulando = False
+                    self.ataque = False
+                    self.colisao_pulo()
+
+        if self.contagem_ataques >= 2:
+                self.mover = False
+                self.ataque = True
+                self.atacar()
+                self.contagem_ataques = 0
+
+        if self.frame_count % self.frame_change == 0:
+            self.sheet.update()
+    
+        if pygame.math.Vector2(self.rect.center).distance_to(self.local_a_mover) < self.speed:
+            self.contagem_ataques += 1
+            print(f"[DEBUG] o contador de ataques é {self.contagem_ataques}")
+            self.gerar_local_a_mover()
+
+        if self.ivuln == True:
+            self.contador_iframes += 1
+            if self.contador_iframes == self.iframes:
+                self.ivuln = False
+
+        for raio in self.raios:
+            if not raio.active:
+                self.raios.remove(raio)
+
+    def draw_raios(self, screen, camera):
+        for raio in self.raios:
+            if raio.active:
+                screen.blit(raio.image, (raio.rect.x - camera.left, raio.rect.y - camera.top))
+
+    def remover_todos_raios(self):
+        for raio in self.raios:
+            self.raios.remove(raio)
+
+    def atacar(self):
+        print("[DEBUG] Boss tentou atacar")
+        if self.ataque and not self.pulando:
+            self.pulo(self.player_rect)
+            print("[DEBUG] Ataque executado")
+
+    def get_hit(self, dano):
+        if self.ivuln == False:
+            self.contador_iframes = 0
+            self.HP -= dano
+            self.ivuln = True
+
+    def colisao_pulo(self):
+        self.range_pulo = self.rect.inflate(self.rect.width, self.rect.height)
+        print(f"[DEBUG] Chamou e o contador de ataques é {self.contagem_ataques}")
+        if self.player_rect.colliderect(self.range_pulo):
+            self.player.get_hit(5)
+            print('[DEBUG] Colidiu')
+        self.mover = True
+        self.gerar_local_a_mover()
+        print('Gerou local')

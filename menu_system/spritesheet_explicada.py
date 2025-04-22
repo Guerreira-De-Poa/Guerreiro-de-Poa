@@ -19,6 +19,7 @@ class SpriteSheet:
         self.lista_acoes = lista_acoes
         self.action = 0
         self.cells = []
+        self.largura_sprite = largura_sprite
         
         # Define a cor de transparência se fornecida
         if color_key:
@@ -53,9 +54,18 @@ class SpriteSheet:
             self.tile_rect = self.cells[self.action][1]
         self.index += 1  # Avança para o próximo quadro
     
-    def draw(self, surface, x, y):
+    def draw(self, surface, x, y, scale=1):
         """ Desenha o sprite atual na posição especificada. """
         rect = pygame.Rect(self.tile_rect)  # Cria um retângulo baseado no quadro atual
+        tile_image = self.sheet.subsurface(rect)
+
+        if scale != 1:
+            novo_tam = (int(rect.width*scale), int(rect.height*scale))
+            tile_image = pygame.transform.scale(tile_image, novo_tam)
+            draw_rect = tile_image.get_rect(center=(x, y))
+        else:
+            draw_rect = pygame.Rect(x, y, rect.width, rect.height)
         #rect.center = (x, y)  # Define o centro do retângulo na posição desejada
-        rect.topleft = (x, y)
-        surface.blit(self.sheet, rect, self.tile_rect)  # Desenha o sprite na tela
+        # rect.topleft = (x, y)
+        # surface.blit(self.sheet, rect, self.tile_rect)  # Desenha o sprite na tela
+        surface.blit(tile_image, draw_rect)
