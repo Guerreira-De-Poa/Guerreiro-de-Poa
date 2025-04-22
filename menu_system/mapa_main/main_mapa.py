@@ -436,6 +436,35 @@ def inicio():
 
     contador_melee = 0
 
+    def salvar_game():
+        itens = []
+
+        for item in inventario1.items:
+            item_ = [item.tipo,item.nome,item.atributos,item.equipado]
+            itens.append(item_)
+
+        Dicionario_para_save = {
+            
+            'atributos':[
+                player.dano,
+                player.defesa,
+                player.MAX_HP,
+                player.HP,
+                player.max_stamina,
+                player.velocidade_corrida,
+            ],
+
+            'itens': itens,
+
+            'menu_valores': menu.valores,
+
+            'menu_atributos': menu.atributos,
+
+        }
+            # Salvar
+        with open("save.json", "w") as f:
+            json.dump(Dicionario_para_save, f, indent=4)
+
     while running:
         menu.update()
         player.atualizar_stamina()
@@ -487,35 +516,6 @@ def inicio():
                                 dragging_item = item
                                 dragging_from = "inventory2"
             
-
-        #print(inventario1.pressed_counter)
-
-        if not player.atacando_melee:
-            if click:
-                click_hold +=1
-                player.atacando = True
-                player.hold_arrow(mouse_pos,camera)
-                player.atacando_melee = False
-            elif click_mouse_2:
-                player.atacando_melee = True
-                player.hold_arrow(mouse_pos,camera)
-            elif click_hold > 30:
-                player.shoot(mouse_pos)
-                click_hold = 0
-                player.atacando = False
-                player.atacando_melee = False
-        else:
-            contador_melee += 1
-            if contador_melee != 7*7:
-                player.atacando_melee = True
-            else:
-                contador_melee = 0
-                player.sheet_sec.index = 0
-                if not click_mouse_2:
-                    player.atacando_melee = False
-                else:
-                    player.atacando_melee = True
-                    player.hold_arrow(mouse_pos,camera)
 
         missao_1 = npc1.dialogo.missao_ativada
         missao_2 = npc0.dialogo.missao_ativada
@@ -634,6 +634,7 @@ def inicio():
         for event in pygame.event.get():
             
             if event.type == pygame.QUIT:
+                salvar_game()
                 pygame.quit()
                 sys.exit()
 
@@ -978,6 +979,10 @@ def inicio():
                 player.atacando = False
                 player.atacando_melee = False
         else:
+            if contador_melee == 0:
+                cooldown_som_balançar_espada = pygame.time.get_ticks()
+                primeiro_ataque_espada = 0
+
             contador_melee += 1
 
             tempo_atual = pygame.time.get_ticks()
@@ -1003,6 +1008,37 @@ def inicio():
                 else:
                     player.atacando_melee = True
                     player.hold_arrow(mouse_pos,camera)
+
+        #print(primeiro_ataque_espada,player.atacando_melee)
+        print(contador_melee)
+        #print(player.sheet_sec.index)
+
+        # if not player.atacando_melee:
+        #     if click:
+        #         click_hold +=1
+        #         player.atacando = True
+        #         player.hold_arrow(mouse_pos,camera)
+        #         player.atacando_melee = False
+        #     elif click_mouse_2:
+        #         player.atacando_melee = True
+        #         player.hold_arrow(mouse_pos,camera)
+        #     elif click_hold > 30:
+        #         player.shoot(mouse_pos)
+        #         click_hold = 0
+        #         player.atacando = False
+        #         player.atacando_melee = False
+        # else:
+        #     contador_melee += 1
+        #     if contador_melee != 7*7:
+        #         player.atacando_melee = True
+        #     else:
+        #         contador_melee = 0
+        #         player.sheet_sec.index = 0
+        #         if not click_mouse_2:
+        #             player.atacando_melee = False
+        #         else:
+        #             player.atacando_melee = True
+        #             player.hold_arrow(mouse_pos,camera)
         
         # Renderização
         screen.fill((0, 0, 0))  # Fundo preto
@@ -1111,7 +1147,6 @@ def inicio():
             npc.dialogo.coisa()
 
         pygame.display.flip()
-
 
     itens = []
 
