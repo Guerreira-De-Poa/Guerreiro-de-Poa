@@ -327,8 +327,11 @@ def inicio():
 
     interagir_bg = pygame.image.load("caixa_dialogo_pequena2.png")
 
-    omori = pygame.image.load('npc.png')
+    omori = pygame.image.load('npc_amarelo.png')
+    omori1 = pygame.image.load('npc_cinza.png')
+    omori2 = pygame.image.load('npc_vermelho1.png')
 
+    # DIALOGO NPC QUE APARECE DE PRIMEIRA
     texto = {
         'personagem':'Morador de Poá',
         'texto_1':['Ei você', 'Você parece um guerreiro formidável', 'Por favor nos ajude', 'Nossa vila está sendo invadida'],
@@ -336,12 +339,15 @@ def inicio():
         'texto_2':['Não se preocupe senhor', 'Eu irei ajuda-los']
         }
 
+    # DIALOGO NPC QUE APARECE DEPOIS QUE O JOGADOR AJUDA O NPC (PRIMEIRO)
     texto_1 = {
         'personagem':'Morador de Poá',
         'texto_1':['Obrigado por nos salvar', 'Fale com o carinha que mora logo ali','Ele viu onde o chefe dos invasores fica', 'Se você derrotar o chefe', 'Eles nunca irão nos invadir de novo' ],
         'personagem_1': "Guerreiro de Poá",
         'texto_2':['Não se preocupe senhor', 'Eu irei ajuda-los']
         }
+
+    # NPC ANTES DO LIGEIRO
 
     texto_2 = {
         'personagem':'Morador de Poá',
@@ -350,6 +356,7 @@ def inicio():
         'texto_2':['Me leve até lá']
         }
     
+    # NPC ANTES DO GABRIEL
     texto_3 = {
         'personagem':'Morador de Poá',
         'texto_1':['Muito obrigado por nos salvar!', 'Mas agora, é a sua hora de brilhar...', 'Gabriel está neste castelo', 'pronto para aniquilar Poá', 'Apenas você pode derrotá-lo', 'Boa sorte'],
@@ -360,10 +367,11 @@ def inicio():
     ########### 
     # de alguma forma, agora te que deixar o dicionario texto...
     ###########
-
-    npc0 = NPC(omori,screen,1248,545,texto_2, 2)
-    npc1 = NPC(omori,screen,2115, 2150,texto, 3)
-    npc2 = NPC(omori,screen,2110, 605,texto_3, 4)
+ 
+    # posição dos npcs
+    npc0 = NPC(omori1,screen,1151,845,texto_2, 2) # npc ligeiro
+    npc1 = NPC(omori,screen,1955, 2150,texto, 3) # npc inicio
+    npc2 = NPC(omori2,screen,1954, 744,texto_3, 4) # npc gabriel
 
     all_sprites.add(npc0,npc1)
     npcs = pygame.sprite.Group()
