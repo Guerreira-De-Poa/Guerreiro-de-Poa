@@ -66,7 +66,7 @@ def inicio():
         with open(map_path, 'r') as f:
             map_data = json.load(f)
     except Exception as e:
-        print(f"Erro ao carregar mapa: {e}")
+        # print(f"Erro ao carregar mapa: {e}")
         pygame.quit()
         sys.exit()
 
@@ -89,9 +89,9 @@ def inicio():
         def __init__(self, filename):
             try:
                 self.sheet = pygame.image.load(filename).convert_alpha()
-                print(f"Spritesheet {filename} carregada com sucesso!")
+                # print(f"Spritesheet {filename} carregada com sucesso!")
             except Exception as e:
-                print(f"Erro ao carregar spritesheet: {e}")
+                # print(f"Erro ao carregar spritesheet: {e}")
                 self.sheet = None
         
         def get_sprite(self, x, y, width, height):
@@ -169,7 +169,7 @@ def inicio():
 
     def process_map_for_rendering(map_data):
         tiles = []
-        layer_order = ['Background', 'Sand', 'Cliff', 'Rocks', 'Grass', 'detalhes', 'detalinhos', 'pedra_mar', 'casas', 'arvores']
+        layer_order = ['Background', 'Background-colisoes',  'Sand', 'Layer_18', 'Cliff', 'Rocks', 'Grass', 'Miscs (Copy)', 'placas', 'Buildings (Copy)', 'torres', 'Miscs', 'detalinhos', 'pedra_mar', 'casas', 'arvores']
         
         layer_dict = {layer_name: [] for layer_name in layer_order}
         
@@ -372,8 +372,8 @@ def inicio():
 
     #################
 
-    print(dialogo_group)
-    print(f"Total de tiles carregados: {len(map_tiles)}")
+    # print(dialogo_group)
+    # print(f"Total de tiles carregados: {len(map_tiles)}")
 
     #CONFIG INVENTARIO
 
@@ -503,7 +503,7 @@ def inicio():
             screen.fill((0, 0, 0))
             pygame.display.flip()
             pygame.time.delay(500)
-            print('ok')
+            # print('ok')
             ultimo_nivel() # AQUI É MELHOR
         if missao_2 == True:
             pygame.mixer.music.stop()
@@ -526,7 +526,7 @@ def inicio():
             screen.blit(fundo_loading, (0, 0))
             pygame.display.flip()
             pygame.time.delay(1500)
-            print('ok')
+            # print('ok')
             boss_fight() # AQUI É MELHOR
 
         if missao_1 == True and iterado_teste == 0:

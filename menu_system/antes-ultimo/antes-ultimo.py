@@ -2,7 +2,6 @@ import pygame
 import sys
 import json
 import os
-import random
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -12,11 +11,10 @@ from npcs import *
 from dialogo import *
 from inimigo_teste import *
 from inventario1 import Inventario
-from boss import *
+from boss import Boss1
 from bau import Bau
 from XP import XP
 from menu_status import Menu
-from raios import Raios
 
 pause = False
 
@@ -35,8 +33,8 @@ def inicio():
 
     # Obter caminhos dos arquivos
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    map_path = os.path.join(current_dir, 'map1.json')
-    spritesheet_path = os.path.join(current_dir, 'spritesheet1.png')
+    map_path = os.path.join(current_dir, 'map.json')
+    spritesheet_path = os.path.join(current_dir, 'spritesheet.png')
 
     # Carregar o arquivo JSON do mapa
     try:
@@ -98,7 +96,14 @@ def inicio():
         '30': (96, 48), '31': (112, 48), '32': (0, 64),
         '33': (16, 64), '34': (32, 64), '35': (48, 64),
         '36': (64, 64), '37': (80, 64), '38': (96, 64),
-        '39': (112, 64), '40': (0, 80),
+        '39': (112, 64), '40': (0, 80), '41': (16, 80),
+        '42': (32, 80), '43': (48, 80), '44': (64, 80),
+        '45': (80, 80), '46': (96, 80), '47': (112, 80),
+        '48': (0, 96), '49': (16, 96), '50': (32, 96),
+        '51': (48, 96), '52': (64, 96), '53': (80, 96),
+        '54': (96, 96), '55': (112, 96), '56': (0, 112),
+        '57': (16, 112), '58': (32, 112), '59': (48, 112),
+        '60': (64, 112),
     }
 
     def process_map_for_collision(map_data):
@@ -114,7 +119,7 @@ def inicio():
 
     def process_map_for_rendering(map_data):
         tiles = []
-        layer_order = ['Floor', 'Walls', 'Walls sides', 'Miscs', 'Doors', 'decoracoes']
+        layer_order = ['Floor', 'Walls', 'Walls sides', 'Miscs', 'Doors', 'colunas']
         
         layer_dict = {layer_name: [] for layer_name in layer_order}
         
@@ -146,18 +151,18 @@ def inicio():
     walls = process_map_for_collision(map_data)
     map_tiles = process_map_for_rendering(map_data)
     
-    lista_1 = [9 for i in range(4)]
-    lista_2 = [6 for i in range(4)]
-    lista_3 = [13 for i in range(10)]
-    lista_4 = [5 for j in range(4)]
-    lista_5 = [5 for k in range(14)]
+    lista_1 = [7 for i in range(4)]
+    lista_2 = [4 for i in range(4)]
+    lista_3 = [6 for i in range(8)]
+    lista_4 = [13 for j in range(4)]
+    lista_5 = [7 for k in range(14)]
 
     # Criar o jogador
     try:
         player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha(2).png')
         player_sprite_path2 = os.path.join(current_dir, '..', '..', 'sprites_ataque_espada.png')
         
-        player_sprite = SpriteSheet(player_sprite_path, 0, 512, 64, 64, 4, lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+        player_sprite = SpriteSheet(player_sprite_path, 0, 514, 64, 64, 4, lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
         player_sprite_ataques = SpriteSheet(player_sprite_path2, 8, 38, 128, 128, 12, [6,6,6,6], (255,255,255))
         
         player = Personagem(player_sprite, menu.atributos["ataque"], menu.atributos["defesa"], menu.atributos["vida"], 
@@ -172,16 +177,8 @@ def inicio():
     # Configuração da câmera
     camera = pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 
-    spritesheet_inimigo_arco2 = SpriteSheet('gabrielFase2.png', 0, 522, 64, 64, 4, lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    boss = Boss2(player.rect, player, 1220, 1000, True, spritesheet_inimigo_arco2, 30, 300, 200)
-
-    spritesheet_danger = SpriteSheet('thunderSpritesheet.png', 0, 0, 128, 256, 0, [5], (0, 0, 0), False)
-    spritesheet_raio = SpriteSheet('dangerAnimation.png', 0, 0, 32, 32, 0, [6], (0, 0, 0), False)
-    
-    raios = pygame.sprite.Group()
-
-    cooldown = 180
-    cooldown_timer = 0
+    spritesheet_inimigo_arco2 = SpriteSheet('boss_agua.png', 0, 522, 64, 64, 4, lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    boss = Boss1(player.rect, player, 1220, 1000, True, spritesheet_inimigo_arco2, 30, 300, 200)
 
     inimigos = pygame.sprite.Group()
     player_group = pygame.sprite.Group()
@@ -346,15 +343,6 @@ def inicio():
                 player.speed = velocidade_anterior
                 dash = 0
 
-        cooldown_timer += 1
-        if cooldown_timer >= cooldown:
-            for _ in range(5):
-                x = random.randint(100, 900)
-                y = random.randint(200, 1000)
-                novo_raio = Raios(spritesheet_danger, spritesheet_raio, (x, y), scale=2)
-                raios.add(novo_raio)
-            cooldown_timer = 0
-
         player_hits = pygame.sprite.groupcollide(player.balas, inimigos, False, False)
         
         for inimigo in inimigos:
@@ -476,7 +464,7 @@ def inicio():
         player.draw_balas(screen, camera)
 
         for inimigo in inimigos:
-            inimigo.sheet.draw(screen, inimigo.rect.x - camera.left, inimigo.rect.y - camera.top, scale=1.3)
+            inimigo.sheet.draw(screen, inimigo.rect.x - camera.left, inimigo.rect.y - camera.top)
 
         for bau in baus:
             screen.blit(bau.image, (bau.rect.x - camera.left, bau.rect.y - camera.top))
@@ -489,13 +477,13 @@ def inicio():
 
         if boss.HP > 0:
             pygame.draw.rect(screen, (0, 0, 0), (200, 45, 400, 25))
-            pygame.draw.rect(screen, (255, 0, 0), (200, 45, 80 * (boss.HP/2), 25))
+            pygame.draw.rect(screen, (255, 0, 0), (200, 45, 80 * boss.HP, 25))
             fonte = pygame.font.Font('8-BIT WONDER.TTF', 30)
-            text_surface = fonte.render("O Professor", True, (255, 255, 255))
+            text_surface = fonte.render("O Ligeiro", True, (255, 255, 255))
             screen.blit(text_surface, (288, 68, 400, 100))
 
             fonte2 = pygame.font.Font('8-BIT WONDER.TTF', 30)
-            text_surface = fonte2.render("O Professor", True, (0, 0, 0))
+            text_surface = fonte2.render("O Ligeiro", True, (0, 0, 0))
             screen.blit(text_surface, (290, 70, 400, 100))
 
         if inventario1.inventory_open:
@@ -516,9 +504,6 @@ def inicio():
         player.draw_health(screen)
         player.draw_stamina(screen)
         xp.render()
-
-        raios.update()
-        raios.draw(screen)
 
         for npc in npcs:
             npc.dialogo.coisa()

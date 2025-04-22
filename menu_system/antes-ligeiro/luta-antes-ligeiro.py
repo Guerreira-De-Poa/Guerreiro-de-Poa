@@ -2,31 +2,37 @@ import pygame
 import sys
 import json
 import os
-import random
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from spritesheet_explicada import SpriteSheet
 from sprite_teste_v2 import Personagem
+
 from npcs import * 
 from dialogo import *
 from inimigo_teste import *
 from inventario1 import Inventario
-from boss import *
+from boss import Boss1
 from bau import Bau
+
 from XP import XP
 from menu_status import Menu
-from raios import Raios
 
 pause = False
+pygame.mixer.music.stop()
+
 
 def inicio():
-    boss_parado = False
+    pygame.mixer.music.load("musicas/In the Hall of the Mountain King.mp3")
+    pygame.mixer.music.play(-1)  # -1 significa que a música vai tocar em loop
+    pygame.mixer.music.set_volume(0.5)  # 50% do volume máximo
+        
+    boss_parado=False
     global pause
-    
     # Inicialização do Pygame
     pygame.init()
 
+    # Configurações da tela
     # Configurações da tela
     SCREEN_WIDTH = 1200
     SCREEN_HEIGHT = 800
@@ -35,8 +41,8 @@ def inicio():
 
     # Obter caminhos dos arquivos
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    map_path = os.path.join(current_dir, 'map1.json')
-    spritesheet_path = os.path.join(current_dir, 'spritesheet1.png')
+    map_path = os.path.join(current_dir, 'map.json')
+    spritesheet_path = os.path.join(current_dir, 'spritesheet.png')  # Nome correto da sua spritesheet
 
     # Carregar o arquivo JSON do mapa
     try:
@@ -47,15 +53,12 @@ def inicio():
         pygame.quit()
         sys.exit()
 
-    # Configurações do mapa (tamanho final desejado)
-    TILE_SIZE = 64  # Tamanho final dos tiles na tela
-    ORIGINAL_TILE_SIZE = 16  # Tamanho original na spritesheet
-    SCALE_FACTOR = TILE_SIZE // ORIGINAL_TILE_SIZE
-    
+    # Configurações do mapa
+    TILE_SIZE = map_data['tileSize']
     MAP_WIDTH = map_data['mapWidth']
     MAP_HEIGHT = map_data['mapHeight']
 
-    # Classe para carregar a spritesheet do mapa (corrigida)
+    # Classe para carregar a spritesheet do mapa
     class MapSpriteSheet:
         def __init__(self, filename):
             try:
@@ -67,11 +70,9 @@ def inicio():
         
         def get_sprite(self, x, y, width, height):
             if self.sheet:
-                # Pegar o tile no tamanho original (16x16)
-                sprite = pygame.Surface((ORIGINAL_TILE_SIZE, ORIGINAL_TILE_SIZE), pygame.SRCALPHA)
-                sprite.blit(self.sheet, (0, 0), (x, y, ORIGINAL_TILE_SIZE, ORIGINAL_TILE_SIZE))
-                # Escalar para o tamanho desejado (64x64)
-                return pygame.transform.scale(sprite, (TILE_SIZE, TILE_SIZE))
+                sprite = pygame.Surface((width, height), pygame.SRCALPHA)
+                sprite.blit(self.sheet, (0, 0), (x, y, width, height))
+                return sprite
             return None
 
     # Carregar a spritesheet do mapa
@@ -80,25 +81,29 @@ def inicio():
         pygame.quit()
         sys.exit()
 
+
     xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
     menu = Menu(5, 5, 5, 5, 5, 6.25, 0.0, 10, 6.25, 5.0)
 
-    # Dicionário de mapeamento de tiles (coordenadas originais 16x16)
+    # Dicionário de mapeamento de tiles
     TILE_MAPPING = {
-        '0': (0, 0), '1': (16, 0), '2': (32, 0),
-        '3': (48, 0), '4': (64, 0), '5': (80, 0),
-        '6': (96, 0), '7': (112, 0), '8': (0, 16),
-        '9': (16, 16), '10': (32, 16), '11': (48, 16),
-        '12': (64, 16), '13': (80, 16), '14': (96, 16),
-        '15': (112, 16), '16': (0, 32), '17': (16, 32),
-        '18': (32, 32), '19': (48, 32), '20': (64, 32),
-        '21': (80, 32), '22': (96, 32), '23': (112, 32),
-        '24': (0, 48), '25': (16, 48), '26': (32, 48),
-        '27': (48, 48), '28': (64, 48), '29': (80, 48),
-        '30': (96, 48), '31': (112, 48), '32': (0, 64),
-        '33': (16, 64), '34': (32, 64), '35': (48, 64),
-        '36': (64, 64), '37': (80, 64), '38': (96, 64),
-        '39': (112, 64), '40': (0, 80),
+    '0': (0, 0), '1': (64, 0), '2': (128, 0),
+    '3': (192, 0), '4': (256, 0), '5': (320, 0),
+    '6': (384, 0), '7': (448, 0), '8': (0, 64),
+    '9': (64, 64), '10': (128, 64), '11': (192, 64),
+    '12': (256, 64), '13': (320, 64), '14': (384, 64),
+    '15': (448, 64), '16': (0, 128), '17': (64, 128),
+    '18': (128, 128), '19': (192, 128), '20': (256, 128),
+    '21': (320, 128), '22': (384, 128), '23': (448, 128),
+    '24': (0, 192), '25': (64, 192), '26': (128, 192),
+    '27': (192, 192), '28': (256, 192), '29': (320, 192),
+    '30': (384, 192), '31': (448, 192), '32': (0, 256),
+    '33': (64, 256), '34': (128, 256), '35': (192, 256),
+    '36': (256, 256), '37': (320, 256), '38': (384, 256),
+    '39': (448, 256), '40': (0, 320), '41': (64, 320),
+    '42': (128, 320), '43': (192, 320), '44': (256, 320),
+    '45': (320, 320), '46': (384, 320), '47': (448, 320),
+    '48': (0, 384), '49': (64, 384), '50': (128, 384),
     }
 
     def process_map_for_collision(map_data):
@@ -106,7 +111,6 @@ def inicio():
         for layer in map_data['layers']:
             if layer['collider']:
                 for tile in layer['tiles']:
-                    # Usar TILE_SIZE (64) para colisões
                     x = int(tile['x']) * TILE_SIZE
                     y = int(tile['y']) * TILE_SIZE
                     walls.append(pygame.Rect(x, y, TILE_SIZE, TILE_SIZE))
@@ -114,7 +118,7 @@ def inicio():
 
     def process_map_for_rendering(map_data):
         tiles = []
-        layer_order = ['Floor', 'Walls', 'Walls sides', 'Miscs', 'Doors', 'decoracoes']
+        layer_order = ['Background', 'colisao-agua', 'Sand', 'Rocks', 'rochas', 'Grass', 'Stairs', 'Miscs', 'Cliff', 'areia', 'placas']
         
         layer_dict = {layer_name: [] for layer_name in layer_order}
         
@@ -125,16 +129,14 @@ def inicio():
             
             for tile in layer['tiles']:
                 tile_id = str(tile['id'])
-                # Usar coordenadas originais (16) para posicionamento
-                x = int(tile['x']) * ORIGINAL_TILE_SIZE
-                y = int(tile['y']) * ORIGINAL_TILE_SIZE
+                x = int(tile['x']) * TILE_SIZE
+                y = int(tile['y']) * TILE_SIZE
                 
                 if tile_id in TILE_MAPPING and map_spritesheet.sheet:
                     sprite_x, sprite_y = TILE_MAPPING[tile_id]
-                    image = map_spritesheet.get_sprite(sprite_x, sprite_y, ORIGINAL_TILE_SIZE, ORIGINAL_TILE_SIZE)
+                    image = map_spritesheet.get_sprite(sprite_x, sprite_y, TILE_SIZE, TILE_SIZE)
                     if image:
-                        # Multiplicar por SCALE_FACTOR para posicionar corretamente
-                        layer_dict[layer_name].append((x * SCALE_FACTOR, y * SCALE_FACTOR, image))
+                        layer_dict[layer_name].append((x, y, image))
         
         for layer_name in layer_order:
             if layer_name in layer_dict:
@@ -145,99 +147,138 @@ def inicio():
     # Processar o mapa
     walls = process_map_for_collision(map_data)
     map_tiles = process_map_for_rendering(map_data)
-    
-    lista_1 = [9 for i in range(4)]
-    lista_2 = [6 for i in range(4)]
-    lista_3 = [13 for i in range(10)]
-    lista_4 = [5 for j in range(4)]
-    lista_5 = [5 for k in range(14)]
+    lista_1 = [7 for i in range(4)]
+    lista_2 = [4 for i in range(4)]
+    lista_3 = [6 for i in range(8)]
+    lista_4 = [13 for j in range(4)]
+    lista_5 = [7 for k in range(14)]
 
     # Criar o jogador
     try:
         player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha(2).png')
         player_sprite_path2 = os.path.join(current_dir, '..', '..', 'sprites_ataque_espada.png')
         
-        player_sprite = SpriteSheet(player_sprite_path, 0, 512, 64, 64, 4, lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-        player_sprite_ataques = SpriteSheet(player_sprite_path2, 8, 38, 128, 128, 12, [6,6,6,6], (255,255,255))
-        
-        player = Personagem(player_sprite, menu.atributos["ataque"], menu.atributos["defesa"], menu.atributos["vida"], 
-                           menu.atributos["stamina"], menu.atributos["velocidade"], player_sprite_ataques)
+        player_sprite = SpriteSheet(player_sprite_path, 0, 514, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+        player_sprite_ataques = SpriteSheet(player_sprite_path2, 8, 38, 128, 128, 12,[6,6,6,6], (255,255,255))
+        #######
+        # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
+        player = Personagem(player_sprite, menu.atributos["ataque"], menu.atributos["defesa"], menu.atributos["vida"], menu.atributos["stamina"], menu.atributos["velocidade"],player_sprite_ataques)
     except Exception as e:
         print(f"Erro ao carregar sprite do jogador: {e}")
         pygame.quit()
         sys.exit()
 
-    player.rect.x, player.rect.y = 1056, 800
+    # Posicionar o jogador em uma posição válida no mapa
+
+    player.rect.x,player.rect.y = 1220,1300
 
     # Configuração da câmera
     camera = pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 
-    spritesheet_inimigo_arco2 = SpriteSheet('gabrielFase2.png', 0, 522, 64, 64, 4, lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    boss = Boss2(player.rect, player, 1220, 1000, True, spritesheet_inimigo_arco2, 30, 300, 200)
+    ###########################################
+    # PARTE DO FPS DO JOGO
 
-    spritesheet_danger = SpriteSheet('thunderSpritesheet.png', 0, 0, 128, 256, 0, [5], (0, 0, 0), False)
-    spritesheet_raio = SpriteSheet('dangerAnimation.png', 0, 0, 32, 32, 0, [6], (0, 0, 0), False)
-    
-    raios = pygame.sprite.Group()
+    # ESTAVA DANDO PROBLEMA EM RELAÇÃO AOS FPS (CONFLITO COM O SPRITE_TESTE_V2.PY)
+    # DEIXEI DE FORMA MAIS SIMPLIFICADO, MAS DAR UMA OLHADA FUTURAMENTE
 
-    cooldown = 180
-    cooldown_timer = 0
-
-    inimigos = pygame.sprite.Group()
-    player_group = pygame.sprite.Group()
-    all_sprites = pygame.sprite.Group()
-    all_sprites.add(player)
-    player_group.add(player)
-    all_sprites.add(boss)
-    inimigos.add(boss)
-
-    contador = 0
-    click_hold = 0
-    interagir_bg = pygame.image.load("caixa_dialogo_pequena.jpg")
-    npcs = pygame.sprite.Group()
-    baus = pygame.sprite.Group()
-    dialogo_group = []
-
-    # Configurações de inventário
-    WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
-    button_rect = pygame.Rect(WIDTH - 150, HEIGHT - 100, 140, 60)
-    dragging_item = None
-    dragging_from = None
-
-    inventario1 = Inventario((50, 50, 50), 50, ["Espada", "Poção", "Escudo"])
-    inventario2 = Inventario((0, 100, 0), 400)
-
-    contador_ataque_melee = 0
-    dash = 0
-    cooldown_dash = 0
-    velocidade_anterior = 0
-    contador_melee = 0
-
+    ###########################################
     # Game loop
     clock = pygame.time.Clock()
     running = True
 
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+
+    vida_imagem = pygame.image.load('love-always-wins(1).png')
+
+    spritesheet_inimigo_arco2 = SpriteSheet('boss_agua.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+
+    boss = Boss1(player.rect,player,1220,1000,True,spritesheet_inimigo_arco2, 30, 300, 200)
+
+
+    inimigos = pygame.sprite.Group()
+
+    player_group = pygame.sprite.Group()
+
+    # Grupo de sprites
+    all_sprites = pygame.sprite.Group()
+    all_sprites.add(player)
+    player_group.add(player)
+
+    all_sprites.add(boss)
+    inimigos.add(boss)
+
+    # boss2 = Boss1(player.rect,player,400,400,True,spritesheet_inimigo_arco)
+    # all_sprites.add(boss2)
+    # inimigos.add(boss2)
+
+    contador = 0
+
+    click_hold = 0
+
+    interagir_bg = pygame.image.load("caixa_dialogo_pequena.jpg")
+
+    npcs = pygame.sprite.Group()
+
+    baus = pygame.sprite.Group()
+
+    dialogo_group = []
+
+    #CONFIG INVENTARIO
+
+    WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
+
+    # Botão para abrir o inventário 2
+    button_rect = pygame.Rect(WIDTH - 150, HEIGHT - 100, 140, 60)
+
+    # Variáveis de controle de arrastar itens
+    dragging_item = None
+    dragging_from = None
+
+    # Criar as instâncias dos inventários
+    inventario1 = Inventario((50, 50, 50), 50, ["Espada", "Poção", "Escudo"])
+    inventario2 = Inventario((0, 100, 0), 400)
+
+    print(boss.local_a_mover)
+
+    contador_ataque_melee = 0
+
+    dash = 0
+    cooldown_dash = 0
+    velocidade_anterior = 0
+
+    contador_melee = 0
+
     while running:
+
+        #print("LEN = ",len([player.sheet.action]),"NUM = ",player.sheet.index % len(player.sheet.cells[player.sheet.action]))
+        # print(player.sheet.action)
+        # print(player.sheet.cells[0])
+        
         player.atualizar_stamina()
+
         bau_perto = False
 
         for bau in baus:
             if bau.interagir_rect.colliderect(player.rect):
                 bau_perto = bau
 
-        clock.tick(60)
+        clock.tick(60) # Delta time em segundos
+
         botao_ativo = False
+
         dialogo_a_abrir = False
 
-        screen.fill((100, 100, 100))
+        screen.fill((100, 100, 100))  # Preenche o fundo com uma cor sólida
 
-        dialogo_hitbox = False
+        dialogo_hitbox =  False
+
         for npc in npcs:
             if npc.dialogo_rect.colliderect(player.rect):
                 dialogo_hitbox = npc
 
         if dialogo_hitbox:
             dialogo_a_abrir = dialogo_hitbox.dialogo
+
 
         for bau in baus:
             if bau_perto == bau:
@@ -247,12 +288,17 @@ def inicio():
                     player.rect.x, player.rect.y = old_x, old_y
                 elif not bau.interagir_rect.colliderect(player.rect):
                     botao_ativo = False
-                    if bau_perto:
-                        bau_perto.inventario.inventory_open = False
+                    bau_perto.inventario.inventory_open = False
 
+        # Obter teclas pressionadas
         keys = pygame.key.get_pressed()
+        
+        # Resetar direção
         player.direction = None
         player.nova_direcao = False
+
+                # Adicione no início do código, com outras configurações
+        DEBUG_MODE = True  # Mude para False para desativar o deb
 
         if keys[pygame.K_w]:
             player.direction = 'UP'
@@ -263,7 +309,7 @@ def inicio():
         elif keys[pygame.K_d]:
             player.direction = 'RIGHT'
         else:
-            player.direction = None
+            player.direction = None  # Nenhuma direção se nenhuma tecla for pressionada
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -292,10 +338,12 @@ def inicio():
                     elif botao_ativo:
                         if bau_perto:
                             bau_perto.inventario.inventory_open = not bau_perto.inventario.inventory_open
-                elif event.key == pygame.K_z:
+                elif keys[pygame.K_z]:
                     DEBUG_MODE = not DEBUG_MODE
                 elif event.key == pygame.K_p:
                     pause = not pause
+
+                    #COMANDOS INVENTARIO
                 elif event.key in (pygame.K_LALT, pygame.K_RALT):
                     inventario1.inventory_open = not inventario1.inventory_open
                 elif event.key == pygame.K_ESCAPE:
@@ -320,6 +368,7 @@ def inicio():
                             dragging_from = "inventory2"
 
             if event.type == pygame.MOUSEBUTTONUP:
+                # Handle mouse button release
                 if bau_perto:
                     if dragging_item:
                         if bau_perto.inventario.inventory_open and bau_perto.inventario.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory1":
@@ -331,38 +380,33 @@ def inicio():
                         dragging_item = None
                         dragging_from = None
 
-        contador += 1
+        contador+=1
 
-        if cooldown_dash > 0:
-            cooldown_dash += 1
+        #print(player.dash)
+
+        if cooldown_dash>0:
+            cooldown_dash+=1
             if cooldown_dash == 90:
                 cooldown_dash = 0
 
-        if player.dash:
+        if player.dash == True:
+            print(cooldown_dash)
             player.speed = 15
-            dash += 1
+            dash+=1
             if dash == 10:
                 player.dash = False
                 player.speed = velocidade_anterior
-                dash = 0
+                dash=0
 
-        cooldown_timer += 1
-        if cooldown_timer >= cooldown:
-            for _ in range(5):
-                x = random.randint(100, 900)
-                y = random.randint(200, 1000)
-                novo_raio = Raios(spritesheet_danger, spritesheet_raio, (x, y), scale=2)
-                raios.add(novo_raio)
-            cooldown_timer = 0
-
-        player_hits = pygame.sprite.groupcollide(player.balas, inimigos, False, False)
+        player_hits =  pygame.sprite.groupcollide(player.balas,inimigos, False, False)
         
         for inimigo in inimigos:
             enemy_hits = pygame.sprite.groupcollide(inimigo.balas, player_group, False, False)
 
-            if len(enemy_hits) > 0:
+            if len(enemy_hits)>0:
                 a = (enemy_hits.keys())
                 inimigo.balas.remove(a)
+                
                 player.get_hit(2.5)
 
         if len(player_hits) > 0:
@@ -374,6 +418,11 @@ def inicio():
                 for item in inimigos:
                     if value[0] == item:
                         item.get_hit(1)
+            i = 0
+            for inimigo in inimigos:
+                i+=1
+
+        
 
         for inimigo in inimigos:
             xp.atualizar_xp(inimigo, 300)
@@ -383,56 +432,70 @@ def inicio():
                 inimigos.remove(inimigo)
                 all_sprites.remove(inimigo)
             if inimigo.rect.colliderect(player.range_melee) and player.atacando_melee:
-                if player.sheet_sec.tile_rect in [player.sheet_sec.cells[player.sheet_sec.action][-3], 
-                                                player.sheet_sec.cells[player.sheet_sec.action][-2], 
-                                                player.sheet_sec.cells[player.sheet_sec.action][-1]]:
+                if player.sheet_sec.tile_rect in [player.sheet_sec.cells[player.sheet_sec.action][-3],player.sheet_sec.cells[player.sheet_sec.action][-2],player.sheet_sec.cells[player.sheet_sec.action][-1]]:
+                    print(True)
                     inimigo.get_hit(1)
                     inimigo.rect.x, inimigo.rect.y = inimigo.old_pos_x, inimigo.old_pos_y
-
+            
+        # Salvar a posição anterior para colisão
         old_x, old_y = player.rect.x, player.rect.y
+        
+
+        # Atualizar jogador
+        #all_sprites.update(pause) ######## pause maroto
 
         if dialogo_a_abrir:
             all_sprites.update(dialogo_a_abrir.texto_open)
         else:
             all_sprites.update(False)
         
+        # Verificar colisões com retângulo customizado
         for wall in walls:
             if player.collision_rect.colliderect(wall):
+                # Colisão detectada, voltar para a posição anterior
                 player.rect.x, player.rect.y = old_x, old_y
                 break
 
         for npc in npcs:
             if player.collision_rect.colliderect(npc):
+                # Colisão detectada, voltar para a posição anterior
                 player.rect.x, player.rect.y = old_x, old_y
                 break
+
                 
+        # Atualizar câmera
         camera.center = player.rect.center
+        
+        # Limitar câmera aos limites do mapa
         camera.left = max(0, camera.left)
         camera.top = max(0, camera.top)
         camera.right = min(MAP_WIDTH * TILE_SIZE, camera.right)
         camera.bottom = min(MAP_HEIGHT * TILE_SIZE, camera.bottom)
 
         click = pygame.mouse.get_pressed()[0]
+
         click_mouse_2 = pygame.mouse.get_pressed()[2]
+
         mouse_errado = pygame.mouse.get_pos()
 
-        mouse_pos = [0, 0]
-        if camera.left > 0:
-            mouse_pos[0] = mouse_errado[0] + camera.left
-        else:
-            mouse_pos[0] = mouse_errado[0] - camera.left
+        mouse_pos =[0,0]
 
-        mouse_pos[1] = mouse_errado[1] + camera.top
+        if camera.left > 0:
+            mouse_pos[0] = mouse_errado[0]+camera.left
+        else:
+            mouse_pos[0] = mouse_errado[0]-camera.left
+
+        mouse_pos[1] = mouse_errado[1]+camera.top
     
         if not player.atacando_melee:
             if click:
-                click_hold += 1
+                click_hold +=1
                 player.atacando = True
-                player.hold_arrow(mouse_pos, camera)
+                player.hold_arrow(mouse_pos,camera)
                 player.atacando_melee = False
             elif click_mouse_2:
                 player.atacando_melee = True
-                player.hold_arrow(mouse_pos, camera)
+                player.hold_arrow(mouse_pos,camera)
             elif click_hold > 30:
                 player.shoot(mouse_pos)
                 click_hold = 0
@@ -449,20 +512,23 @@ def inicio():
                     player.atacando_melee = False
                 else:
                     player.atacando_melee = True
-                    player.hold_arrow(mouse_pos, camera)
-
-        # Renderização
-        screen.fill((0, 0, 0))
+                    player.hold_arrow(mouse_pos,camera)
         
-        # Desenhar tiles do mapa com offset da câmera
+        # Renderização
+        screen.fill((0, 0, 0))  # Fundo preto
+        
+        # Desenhar o mapa (apenas tiles visíveis)
         for x, y, image in map_tiles:
-            screen.blit(image, (x - camera.left, y - camera.top))
+            # Verificar se o tile está dentro da visão da câmera
+            if (camera.left - TILE_SIZE <= x < camera.right and 
+                camera.top - TILE_SIZE <= y < camera.bottom):
+                screen.blit(image, (x - camera.left, y - camera.top))
 
         for inimigo in inimigos:
             if inimigo.rect.colliderect(player.rect):
                 player.get_hit(30)
                 inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
-                player.rect.topleft = (old_x, old_y)
+                player.rect.topleft = (old_x,old_y)
                 inimigo.atacando_melee = True
                 inimigo.frame_change = 4
             else:
@@ -470,34 +536,61 @@ def inicio():
                 inimigo.frame_change = 8
 
         player.draw(screen, camera)
+        #print(player.rect.x)
 
         for inimigo in inimigos:
-            inimigo.draw_balas(screen, camera)
-        player.draw_balas(screen, camera)
+            inimigo.draw_balas(screen,camera)
+        player.draw_balas(screen,camera)
 
         for inimigo in inimigos:
-            inimigo.sheet.draw(screen, inimigo.rect.x - camera.left, inimigo.rect.y - camera.top, scale=1.3)
+            inimigo.sheet.draw(screen, inimigo.rect.x - camera.left, inimigo.rect.y - camera.top)
+
+        # for vida in range(player.HP):
+        #     screen.blit(vida_imagem,(18 + 32*vida,0))
 
         for bau in baus:
             screen.blit(bau.image, (bau.rect.x - camera.left, bau.rect.y - camera.top))
 
         if dialogo_a_abrir and dialogo_a_abrir.texto_open == False:
-            font = pygame.font.Font('8bitOperatorPlus8-Regular.ttf', 48)
-            render = font.render("Interagir", True, (0, 0, 0))
-            screen.blit(interagir_bg, (300, 450))
-            screen.blit(render, (325, 457))
+            
+            font = pygame.font.Font('8bitOperatorPlus8-Regular.ttf',48)
+            render = font.render("Interagir", True, (0,0,0))
+            screen.blit(interagir_bg,(300,450))
+            screen.blit(render,(325,457))
 
         if boss.HP > 0:
-            pygame.draw.rect(screen, (0, 0, 0), (200, 45, 400, 25))
-            pygame.draw.rect(screen, (255, 0, 0), (200, 45, 80 * (boss.HP/2), 25))
-            fonte = pygame.font.Font('8-BIT WONDER.TTF', 30)
-            text_surface = fonte.render("O Professor", True, (255, 255, 255))
-            screen.blit(text_surface, (288, 68, 400, 100))
+            pygame.draw.rect(screen,(0,0,0),(200,45,400,25))
+            pygame.draw.rect(screen,(255,0,0),(200,45,80*boss.HP,25))
+            fonte = pygame.font.Font('8-BIT WONDER.TTF',30)
+            text_surface = fonte.render("O Ligeiro", True, (255, 255, 255))
+            screen.blit(text_surface, (288,68,400,100))
 
-            fonte2 = pygame.font.Font('8-BIT WONDER.TTF', 30)
-            text_surface = fonte2.render("O Professor", True, (0, 0, 0))
-            screen.blit(text_surface, (290, 70, 400, 100))
+            fonte2 = pygame.font.Font('8-BIT WONDER.TTF',30)
+            text_surface = fonte2.render("O Ligeiro", True, (0, 0, 0))
+            screen.blit(text_surface, (290,70,400,100))
+        else:
+            ##############
 
+            # ADICIONAMOS A FUNÇÃO DE FIM DE JOGO, O BOSS MORREU
+
+            ##############
+
+            pygame.mixer.music.stop()
+            running = False
+            screen.fill((0, 0, 0))
+            # fonte = pygame.font.Font('8-BIT WONDER.TTF',30)
+            # text_surface = fonte.render("O Ligeiro", True, (255, 255, 255))
+            # screen.blit(text_surface, (288,68,400,100))
+
+            # fonte2 = pygame.font.Font('8-BIT WONDER.TTF',30)
+            # text_surface = fonte2.render("O Ligeiro", True, (0, 0, 0))
+            # screen.blit(text_surface, (290,70,400,100))
+            pygame.display.flip()
+            pygame.time.delay(500)
+            from mapa_main.main_mapa import inicio as mapa_principal # PARA CORRIGIR O PROBLEMA DE IMPORTAÇÃO CIRCULAR
+            mapa_principal()
+
+        # Desenhar os inventários e o botão
         if inventario1.inventory_open:
             inventario1.draw_inventory(screen)
         if bau_perto:
@@ -508,17 +601,14 @@ def inicio():
                 bau_perto.image = bau_perto.bau_fechado
 
         if botao_ativo:
-            inventario1.draw_button(screen)
+            inventario1.draw_button(screen)  # Agora o método `draw_button` é da classe Inventario1
 
         if dragging_item:
-            inventario1.draw_dragging_item(screen, dragging_item)
+            inventario1.draw_dragging_item(screen, dragging_item)  # Agora o método `draw_dragging_item` é da classe Inventario1
 
         player.draw_health(screen)
         player.draw_stamina(screen)
         xp.render()
-
-        raios.update()
-        raios.draw(screen)
 
         for npc in npcs:
             npc.dialogo.coisa()

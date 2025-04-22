@@ -335,7 +335,7 @@ class Personagem(pygame.sprite.Sprite):
             self.balas.remove(bala)
 
     def get_hit(self, dano):
-        print(self.HP)
+        # print(self.HP)
         if self.ivuln == False:
             self.contador_iframes = 0
             self.HP -= max(dano - self.defesa, 0)

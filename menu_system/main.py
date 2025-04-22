@@ -14,5 +14,6 @@ pygame.mixer.music.play(-1)  # -1 significa que a música vai tocar em loop
 pygame.mixer.music.set_volume(0.3)  # 50% do volume máximo
 
 while g.running:
+    
     g.curr_menu.display_menu()
     g.game_loop()

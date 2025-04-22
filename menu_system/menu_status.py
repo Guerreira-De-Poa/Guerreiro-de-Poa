@@ -30,6 +30,14 @@ class Menu():
             "velocidade": 6
         }
 
+        self.atributos_max = {
+            "ataque": 12,
+            "defesa": atr_defesa,
+            "vida": atr_vida,
+            "stamina": atr_stamina,
+            "velocidade": 12.0
+        }
+
         self.valores_copy = 0
 
         self.player = player
