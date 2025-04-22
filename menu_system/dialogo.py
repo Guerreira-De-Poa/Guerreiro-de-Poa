@@ -10,13 +10,13 @@ class Dialogo():
         #text = (font.render(texto.get('texto_1')[iter_texto], True, (100,100,100)))
         self.screen = screen
 
-        self.text_bg = pygame.image.load("caixa_dialogo.jpg")
+        self.text_bg = pygame.image.load("caixa_dialogo2.jpg")
 
         self.texto = texto
 
         self.iter_texto = 0
         self.texto_open = False
-        self.texto_pos_x = 100
+        self.texto_pos_x = 340
         self.frame_count = 0
         self.frase = ''
         self.letra_index = 0
@@ -50,6 +50,9 @@ class Dialogo():
             elif self.texto_index == self.qtd_textos-1:
                 self.texto_open = False
 
+                self.letra_index = 0
+                self.frase = ''
+
                 ##########
                 # Dai caso a missão seja true, começa, essa parte funciona!
                 ##########
@@ -69,7 +72,7 @@ class Dialogo():
         self.personagem_falando = self.todos_textos[self.texto_index][0]
 
         if self.texto_open == True:
-            self.screen.blit(self.text_bg, (0,400))
+            self.screen.blit(self.text_bg, (300,500))
 
             if self.letra_index < len(self.text) and self.frame_count % 2 == 0:
                 self.frase += self.text[self.letra_index]
@@ -78,7 +81,7 @@ class Dialogo():
             personagem_render = self.font_secundaria.render(self.personagem_falando, True, (0,0,0))
             frase_render = self.font.render(self.frase, True, (100,100,100))
 
-            self.screen.blit(frase_render, (self.texto_pos_x,480))
-            self.screen.blit(personagem_render,(self.texto_pos_x,450))
+            self.screen.blit(frase_render, (self.texto_pos_x,580))
+            self.screen.blit(personagem_render,(self.texto_pos_x,540))
 
 

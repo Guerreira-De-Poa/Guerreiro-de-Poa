@@ -2,6 +2,10 @@ import pygame
 import sys
 import json
 import os
+import cv2
+
+os.environ['SDL_VIDEO_CENTERED'] = '1'
+
 
 pasta_pai = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
@@ -23,22 +27,51 @@ from npcs import *
 from dialogo import *
 from inimigo_teste import *
 from inventario1 import Inventario
+from itens import Item
 from boss import Boss1
 from bau import Bau
 
 from XP import XP
 from menu_status import Menu
 
+from cutscenes.tocar_cutscene import tocar_cutscene_cv2
+
 pause = False
 
 pygame.mixer.music.stop()
+
+# Ler
+# with open('save.json', 'r') as f:
+#     estado = json.load(f)
+
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = 800
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 def inicio():
     ####
     # PRA MUSICA FUNCIONAR: ANTES DO LOOP, QUEBRE O SOM, COMEÇOU? PEGA A MUSICA
     pygame.mixer.music.load("musicas/The Four Seasons, Winter - Vivaldi.mp3")
     pygame.mixer.music.play(-1)  # -1 significa que a música vai tocar em loop
-    pygame.mixer.music.set_volume(0.2)  # 50% do volume máximo
+    pygame.mixer.music.set_volume(0.05)  # 50% do volume máximo
+
+    # Efeitos Sonoros
+    som_andar = pygame.mixer.Sound("musicas/Efeitos sonoros/Passos.mp3")
+    canal_andar = pygame.mixer.Channel(0)
+    teclas_movimento = {pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d}
+    teclas_pressionadas = set()
+    
+    som_balançar_espada = pygame.mixer.Sound("musicas/Efeitos sonoros/Balançar espada.mp3")
+    canal_balançar_espada = pygame.mixer.Channel(1)
+    cooldown_som_balançar_espada = 0
+    delay_som_balançar_espada = 400
+    primeiro_ataque_espada = 0
+
+    som_carregar_arco = pygame.mixer.Sound("musicas/Efeitos sonoros/carregando_arco_flecha.mp3")
+    canal_carregar_arco = pygame.mixer.Channel(2)
+
+    som_atirar_flecha = pygame.mixer.Sound("musicas/Efeitos sonoros/Arco e flecha.mp3")
+    canal_atirar_flecha = pygame.mixer.Channel(3)
     
     boss_parado=False
     global pause
@@ -70,8 +103,14 @@ def inicio():
     MAP_WIDTH = map_data['mapWidth']
     MAP_HEIGHT = map_data['mapHeight']
 
-    xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
-    menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0)
+    atributos = {
+            "ataque": 6.25,
+            "defesa": 5.0,
+            "vida_max": 20,
+            "vida_atual": 10,
+            "stamina": 6.25,
+            "velocidade": 10
+    }
 
     # Classe para carregar a spritesheet do mapa
     class MapSpriteSheet:
@@ -193,20 +232,22 @@ def inicio():
         pygame.quit()
         sys.exit()
 
-    # Criando as listas: lista_tamanhos e lista_acoes para que o código reladione cada tamanho para cada ação
-
-    # lista_tamanhhos: contém uma tupla por action (uma tupla para cada linha da spritesheet)
-    player_lista_tamanhos = [(64, 64) for _ in range(38)] + [(128,128) for _ in range(12)]
-    # lista_acoes: contém de indíces a qtde de linhas do spritesheet, e o valor de cada indíce é a qtde de frames da linha
-    player_lista_acoes = [9 for _ in range(8)] + [13 for _ in range(4)] + [8 for _ in range(26)] + [9 for _ in range(4)] + [6 for _ in range(8)]
-
-    lista_tamanhos = [(64, 64) for _ in range(38)] + [(128,128) for _ in range(12)]
-
     lista_1 = [7 for i in range(4)]
     lista_2 = [4 for i in range(4)]
+    lista_2_alt = [6 for i in range (4)]
     lista_3 = [6 for i in range(8)]
     lista_4 = [13 for j in range(4)]
     lista_5 = [7 for k in range(14)]
+
+    with open('save.json', 'r') as f:
+        try:
+            save_carregado = json.load(f)
+            print(save_carregado)
+        except:
+            save_carregado = False
+            print("ERRO AO CARREGAR SAVE")
+
+    #print(save_carregado)
 
     # Criar o jogador
     try:
@@ -216,12 +257,28 @@ def inicio():
         player_sprite = SpriteSheet(player_sprite_path, 0, 514, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
         player_sprite_ataques = SpriteSheet(player_sprite_path2, 18, 38, 128, 128, 12,[6,6,6,6], (255,255,255))
         #######
-        # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ 
-        player = Personagem(player_sprite, menu.atributos["ataque"], menu.atributos["defesa"], menu.atributos["vida"], menu.atributos["stamina"], menu.atributos["velocidade"],player_sprite_ataques)
+        # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ
+        if save_carregado:
+            print("SAVE CARREGADO")
+            player = Personagem(player_sprite, save_carregado['atributos'][0], save_carregado['atributos'][1], save_carregado['atributos'][2], save_carregado['atributos'][3], save_carregado['atributos'][4],save_carregado['atributos'][5],player_sprite_ataques)
+
+            itens_carregados = []
+            for item in save_carregado['itens']:
+                novo_item = Item(item[0],item[1],item[2],item[3],player)
+                itens_carregados.append(novo_item)
+            inventario1 = Inventario((50, 50, 50), 50, [itens_carregados[i] for i in range(len(itens_carregados))])
+            
+        else:
+            print("SAVE NAO CARREGADO")
+            player = Personagem(player_sprite, atributos["ataque"], atributos["defesa"], atributos["vida_max"],atributos['vida_atual'], atributos["stamina"], atributos["velocidade"],player_sprite_ataques)
+            inventario1 = Inventario((50, 50, 50), 50, [])
     except Exception as e:
         print(f"Erro ao carregar sprite do jogador: {e}")
         pygame.quit()
         sys.exit()
+
+    xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+    menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
 
     # Posicionar o jogador em uma posição válida no mapa
     player.rect.x = 33 * TILE_SIZE
@@ -230,13 +287,6 @@ def inicio():
     # Configuração da câmera
     camera = pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 
-    ###########################################
-    # PARTE DO FPS DO JOGO
-
-    # ESTAVA DANDO PROBLEMA EM RELAÇÃO AOS FPS (CONFLITO COM O SPRITE_TESTE_V2.PY)
-    # DEIXEI DE FORMA MAIS SIMPLIFICADO, MAS DAR UMA OLHADA FUTURAMENTE
-
-    ###########################################
     # Game loop
     clock = pygame.time.Clock()
     running = True
@@ -249,12 +299,12 @@ def inicio():
 
 
     spritesheet_inimigo_arco_png = pygame.image.load("inimigo_com_arco.png")
-    spritesheet_inimigo_arco = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco0 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco1 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco3 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco4 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco0 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco1 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco3 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco4 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
     inimigos = pygame.sprite.Group()
 
     player_group = pygame.sprite.Group()
@@ -275,7 +325,7 @@ def inicio():
 
     click_hold = 0
 
-    interagir_bg = pygame.image.load("caixa_dialogo_pequena.jpg")
+    interagir_bg = pygame.image.load("caixa_dialogo_pequena2.png")
 
     omori = pygame.image.load('npc_amarelo.png')
     omori1 = pygame.image.load('npc_cinza.png')
@@ -301,7 +351,7 @@ def inicio():
 
     texto_2 = {
         'personagem':'Morador de Poá',
-        'texto_1':['Você foi o guerreiro que nos salvou certo?', 'Muito obrigado', 'Eu posso te levar ao chefe deles', 'Isso fará com que eles desistam de nos invadir'],
+        'texto_1':['Você foi o guerreiro que nos salvou certo?', 'Muito obrigado', 'Eu posso te levar ao chefe deles', 'Isso fará com que eles desistam'],
         'personagem_1': "Guerreiro de Poá",
         'texto_2':['Me leve até lá']
         }
@@ -356,8 +406,6 @@ def inicio():
     dragging_item = None
     dragging_from = None
 
-    # Criar as instâncias dos inventários
-    inventario1 = Inventario((50, 50, 50), 50, ["Espada", "Poção", "Escudo"])
     inventario2 = Inventario((0, 100, 0), 400)
 
     baus = pygame.sprite.Group()
@@ -368,8 +416,77 @@ def inicio():
 
     contador_melee = 0
 
+    def salvar_game():
+        itens = []
+
+        for item in inventario1.items:
+            item_ = [item.tipo,item.nome,item.atributos,item.equipado]
+            itens.append(item_)
+
+        Dicionario_para_save = {
+            
+            'atributos':[
+                player.dano,
+                player.defesa,
+                player.MAX_HP,
+                player.HP,
+                player.max_stamina,
+                player.velocidade_corrida,
+            ],
+
+            'itens': itens,
+
+            'menu_valores': menu.valores,
+
+            'menu_atributos': menu.atributos,
+
+        }
+            # Salvar
+        with open("save.json", "w") as f:
+            json.dump(Dicionario_para_save, f, indent=4)
+
     while running:
+        menu.update()
         player.atualizar_stamina()
+
+        click = pygame.mouse.get_pressed()[0]
+
+        click_mouse_2 = pygame.mouse.get_pressed()[2]
+
+        mouse_errado = pygame.mouse.get_pos()
+
+        mouse_pos =[0,0]
+
+        if camera.left > 0:
+            mouse_pos[0] = mouse_errado[0]+camera.left
+        else:
+            mouse_pos[0] = mouse_errado[0]-camera.left
+
+        mouse_pos[1] = mouse_errado[1]+camera.top
+
+        if click or click_mouse_2:
+            #print("DMSALDML")
+            if inventario1.inventory_open or bau_perto:
+                if bau_perto:
+                    bau_perto.pressed_counter +=1
+                else:
+                    inventario1.pressed_counter +=1
+
+                if dragging_item == None:
+                    if inventario1.inventory_open and inventario1.pressed_counter >= 10:
+                        item = inventario1.get_item_at(pygame.mouse.get_pos())
+
+                        if item:
+                            dragging_item = item
+                            dragging_from = "inventory1"
+
+                    if bau_perto:
+                        if bau_perto.inventario.inventory_open and inventario1.pressed_counter >= 10:
+                            item = bau_perto.inventario.get_item_at(pygame.mouse.get_pos())
+                            if item:
+                                dragging_item = item
+                                dragging_from = "inventory2"
+            
 
         missao_1 = npc1.dialogo.missao_ativada
         missao_2 = npc0.dialogo.missao_ativada
@@ -385,7 +502,8 @@ def inicio():
             screen.fill((0, 0, 0))
             pygame.display.flip()
             pygame.time.delay(500)
-            # print('ok')
+            print('ok')
+            tocar_cutscene_cv2('cutscenes/cutscene_bossFinal.mp4', 'cutscenes/cutscene_bossFinal.mp3', screen)
             ultimo_nivel() # AQUI É MELHOR
         if missao_2 == True:
             pygame.mixer.music.stop()
@@ -404,11 +522,13 @@ def inicio():
             #
             ####################
             screen.fill((0, 0, 0))
-            fundo_loading = pygame.image.load('tela_loading_ligeiro.png')
+            fundo_loading = pygame.image.load('tela_loading_ligeiro.png').convert_alpha()
+            fundo_loading = pygame.transform.scale(fundo_loading, (1152, 648))
             screen.blit(fundo_loading, (0, 0))
             pygame.display.flip()
             pygame.time.delay(1500)
-            # print('ok')
+            print('ok')
+            tocar_cutscene_cv2('cutscenes/cutscene_boss1.mp4', 'cutscenes/cutscene_boss1.mp3', screen)
             boss_fight() # AQUI É MELHOR
 
         if missao_1 == True and iterado_teste == 0:
@@ -483,11 +603,23 @@ def inicio():
             player.direction = None  # Nenhuma direção se nenhuma tecla for pressionada
 
         for event in pygame.event.get():
+            
             if event.type == pygame.QUIT:
+                salvar_game()
                 pygame.quit()
                 sys.exit()
 
             if event.type == pygame.KEYDOWN:
+                # ativar efeitos sonoros
+                if event.key in teclas_movimento:
+                    teclas_pressionadas.add(event.key)
+                    
+                    if not canal_andar.get_busy():
+                        som_andar.set_volume(0.5)
+                        canal_andar.play(som_andar, loops=-1)
+
+                # if event.key in [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d] and event.key == pygame.K_LSHIFT:
+                
                 if event.key == pygame.K_w:
                     player.nova_direcao = True
                 elif event.key == pygame.K_s:
@@ -506,6 +638,7 @@ def inicio():
                     elif botao_ativo:
                         if bau_perto:
                             bau_perto.inventario.inventory_open = not bau_perto.inventario.inventory_open
+                            inventario1.inventory_open = True
                 elif keys[pygame.K_z]:
                     DEBUG_MODE = not DEBUG_MODE
                 elif event.key == pygame.K_p:
@@ -514,6 +647,29 @@ def inicio():
                     #COMANDOS INVENTARIO
                 elif event.key in (pygame.K_LALT, pygame.K_RALT):
                     inventario1.inventory_open = not inventario1.inventory_open
+                elif event.key == pygame.K_DOWN and inventario1.scroll_index < len(inventario1.items) - inventario1.visible_items:
+                    inventario1.item_index +=1
+                    inventario1.scroll_index += 1
+                elif event.key == pygame.K_UP and inventario1.scroll_index > 0:
+                    inventario1.item_index -=1
+                    if inventario1.item_index < inventario1.visible_items-1:
+                        print(inventario1.item_index,inventario1.visible_items + 2)
+                        inventario1.scroll_index -= 1
+
+                elif event.key == pygame.K_DOWN and inventario1.item_index < len(inventario1.items)-1:
+                    inventario1.item_index +=1
+                elif event.key == pygame.K_UP and inventario1.item_index > 0:
+                    inventario1.item_index -=1
+
+                elif event.key == pygame.K_RETURN:
+                    if inventario1.inventory_open:
+                        if inventario1.items[inventario1.item_index].tipo != 'consumivel':
+                            inventario1.items[inventario1.item_index].equipar()
+                        else:
+                            inventario1.items[inventario1.item_index].utilizar()
+                            inventario1.remove(inventario1.items[inventario1.item_index])
+
+
                 elif event.key == pygame.K_ESCAPE:
                     running = False
 
@@ -521,6 +677,12 @@ def inicio():
                     xp.show_menu = not xp.show_menu
                     if xp.show_menu:
                         menu.valores_copy = menu.valores.copy()
+            
+            elif event.type == pygame.KEYUP and not event.type == pygame.KEYDOWN:
+                if event.key in teclas_movimento:
+                    teclas_pressionadas.discard(event.key)
+                    if len(teclas_pressionadas) == 0:
+                        canal_andar.stop()
 
             if not player.arcoEquipado:
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -567,22 +729,25 @@ def inicio():
                             else:
                                 xp.pontos_disponiveis -= 1  # Gasta um ponto
 
-                                if atributo == "ataque":
-                                    menu.atributos[atributo] += 1.25
-                                    player.dano = menu.atributos[atributo]
-                                if atributo == "defesa":
-                                    menu.atributos[atributo] += 1
-                                    player.defesa = menu.atributos[atributo]
-                                if atributo == "vida":
-                                    menu.atributos[atributo] += 3
-                                    player.MAX_HP = menu.atributos[atributo]
-                                    player.HP += 3
-                                if atributo == "stamina":
-                                    menu.atributos[atributo] += 1.25
-                                    player.max_stamina = menu.atributos[atributo]
-                                if atributo == "velocidade":
-                                    menu.atributos[atributo] += 2
-                                    player.velocidade_corrida = menu.atributos[atributo]
+                            if atributo == "ataque":
+                                menu.atributos[atributo] += 1.25
+                                player.dano = menu.atributos[atributo]
+                            if atributo == "defesa":
+                                menu.atributos[atributo] += 1
+                                player.defesa = menu.atributos[atributo]
+                            if atributo == "vida":
+                                menu.atributos[atributo] += 3
+                                player.MAX_HP = menu.atributos[atributo]
+                                player.HP += 3
+                            if atributo == "stamina":
+                                menu.atributos[atributo] += 1.25
+                                player.max_stamina = menu.atributos[atributo]
+                            if atributo == "velocidade" and menu.valores["velocidade"] <= 6:
+                                menu.atributos[atributo] += 2
+                                player.velocidade_corrida = menu.atributos[atributo]
+                            # else:
+                                # menu.valores[atributo] = menu.valores_max[atributo]
+                                # xp.pontos_disponiveis = xp.pontos_disponiveis
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if button_rect.collidepoint(event.pos) and botao_ativo == True:
@@ -604,16 +769,48 @@ def inicio():
 
             if event.type == pygame.MOUSEBUTTONUP:
                 # Handle mouse button release
-                if bau_perto:
+
+                #print(inventario1.pressed_counter)
+                
+                if event.button == 1:
+                    if bau_perto:
+                        if dragging_item:
+                            if bau_perto.inventario.inventory_open and bau_perto.inventario.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory1":
+                                inventario1.remove(dragging_item)
+                                bau_perto.inventario.items.append(dragging_item)
+                            elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory2":
+                                bau_perto.inventario.remove(dragging_item)
+                                inventario1.items.append(dragging_item)
+                            elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory1":
+                                inventario1.items.append(dragging_item)
+                            dragging_item = None
+                            dragging_from = None
+                            if bau_perto.inventario.inventory_open and inventario1.pressed_counter <= 10:
+                                if inventario1.get_item_at(event.pos) == None:
+                                    inventario1.inventory_open = False
+                                else:
+                                    bau_perto.remove(inventario1.get_item_at(event.pos))
+
+                    elif inventario1.inventory_open and inventario1.pressed_counter < 10:
+                        if inventario1.get_item_at(event.pos) == None:
+                            inventario1.inventory_open = False
+                        elif inventario1.get_item_at(event.pos).tipo != 'consumivel':
+                            inventario1.get_item_at(event.pos).equipar()
+                        else:
+                            inventario1.get_item_at(event.pos).utilizar()
+                            inventario1.remove(inventario1.get_item_at(event.pos))
+
                     if dragging_item:
-                        if bau_perto.inventario.inventory_open and bau_perto.inventario.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory1":
-                            inventario1.items.remove(dragging_item)
-                            bau_perto.inventario.items.append(dragging_item)
-                        elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory2":
-                            bau_perto.inventario.items.remove(dragging_item)
-                            inventario1.items.append(dragging_item)
                         dragging_item = None
-                        dragging_from = None
+
+                elif event.button == 3:
+                    if inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos):
+                        inventario1.remove(inventario1.get_item_at(event.pos))
+                    dragging_item = None
+                #print("DNSKLANDKLSANDLKASNDKLSANKLDNSAKL")
+                inventario1.pressed_counter = 0
+
+        #print(inventario1.item_index)
 
         contador+=1
 
@@ -622,13 +819,6 @@ def inicio():
                 if inimigo.ataque:
                     inimigo.atacar()
                 pass
-        # if contador % 500 == 0:
-        #     for inimigo in inimigos:
-        #         if inimigo.mover:
-        #             inimigo.mover = False
-        #             boss_parado = True
-        #         elif inimigo.ataque:
-        #             inimigo.mover = True
 
         player_hits =  pygame.sprite.groupcollide(player.balas,inimigos, False, False)
         
@@ -649,9 +839,8 @@ def inicio():
             for value in b:
                 for item in inimigos:
                     if value[0] == item:
-                        item.HP -= player.dano
-                        # print(enemy0.HP)
-                        # print(enemy1.HP)
+                        item.get_hit(player.dano)
+                        print(item.HP)
             i = 0
             for inimigo in inimigos:
                 i+=1
@@ -665,8 +854,8 @@ def inicio():
                 all_sprites.remove(inimigo)
             if inimigo.rect.colliderect(player.range_melee) and player.atacando_melee:
                 if player.sheet_sec.tile_rect in [player.sheet_sec.cells[player.sheet_sec.action][-3],player.sheet_sec.cells[player.sheet_sec.action][-2],player.sheet_sec.cells[player.sheet_sec.action][-1]]:
-                    # print(True)
-                    inimigo.get_hit(1)
+                    #print(True)
+                    inimigo.get_hit(player.dano)
                     inimigo.rect.x, inimigo.rect.y = inimigo.old_pos_x, inimigo.old_pos_y
 
         # Salvar a posição anterior para colisão
@@ -676,10 +865,10 @@ def inicio():
         # Atualizar jogador
         #all_sprites.update(pause) ######## pause maroto
 
-        if dialogo_a_abrir:
-            all_sprites.update(dialogo_a_abrir.texto_open)
-        elif xp.show_menu:
+        if inventario1.inventory_open or xp.show_menu:
             all_sprites.update(True)
+        elif dialogo_a_abrir:
+            all_sprites.update(dialogo_a_abrir.texto_open)
         else:
             all_sprites.update(False)
         
@@ -721,31 +910,48 @@ def inicio():
 
         mouse_pos[1] = mouse_errado[1]+camera.top
 
-        # if click:
-        #     player.shoot(mouse_pos)
-        # else:
-        #     if click_hold > 0:
-        #         player.shoot(mouse_pos)
-        #         print(mouse_pos)
-        #     click_hold = 0
-        #     player.atacando = False
-
         if not player.atacando_melee:
             if click:
-                click_hold +=1
+                click_hold += 1
+                if not canal_carregar_arco.get_busy() and click_hold <= 30:
+                    som_carregar_arco.set_volume(1)
+                    canal_carregar_arco.play(som_carregar_arco, loops=0)
+                elif click_hold > 30:
+                    canal_carregar_arco.stop()
                 player.atacando = True
                 player.hold_arrow(mouse_pos,camera)
                 player.atacando_melee = False
             elif click_mouse_2:
                 player.atacando_melee = True
                 player.hold_arrow(mouse_pos,camera)
+                cooldown_som_balançar_espada = pygame.time.get_ticks()
             elif click_hold > 30:
                 player.shoot(mouse_pos)
+                if not canal_atirar_flecha.get_busy():
+                    som_atirar_flecha.set_volume(0.05)
+                    canal_atirar_flecha.play(som_atirar_flecha, loops=0)
                 click_hold = 0
                 player.atacando = False
                 player.atacando_melee = False
         else:
+            if contador_melee == 0:
+                cooldown_som_balançar_espada = pygame.time.get_ticks()
+                primeiro_ataque_espada = 0
+
             contador_melee += 1
+
+            tempo_atual = pygame.time.get_ticks()
+            if tempo_atual - cooldown_som_balançar_espada >= delay_som_balançar_espada and primeiro_ataque_espada == 0:
+                som_balançar_espada.set_volume(0.5)
+                canal_balançar_espada.play(som_balançar_espada, loops=0)
+                cooldown_som_balançar_espada = tempo_atual
+                primeiro_ataque_espada = 1
+
+            elif tempo_atual - cooldown_som_balançar_espada >= delay_som_balançar_espada + 335 and primeiro_ataque_espada == 1:
+                som_balançar_espada.set_volume(0.5)
+                canal_balançar_espada.play(som_balançar_espada, loops=0)
+                cooldown_som_balançar_espada = tempo_atual
+
             if contador_melee != 7*7:
                 player.atacando_melee = True
             else:
@@ -753,9 +959,12 @@ def inicio():
                 player.sheet_sec.index = 0
                 if not click_mouse_2:
                     player.atacando_melee = False
+                    primeiro_ataque_espada = 0
                 else:
                     player.atacando_melee = True
                     player.hold_arrow(mouse_pos,camera)
+
+        print(contador_melee)
         
         # Renderização
         screen.fill((0, 0, 0))  # Fundo preto
@@ -769,11 +978,12 @@ def inicio():
 
         for inimigo in inimigos:
             if inimigo.rect.colliderect(player.rect):
-                player.get_hit(inimigo.dano)
+                if inimigo.sheet.tile_rect in [inimigo.sheet.cells[inimigo.sheet.action][-1]]:
+                    player.get_hit(inimigo.dano)
+
                 inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
-                player.rect.topleft = (old_x,old_y)
                 inimigo.atacando_melee = True
-                inimigo.frame_change = 4
+                inimigo.frame_change = 10
             else:
                 inimigo.atacando_melee = False
                 inimigo.frame_change = 10
@@ -805,8 +1015,8 @@ def inicio():
             
             font = pygame.font.Font(None,48)
             render = font.render("Interagir", True, (0,0,0))
-            screen.blit(interagir_bg,(300,450))
-            screen.blit(render,(325,457))
+            screen.blit(interagir_bg,(494,600))
+            screen.blit(render,(525,627))
 
         # Desenhar os inventários e o botão
         if inventario1.inventory_open:
@@ -850,14 +1060,20 @@ def inicio():
 
         player.draw_health(screen)
         player.draw_stamina(screen)
-        xp.render()
+        if not dialogo_a_abrir:
+            xp.render()
+        else:
+            if dialogo_a_abrir.texto_open == False:
+                xp.render()
+
+
+        #print(menu.atributos,menu.valores)
 
         for npc in npcs:
             npc.dialogo.coisa()
 
         pygame.display.flip()
 
-    boss_fight()
-
 if __name__ == "__main__":
+    tocar_cutscene_cv2('cutscenes/cutscene_inicio.mp4', 'cutscenes/cutscene_inicio.mp3', screen)
     inicio()
