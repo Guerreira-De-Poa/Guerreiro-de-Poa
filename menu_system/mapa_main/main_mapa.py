@@ -456,15 +456,6 @@ def inicio():
 
         mouse_pos[1] = mouse_errado[1]+camera.top
 
-        # if click:
-        #     player.shoot(mouse_pos)
-        # else:
-        #     if click_hold > 0:
-        #         player.shoot(mouse_pos)
-        #         print(mouse_pos)
-        #     click_hold = 0
-        #     player.atacando = False
-
         if click or click_mouse_2:
             #print("DMSALDML")
             if inventario1.inventory_open or bau_perto:
@@ -820,13 +811,6 @@ def inicio():
                 if inimigo.ataque:
                     inimigo.atacar()
                 pass
-        # if contador % 500 == 0:
-        #     for inimigo in inimigos:
-        #         if inimigo.mover:
-        #             inimigo.mover = False
-        #             boss_parado = True
-        #         elif inimigo.ataque:
-        #             inimigo.mover = True
 
         player_hits =  pygame.sprite.groupcollide(player.balas,inimigos, False, False)
         
