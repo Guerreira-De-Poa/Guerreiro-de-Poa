@@ -11,7 +11,7 @@ from npcs import *
 from dialogo import *
 from inimigo_teste import *
 from inventario1 import Inventario
-from boss import Boss1
+from boss import *
 from bau import Bau
 from XP import XP
 from menu_status import Menu
@@ -144,18 +144,18 @@ def inicio():
     walls = process_map_for_collision(map_data)
     map_tiles = process_map_for_rendering(map_data)
     
-    lista_1 = [7 for i in range(4)]
-    lista_2 = [4 for i in range(4)]
-    lista_3 = [6 for i in range(8)]
-    lista_4 = [13 for j in range(4)]
-    lista_5 = [7 for k in range(14)]
+    lista_1 = [9 for i in range(4)]
+    lista_2 = [6 for i in range(4)]
+    lista_3 = [13 for i in range(10)]
+    lista_4 = [5 for j in range(4)]
+    lista_5 = [5 for k in range(14)]
 
     # Criar o jogador
     try:
         player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha(2).png')
         player_sprite_path2 = os.path.join(current_dir, '..', '..', 'sprites_ataque_espada.png')
         
-        player_sprite = SpriteSheet(player_sprite_path, 0, 514, 64, 64, 4, lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+        player_sprite = SpriteSheet(player_sprite_path, 0, 512, 64, 64, 4, lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
         player_sprite_ataques = SpriteSheet(player_sprite_path2, 8, 38, 128, 128, 12, [6,6,6,6], (255,255,255))
         
         player = Personagem(player_sprite, menu.atributos["ataque"], menu.atributos["defesa"], menu.atributos["vida"], 
@@ -170,8 +170,8 @@ def inicio():
     # Configuração da câmera
     camera = pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 
-    spritesheet_inimigo_arco2 = SpriteSheet('boss_agua.png', 0, 522, 64, 64, 4, lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    boss = Boss1(player.rect, player, 1220, 1000, True, spritesheet_inimigo_arco2, 30, 300, 200)
+    spritesheet_inimigo_arco2 = SpriteSheet('gabrielFase2.png', 0, 522, 64, 64, 4, lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    boss = Boss2(player.rect, player, 1220, 1000, True, spritesheet_inimigo_arco2, 30, 300, 200)
 
     inimigos = pygame.sprite.Group()
     player_group = pygame.sprite.Group()
@@ -472,11 +472,11 @@ def inicio():
             pygame.draw.rect(screen, (0, 0, 0), (200, 45, 400, 25))
             pygame.draw.rect(screen, (255, 0, 0), (200, 45, 80 * boss.HP, 25))
             fonte = pygame.font.Font('8-BIT WONDER.TTF', 30)
-            text_surface = fonte.render("O Ligeiro", True, (255, 255, 255))
+            text_surface = fonte.render("O Professor", True, (255, 255, 255))
             screen.blit(text_surface, (288, 68, 400, 100))
 
             fonte2 = pygame.font.Font('8-BIT WONDER.TTF', 30)
-            text_surface = fonte2.render("O Ligeiro", True, (0, 0, 0))
+            text_surface = fonte2.render("O Professor", True, (0, 0, 0))
             screen.blit(text_surface, (290, 70, 400, 100))
 
         if inventario1.inventory_open:
