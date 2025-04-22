@@ -277,7 +277,9 @@ def inicio():
 
     interagir_bg = pygame.image.load("caixa_dialogo_pequena.jpg")
 
-    omori = pygame.image.load('npc.png')
+    omori = pygame.image.load('npc_amarelo.png')
+    omori1 = pygame.image.load('npc_cinza.png')
+    omori2 = pygame.image.load('npc_vermelho1.png')
 
     # DIALOGO NPC QUE APARECE DE PRIMEIRA
     texto = {
@@ -315,11 +317,11 @@ def inicio():
     ########### 
     # de alguma forma, agora te que deixar o dicionario texto...
     ###########
-
+ 
     # posição dos npcs
-    npc0 = NPC(omori,screen,1151,845,texto_2, 2) # npc ligeiro
+    npc0 = NPC(omori1,screen,1151,845,texto_2, 2) # npc ligeiro
     npc1 = NPC(omori,screen,1955, 2150,texto, 3) # npc inicio
-    npc2 = NPC(omori,screen,1954, 744,texto_3, 4) # npc gabriel
+    npc2 = NPC(omori2,screen,1954, 744,texto_3, 4) # npc gabriel
 
     all_sprites.add(npc0,npc1)
     npcs = pygame.sprite.Group()
