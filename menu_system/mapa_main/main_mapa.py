@@ -2,6 +2,10 @@ import pygame
 import sys
 import json
 import os
+import cv2
+
+os.environ['SDL_VIDEO_CENTERED'] = '1'
+
 
 pasta_pai = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
@@ -30,6 +34,8 @@ from bau import Bau
 from XP import XP
 from menu_status import Menu
 
+from cutscenes.tocar_cutscene import tocar_cutscene_cv2
+
 pause = False
 
 pygame.mixer.music.stop()
@@ -37,6 +43,10 @@ pygame.mixer.music.stop()
 # Ler
 # with open('save.json', 'r') as f:
 #     estado = json.load(f)
+
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = 800
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 def inicio():
     ####
@@ -51,8 +61,8 @@ def inicio():
     pygame.init()
 
     # Configurações da tela
-    SCREEN_WIDTH = 1200
-    SCREEN_HEIGHT = 800
+    SCREEN_WIDTH = 800
+    SCREEN_HEIGHT = 600
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Jogo com Mapa e Colisões")
 
@@ -503,7 +513,8 @@ def inicio():
             screen.fill((0, 0, 0))
             pygame.display.flip()
             pygame.time.delay(500)
-            # print('ok')
+            print('ok')
+            tocar_cutscene_cv2('cutscenes/cutscene_bossFinal.mp4', 'cutscenes/cutscene_bossFinal.mp3', screen)
             ultimo_nivel() # AQUI É MELHOR
         if missao_2 == True:
             pygame.mixer.music.stop()
@@ -522,11 +533,13 @@ def inicio():
             #
             ####################
             screen.fill((0, 0, 0))
-            fundo_loading = pygame.image.load('tela_loading_ligeiro.png')
+            fundo_loading = pygame.image.load('tela_loading_ligeiro.png').convert_alpha()
+            fundo_loading = pygame.transform.scale(fundo_loading, (1152, 648))
             screen.blit(fundo_loading, (0, 0))
             pygame.display.flip()
             pygame.time.delay(1500)
-            # print('ok')
+            print('ok')
+            tocar_cutscene_cv2('cutscenes/cutscene_boss1.mp4', 'cutscenes/cutscene_boss1.mp3', screen)
             boss_fight() # AQUI É MELHOR
 
         if missao_1 == True and iterado_teste == 0:
@@ -710,23 +723,43 @@ def inicio():
                             else:
                                 xp.pontos_disponiveis -= 1  # Gasta um ponto
 
-                                if atributo == "ataque":
-                                    menu.atributos[atributo] += 1.25
-                                    player.dano = menu.atributos[atributo]
-                                if atributo == "defesa":
-                                    menu.atributos[atributo] += 1
-                                    player.defesa = menu.atributos[atributo]
-                                if atributo == "vida":
-                                    menu.atributos[atributo] += 3
-                                    player.MAX_HP = menu.atributos[atributo]
-                                    player.HP += 3
-                                if atributo == "stamina":
-                                    menu.atributos[atributo] += 1.25
-                                    player.max_stamina = menu.atributos[atributo]
-                                if atributo == "velocidade":
-                                    menu.atributos[atributo] += 2
-                                    player.velocidade_corrida = menu.atributos[atributo]
+                            if atributo == "ataque":
+                                menu.atributos[atributo] += 1.25
+                                player.dano = menu.atributos[atributo]
+                            if atributo == "defesa":
+                                menu.atributos[atributo] += 1
+                                player.defesa = menu.atributos[atributo]
+                            if atributo == "vida":
+                                menu.atributos[atributo] += 3
+                                player.MAX_HP = menu.atributos[atributo]
+                                player.HP += 3
+                            if atributo == "stamina":
+                                menu.atributos[atributo] += 1.25
+                                player.max_stamina = menu.atributos[atributo]
+                            if atributo == "velocidade" and menu.valores["velocidade"] <= 6:
+                                menu.atributos[atributo] += 2
+                                player.velocidade_corrida = menu.atributos[atributo]
+                            # else:
+                                # menu.valores[atributo] = menu.valores_max[atributo]
+                                # xp.pontos_disponiveis = xp.pontos_disponiveis
 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if button_rect.collidepoint(event.pos) and botao_ativo == True:
+                    if bau_perto:
+                        bau_perto.inventario.inventory_open = not bau_perto.inventario.inventory_open
+
+                if inventario1.inventory_open:
+                    item = inventario1.get_item_at(event.pos)
+                    if item:
+                        dragging_item = item
+                        dragging_from = "inventory1"
+
+                if bau_perto:
+                    if bau_perto.inventario.inventory_open:
+                        item = bau_perto.inventario.get_item_at(event.pos)
+                        if item:
+                            dragging_item = item
+                            dragging_from = "inventory2"
 
             if event.type == pygame.MOUSEBUTTONUP:
                 # Handle mouse button release
@@ -1001,4 +1034,5 @@ def inicio():
         json.dump(Dicionario_para_save, f, indent=4)
 
 if __name__ == "__main__":
+    tocar_cutscene_cv2('cutscenes/cutscene_inicio.mp4', 'cutscenes/cutscene_inicio.mp3', screen)
     inicio()
