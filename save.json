@@ -30,7 +30,7 @@
             {
                 "defesa": 3
             },
-            true
+            false
         ],
         [
             "armadura",
@@ -62,7 +62,7 @@
             {
                 "defesa": 10
             },
-            false
+            true
         ]
     ],
     "menu_valores": {
@@ -74,7 +74,7 @@
     },
     "menu_atributos": {
         "ataque": 16.25,
-        "defesa": 8.0,
+        "defesa": 15.0,
         "vida": 20,
         "stamina": 6.25,
         "velocidade": 10
