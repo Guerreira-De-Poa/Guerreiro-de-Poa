@@ -232,15 +232,6 @@ def inicio():
         pygame.quit()
         sys.exit()
 
-    # Criando as listas: lista_tamanhos e lista_acoes para que o código reladione cada tamanho para cada ação
-
-    # lista_tamanhhos: contém uma tupla por action (uma tupla para cada linha da spritesheet)
-    player_lista_tamanhos = [(64, 64) for _ in range(38)] + [(128,128) for _ in range(12)]
-    # lista_acoes: contém de indíces a qtde de linhas do spritesheet, e o valor de cada indíce é a qtde de frames da linha
-    player_lista_acoes = [9 for _ in range(8)] + [13 for _ in range(4)] + [8 for _ in range(26)] + [9 for _ in range(4)] + [6 for _ in range(8)]
-
-    lista_tamanhos = [(64, 64) for _ in range(38)] + [(128,128) for _ in range(12)]
-
     lista_1 = [7 for i in range(4)]
     lista_2 = [4 for i in range(4)]
     lista_2_alt = [6 for i in range (4)]
@@ -296,13 +287,6 @@ def inicio():
     # Configuração da câmera
     camera = pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 
-    ###########################################
-    # PARTE DO FPS DO JOGO
-
-    # ESTAVA DANDO PROBLEMA EM RELAÇÃO AOS FPS (CONFLITO COM O SPRITE_TESTE_V2.PY)
-    # DEIXEI DE FORMA MAIS SIMPLIFICADO, MAS DAR UMA OLHADA FUTURAMENTE
-
-    ###########################################
     # Game loop
     clock = pygame.time.Clock()
     running = True
@@ -413,18 +397,6 @@ def inicio():
     # Variáveis de controle de arrastar itens
     dragging_item = None
     dragging_from = None
-
-
-    # espada = Item('Arma', 'Espada', {'dano': 10}, False ,player)
-    # pocao = Item('Consumivel', 'Poção', {'HP': 10}, False ,player)
-    # escudo = Item('Armadura', 'Escudo', {'defesa': 3}, False ,player)
-    # capacete = Item('Armadura', 'Capacete', {'defesa': 1}, False ,player)
-    # adaga = Item('Arma', 'Adaga', {'dano': 3}, False ,player)
-    # botas = Item('Armadura', 'Botas', {'defesa': 1}, False ,player)
-    # armadura = Item('Armadura', 'Armadura', {'defesa': 10}, False, player)
-
-    # Criar as instâncias dos inventários
-    # inventario1 = Inventario((50, 50, 50), 50, [espada,pocao,escudo,capacete,adaga,botas,armadura])
 
     inventario2 = Inventario((0, 100, 0), 400)
 
@@ -946,15 +918,6 @@ def inicio():
 
         mouse_pos[1] = mouse_errado[1]+camera.top
 
-        # if click:
-        #     player.shoot(mouse_pos)
-        # else:
-        #     if click_hold > 0:
-        #         player.shoot(mouse_pos)
-        #         print(mouse_pos)
-        #     click_hold = 0
-        #     player.atacando = False
-
         if not player.atacando_melee:
             if click:
                 click_hold += 1
@@ -1009,36 +972,7 @@ def inicio():
                     player.atacando_melee = True
                     player.hold_arrow(mouse_pos,camera)
 
-        #print(primeiro_ataque_espada,player.atacando_melee)
         print(contador_melee)
-        #print(player.sheet_sec.index)
-
-        # if not player.atacando_melee:
-        #     if click:
-        #         click_hold +=1
-        #         player.atacando = True
-        #         player.hold_arrow(mouse_pos,camera)
-        #         player.atacando_melee = False
-        #     elif click_mouse_2:
-        #         player.atacando_melee = True
-        #         player.hold_arrow(mouse_pos,camera)
-        #     elif click_hold > 30:
-        #         player.shoot(mouse_pos)
-        #         click_hold = 0
-        #         player.atacando = False
-        #         player.atacando_melee = False
-        # else:
-        #     contador_melee += 1
-        #     if contador_melee != 7*7:
-        #         player.atacando_melee = True
-        #     else:
-        #         contador_melee = 0
-        #         player.sheet_sec.index = 0
-        #         if not click_mouse_2:
-        #             player.atacando_melee = False
-        #         else:
-        #             player.atacando_melee = True
-        #             player.hold_arrow(mouse_pos,camera)
         
         # Renderização
         screen.fill((0, 0, 0))  # Fundo preto
@@ -1147,34 +1081,6 @@ def inicio():
             npc.dialogo.coisa()
 
         pygame.display.flip()
-
-    itens = []
-
-    for item in inventario1.items:
-        item_ = [item.tipo,item.nome,item.atributos,item.equipado]
-        itens.append(item_)
-
-    Dicionario_para_save = {
-        
-        'atributos':[
-            player.dano,
-            player.defesa,
-            player.MAX_HP,
-            player.HP,
-            player.max_stamina,
-            player.velocidade_corrida,
-        ],
-
-        'itens': itens,
-
-        'menu_valores': menu.valores,
-
-        'menu_atributos': menu.atributos,
-
-    }
-        # Salvar
-    with open("save.json", "w") as f:
-        json.dump(Dicionario_para_save, f, indent=4)
 
 if __name__ == "__main__":
     tocar_cutscene_cv2('cutscenes/cutscene_inicio.mp4', 'cutscenes/cutscene_inicio.mp3', screen)
