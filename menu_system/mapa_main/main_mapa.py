@@ -865,10 +865,10 @@ def inicio():
         # Atualizar jogador
         #all_sprites.update(pause) ######## pause maroto
 
-        if dialogo_a_abrir:
-            all_sprites.update(dialogo_a_abrir.texto_open)
-        elif inventario1.inventory_open or xp.show_menu:
+        if inventario1.inventory_open or xp.show_menu:
             all_sprites.update(True)
+        elif dialogo_a_abrir:
+            all_sprites.update(dialogo_a_abrir.texto_open)
         else:
             all_sprites.update(False)
         

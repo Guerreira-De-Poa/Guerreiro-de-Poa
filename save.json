@@ -1,9 +1,9 @@
 {
     "atributos": [
-        6.25,
-        5.0,
+        16.25,
+        8.0,
         20,
-        20,
+        17.0,
         6.25,
         10
     ],
@@ -14,7 +14,7 @@
             {
                 "dano": 10
             },
-            false
+            true
         ],
         [
             "arma",
@@ -30,7 +30,7 @@
             {
                 "defesa": 3
             },
-            false
+            true
         ],
         [
             "armadura",
@@ -73,8 +73,8 @@
         "velocidade": 5
     },
     "menu_atributos": {
-        "ataque": 6.25,
-        "defesa": 5.0,
+        "ataque": 16.25,
+        "defesa": 8.0,
         "vida": 20,
         "stamina": 6.25,
         "velocidade": 10

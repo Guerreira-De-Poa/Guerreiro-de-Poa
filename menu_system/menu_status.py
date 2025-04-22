@@ -58,7 +58,7 @@ class Menu():
         self.botoes = {}
 
         for i, atributo in enumerate(self.valores.keys()):
-            x_menos, x_mais, x_texto, y, y_texto = 450, 500, 480, 252 + i * 30.9, 255 + i * 30.7
+            x_menos, x_mais, x_texto, y, y_texto = 500, 550, 480, 326 + i * 30.9, 325 + i * 30.7
             frames_menos = [self.botao_menos.subsurface((j * 25, 0, 20, 20)) for j in range(2)]
             frames_mais = [self.botao_mais.subsurface((j * 25, 0, 20, 20)) for j in range(2)]
 
@@ -93,7 +93,7 @@ class Menu():
 
         for i, key in enumerate(self.atributos.keys()):
             text_atributo = self.fonte.render(str(self.atributos[key]), True, (0,0,0))
-            tela.blit(text_atributo, (780, 255 + i * 30))
+            tela.blit(text_atributo, (780, 332 + i * 30))
 
     def resetar_botoes(self):
         for botoes in self.botoes.values():
