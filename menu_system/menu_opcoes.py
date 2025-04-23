@@ -34,6 +34,11 @@ ativar_controles_img = False
 
 clock = pygame.time.Clock()
 
+
+opcao_selecionada = 0
+pos_espadinha_y_final = pos_espadinha_y
+mudar_opcao_baixo = False
+mudar_opcao_cima = False
 # for x, y in pos_menus:
 #     retangulo_teclado = pygame.Rect(x, y, 1, 1)
 
@@ -100,65 +105,97 @@ while rodando:
                 pausado = not pausado  # Alterna o estado de pausa
                 print(pos_menus)
             
-            if evento.key == pygame.K_DOWN:                            
-                for x, y in pos_menus:
-                    retangulo_teclado = pygame.Rect(x, y, 1, 1)
+            if evento.key == pygame.K_DOWN and pausado:
+                if opcao_selecionada < len(pos_menus) - 1:
+                    opcao_selecionada += 1
+                    pos_espadinha_y_final += 80
+                    print(pos_espadinha_y_final)
+                    mudar_opcao_baixo = True
+            
+            elif evento.key == pygame.K_UP and pausado:
+                if opcao_selecionada > 0:
+                    opcao_selecionada -= 1
+                    pos_espadinha_y_final -= 80
+                    print(pos_espadinha_y_final)
+                    mudar_opcao_cima = True
+            
+            elif evento.key == pygame.K_SPACE and pausado:
+                if opcao_selecionada == 0:
+                    pausado = False
+                if opcao_selecionada == 1:
+                    som_ligado = not som_ligado
+                if opcao_selecionada == 2:
+                    ativar_controles_img = True
+                if opcao_selecionada == 3:
+                    rodando = False
 
         elif pausado and evento.type == pygame.MOUSEBUTTONDOWN:
             pos_mouse = pygame.mouse.get_pos()
             print(pos_mouse)
             mouse_rect = pygame.Rect(pos_mouse[0], pos_mouse[1], 1, 1)
-            if mouse_rect.colliderect(pos_menus[0]):
-                pausado = False
-            if mouse_rect.colliderect(pos_menus[1]):
-                som_ligado = not som_ligado
-            if mouse_rect.colliderect(pos_menus[2]):
-                ativar_controles_img = True
-            if mouse_rect.colliderect(pos_menus[3]):
-                rodando = False
 
 
     tela.fill(branco)  # limpa a tela
 
     if pausado:
+        if mudar_opcao_baixo:
+            pos_espadinha_y += 8
+            if pos_espadinha_y == pos_espadinha_y_final:
+                mudar_opcao_baixo = False
+        if mudar_opcao_cima:
+            pos_espadinha_y -= 8
+            if pos_espadinha_y == pos_espadinha_y_final:
+                mudar_opcao_cima = False
+            
         pos_mouse = pygame.mouse.get_pos()
         pos_mouse_rect = pygame.Rect(pos_mouse[0], pos_mouse[1], 1, 1)
         tela.blit(escurecedor, (0, 0))
 
-        if retangulo_teclado.collidedict(pos_menus[0]):
-            espadinha = pygame.image.load("menu_opcoes_imagens/espadinha_menu_opcoes.png")
-            tela.blit(espadinha, (pos_espadinha_x, pos_espadinha_y))
-            continuar = pygame.image.load("menu_opcoes_imagens/Continuar_selecionado.png")
-            tela.blit(continuar, (425, 288))
-        if retangulo_teclado.collidedict(pos_menus[1]):
-            tela.blit(espadinha, (325, 383))
-            audio = pygame.image.load("menu_opcoes_imagens/Audio_selecionado.png")
-            tela.blit(audio, (425, 368))
+
+        desenhar_menu()  # Exibe o menu de opções quando o jogo estiver pausado
+        menu_eventos()
+    espadinha = pygame.image.load("menu_opcoes_imagens/espadinha_menu_opcoes.png")  # Uma vez apenas
+
+    if pausado:
+        if mudar_opcao_baixo:
+            pos_espadinha_y += 8
+            if pos_espadinha_y == pos_espadinha_y_final:
+                mudar_opcao_baixo = False
+        if mudar_opcao_cima:
+            pos_espadinha_y -= 8
+            if pos_espadinha_y == pos_espadinha_y_final:
+                mudar_opcao_cima = False
+
+        pos_mouse = pygame.mouse.get_pos()
+        pos_mouse_rect = pygame.Rect(pos_mouse[0], pos_mouse[1], 1, 1)
+        tela.blit(escurecedor, (0, 0))
 
         desenhar_menu()  # Exibe o menu de opções quando o jogo estiver pausado
         menu_eventos()
 
+        # Verifica se o mouse está fora de qualquer menu
+        
+        if opcao_selecionada == 0:
+            tela.blit(espadinha, (pos_espadinha_x, pos_espadinha_y))
+            continuar = pygame.image.load("menu_opcoes_imagens/Continuar_selecionado.png")
+            tela.blit(continuar, (425, 288))
+        elif opcao_selecionada == 1:
+            tela.blit(espadinha, (pos_espadinha_x, pos_espadinha_y))
+            audio = pygame.image.load("menu_opcoes_imagens/Audio_selecionado.png")
+            tela.blit(audio, (425, 368))
+        elif opcao_selecionada == 2:
+            tela.blit(espadinha, (pos_espadinha_x, pos_espadinha_y))
+            opcao_controles = pygame.image.load("menu_opcoes_imagens/Controles_selecionado.png")
+            tela.blit(opcao_controles, (425, 448))
+        elif opcao_selecionada == 3:
+            tela.blit(espadinha, (pos_espadinha_x, pos_espadinha_y))
+            sair = pygame.image.load("menu_opcoes_imagens/Sair_selecionado.png")
+            tela.blit(sair, (425, 528))
 
         if ativar_controles_img == True:
             tela.blit(tamanho_img, (width // 2 - 425, height // 2 - 284))
             if mouse_rect.colliderect(retangulo_transparente):
                 ativar_controles_img = False
-        if pos_mouse_rect.colliderect(pos_menus[0]):
-            tela.blit(espadinha, (325, 303))
-            continuar = pygame.image.load("menu_opcoes_imagens/Continuar_selecionado.png")
-            tela.blit(continuar, (425, 288))
-        elif pos_mouse_rect.colliderect(pos_menus[1]):
-            tela.blit(espadinha, (325, 383))
-            audio = pygame.image.load("menu_opcoes_imagens/Audio_selecionado.png")
-            tela.blit(audio, (425, 368))
-        elif pos_mouse_rect.colliderect(pos_menus[2]):
-            tela.blit(espadinha, (325, 463))
-            opcao_controles = pygame.image.load("menu_opcoes_imagens/Controles_selecionado.png")
-            tela.blit(opcao_controles, (425, 448))
-        elif pos_mouse_rect.colliderect(pos_menus[3]):
-            tela.blit(espadinha, (325, 543))
-            sair = pygame.image.load("menu_opcoes_imagens/Sair_selecionado.png")
-            tela.blit(sair, (425, 528))
 
     else:
         if mostrar_quadrado:
