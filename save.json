@@ -3,7 +3,7 @@
         16.25,
         8.0,
         20,
-        17.0,
+        10.0,
         6.25,
         10
     ],
@@ -74,7 +74,7 @@
     },
     "menu_atributos": {
         "ataque": 16.25,
-        "defesa": 15.0,
+        "defesa": 8.0,
         "vida": 20,
         "stamina": 6.25,
         "velocidade": 10

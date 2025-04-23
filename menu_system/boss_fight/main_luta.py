@@ -430,7 +430,7 @@ def inicio():
                 a = (enemy_hits.keys())
                 inimigo.balas.remove(a)
                 
-                player.get_hit(2.5)
+                player.get_hit(1)
 
         if len(player_hits) > 0:
             a = (player_hits.keys())
@@ -458,7 +458,7 @@ def inicio():
                 if player.sheet_sec.tile_rect in [player.sheet_sec.cells[player.sheet_sec.action][-3],player.sheet_sec.cells[player.sheet_sec.action][-2],player.sheet_sec.cells[player.sheet_sec.action][-1]]:
                     print(True)
                     inimigo.get_hit(1)
-                    inimigo.rect.x, inimigo.rect.y = inimigo.old_pos_x, inimigo.old_pos_y
+                    #inimigo.rect.x, inimigo.rect.y = inimigo.old_pos_x, inimigo.old_pos_y
             
         # Salvar a posição anterior para colisão
         old_x, old_y = player.rect.x, player.rect.y
@@ -550,8 +550,9 @@ def inicio():
         for inimigo in inimigos:
             if inimigo.rect.colliderect(player.rect):
                 player.get_hit(30)
-                inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
-                player.rect.topleft = (old_x,old_y)
+                if not player.ivuln:
+                    inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
+                    player.rect.topleft = (old_x,old_y)
                 inimigo.atacando_melee = True
                 inimigo.frame_change = 4
             else:
@@ -582,25 +583,26 @@ def inicio():
             screen.blit(render,(325,457))
 
         if boss.HP > 0:
-            pygame.draw.rect(screen,(0,0,0),(200,45,400,25))
-            pygame.draw.rect(screen,(255,0,0),(200,45,80*boss.HP,25))
+            pygame.draw.rect(screen,(0,0,0),(280,45,700,25))
+            pygame.draw.rect(screen,(255,0,0),(280,45,140*boss.HP,25))
             fonte = pygame.font.Font('8-BIT WONDER.TTF',30)
             text_surface = fonte.render("O Ligeiro", True, (255, 255, 255))
-            screen.blit(text_surface, (288,68,400,100))
+            screen.blit(text_surface, (508,68,400,100))
 
             fonte2 = pygame.font.Font('8-BIT WONDER.TTF',30)
             text_surface = fonte2.render("O Ligeiro", True, (0, 0, 0))
-            screen.blit(text_surface, (290,70,400,100))
+            screen.blit(text_surface, (510,70,400,100))
         else:
+            pass
             ##############
 
             # ADICIONAMOS A FUNÇÃO DE FIM DE JOGO, O BOSS MORREU
 
             ##############
 
-            pygame.mixer.music.stop()
-            running = False
-            screen.fill((0, 0, 0))
+            # pygame.mixer.music.stop()
+            # running = False
+            # screen.fill((0, 0, 0))
             # fonte = pygame.font.Font('8-BIT WONDER.TTF',30)
             # text_surface = fonte.render("O Ligeiro", True, (255, 255, 255))
             # screen.blit(text_surface, (288,68,400,100))
@@ -608,10 +610,10 @@ def inicio():
             # fonte2 = pygame.font.Font('8-BIT WONDER.TTF',30)
             # text_surface = fonte2.render("O Ligeiro", True, (0, 0, 0))
             # screen.blit(text_surface, (290,70,400,100))
-            pygame.display.flip()
-            pygame.time.delay(500)
-            from mapa_main.main_mapa import inicio as mapa_principal # PARA CORRIGIR O PROBLEMA DE IMPORTAÇÃO CIRCULAR
-            mapa_principal()
+            # pygame.display.flip()
+            # pygame.time.delay(500)
+            # from mapa_main.main_mapa import inicio as mapa_principal # PARA CORRIGIR O PROBLEMA DE IMPORTAÇÃO CIRCULAR
+            # mapa_principal()
 
         # Desenhar os inventários e o botão
         if inventario1.inventory_open:
