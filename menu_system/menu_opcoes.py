@@ -18,8 +18,13 @@ rodando = True
 pausado = False  # Variável para controlar se o jogo está pausado ou não
 som_ligado = True  # Controle de som, por padrão está ligado
 
+pos_menus = []
+
+clock = pygame.time.Clock()
+
 # Função para desenhar o menu de opções
 def desenhar_menu():
+    pos_menus.clear()
     fonte = pygame.font.Font(None, 60)
     texto_paused = fonte.render("Jogo Pausado", True, preto)
     tela.blit(texto_paused, (width // 2 - texto_paused.get_width() // 2, height // 2 - 200))
@@ -29,7 +34,9 @@ def desenhar_menu():
     
     for i, opcao in enumerate(opcoes):
         texto = fonte.render(opcao, True, preto)
-        pygame.draw.rect(tela, cinza, (width // 2 - 200, height // 2 - 100 + i * 80, 400, 60), 0, 20)
+        pos_quadrados = (width // 2 - 200, height // 2 - 112 + i * 80, 400, 60)
+        retangulo_opcoes = pygame.draw.rect(tela, cinza, pos_quadrados, 0, 20)
+        pos_menus.append(retangulo_opcoes)
         tela.blit(texto, (width // 2 - texto.get_width() // 2, height // 2 - 100 + i * 80))
 
 # Função para lidar com as teclas do menu
@@ -50,11 +57,11 @@ def menu_eventos():
                 # Aqui podemos adicionar a navegação entre as opções
                 pass
             elif evento.key == pygame.K_RETURN:
-                if pausado:
-                    # Se a opção "Voltar para o Jogo" for selecionada
-                    pausado = False
+                # if pausado:
+                #     # Se a opção "Voltar para o Jogo" for selecionada
+                #     pausado = False
                 # Se a opção "Som" for selecionada
-                elif som_ligado:
+                if som_ligado:
                     som_ligado = False
                 else:
                     som_ligado = True
@@ -69,16 +76,33 @@ while rodando:
                 rodando = False
             elif evento.key == pygame.K_ESCAPE:
                 pausado = not pausado  # Alterna o estado de pausa
+                print(pos_menus)
+        elif pausado and evento.type == pygame.MOUSEBUTTONDOWN:
+            pos_mouse = pygame.mouse.get_pos()
+            print(pos_mouse)
+            mouse_rect = pygame.Rect(pos_mouse[0], pos_mouse[1], 1, 1)
+            if mouse_rect.colliderect(pos_menus[0]):
+                pausado = False
+            if mouse_rect.colliderect(pos_menus[1]):
+                som_ligado = not som_ligado
+            if mouse_rect.colliderect(pos_menus[2]):
+                print("Clicou na terceira opção!")
+            if mouse_rect.colliderect(pos_menus[3]):
+                rodando = False
+
 
     tela.fill(branco)  # limpa a tela
 
     if pausado:
         desenhar_menu()  # Exibe o menu de opções quando o jogo estiver pausado
+        menu_eventos()
+
     else:
         if mostrar_quadrado:
             pygame.draw.rect(tela, preto, (width // 2 - 300, height // 2 - 200, 600, 400), 0, 30)  # desenha o quadrado
 
     pygame.display.flip()
+    clock.tick(60)
 
 pygame.quit()
 sys.exit()
