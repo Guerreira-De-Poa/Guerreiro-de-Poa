@@ -22,8 +22,6 @@ from itens import Item
 
 from cutscenes.tocar_cutscene import tocar_cutscene_cv2
 
-from cutscenes.tocar_cutscene import tocar_cutscene_cv2
-
 pause = False
 
 def inicio():

@@ -44,11 +44,11 @@ pygame.mixer.music.stop()
 # with open('save.json', 'r') as f:
 #     estado = json.load(f)
 
-SCREEN_WIDTH = 1200
-SCREEN_HEIGHT = 800
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
 def inicio():
+    SCREEN_WIDTH = 1200
+    SCREEN_HEIGHT = 800
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    tocar_cutscene_cv2('cutscenes/cutscene_inicio.mp4', 'cutscenes/cutscene_inicio.mp3', screen)
     ####
     # PRA MUSICA FUNCIONAR: ANTES DO LOOP, QUEBRE O SOM, COMEÇOU? PEGA A MUSICA
     pygame.mixer.music.load("musicas/The Four Seasons, Winter - Vivaldi.mp3")
@@ -1077,5 +1077,4 @@ def inicio():
         pygame.display.flip()
 
 if __name__ == "__main__":
-    tocar_cutscene_cv2('cutscenes/cutscene_inicio.mp4', 'cutscenes/cutscene_inicio.mp3', screen)
     inicio()
