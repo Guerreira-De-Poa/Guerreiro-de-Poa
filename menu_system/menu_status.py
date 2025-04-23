@@ -5,7 +5,7 @@ import pygame
 pygame.init()
 
 class Menu():
-    def __init__(self, valor_ataque, valor_defesa, valor_vida, valor_stamina, valor_velocidade, atr_ataque, atr_defesa, atr_vida, atr_stamina, atr_velocidade):  
+    def __init__(self, valor_ataque, valor_defesa, valor_vida, valor_stamina, valor_velocidade, atr_ataque, atr_defesa, atr_vida, atr_stamina, atr_velocidade, player):  
         self.valores = {
             "ataque": valor_ataque,
             "defesa": valor_defesa,
@@ -40,6 +40,8 @@ class Menu():
 
         self.valores_copy = 0
 
+        self.player = player
+
         self.tamanho_menu_img_x = 0
         self.tamanho_menu_img_y = 0
 
@@ -56,7 +58,7 @@ class Menu():
         self.botoes = {}
 
         for i, atributo in enumerate(self.valores.keys()):
-            x_menos, x_mais, x_texto, y, y_texto = 300, 350, 330, 227 + i * 30.9, 230 + i * 30.7
+            x_menos, x_mais, x_texto, y, y_texto = 500, 550, 480, 326 + i * 30.9, 331 + i * 30.7
             frames_menos = [self.botao_menos.subsurface((j * 25, 0, 20, 20)) for j in range(2)]
             frames_mais = [self.botao_mais.subsurface((j * 25, 0, 20, 20)) for j in range(2)]
 
@@ -79,11 +81,11 @@ class Menu():
     def desenhar_valores(self, tela, font_nivel, text_nivel, nivel, pontos_disponiveis):
         font_nivel = pygame.font.SysFont(None, self.tamanho_fonte)
         text_nivel = font_nivel.render(f"{nivel}", True, (0,0,0))
-        tela.blit(text_nivel, (270, 166))
+        tela.blit(text_nivel, (475, 266))
 
         font_pontos_disponiveis = pygame.font.SysFont(None, self.tamanho_fonte)
         text_pontos_disponiveis = font_pontos_disponiveis.render(f"{pontos_disponiveis}", True, (0,0,0))
-        tela.blit(text_pontos_disponiveis, (300, 426))
+        tela.blit(text_pontos_disponiveis, (505, 525))
 
         for atributo, botoes in self.botoes.items():
             texto = self.fonte.render(str(self.valores[atributo]), True, (0, 0, 0))
@@ -91,13 +93,22 @@ class Menu():
 
         for i, key in enumerate(self.atributos.keys()):
             text_atributo = self.fonte.render(str(self.atributos[key]), True, (0,0,0))
-            tela.blit(text_atributo, (610, 231 + i * 30))
+            tela.blit(text_atributo, (830, 332 + i * 30))
 
     def resetar_botoes(self):
         for botoes in self.botoes.values():
             botoes["aumentar"]["pressionado"] = False
             botoes["diminuir"]["pressionado"] = False
         self.atualizar_sprites()  # Garante que os sprites são atualizados
+
+    def update(self):
+        self.atributos = {
+            "ataque": self.player.dano,
+            "defesa": self.player.defesa,
+            "vida": self.player.MAX_HP,
+            "stamina": self.player.max_stamina,
+            "velocidade": self.player.velocidade_corrida
+        }
 
 
 # Inicialização do Pygame

@@ -4,7 +4,7 @@ from balas import Bala
 
 # Classe que herda de pygame.sprite.Sprite
 class Personagem(pygame.sprite.Sprite):
-    def __init__(self, sprite_sheet, ataque, defesa, vida, stamina, velocidade,sheet_sec):
+    def __init__(self, sprite_sheet, ataque, defesa, vida_max,vida_atual, stamina, velocidade,sheet_sec):
         super().__init__()  # Chama o inicializador da classe pai
         self.sheet = sprite_sheet
         self.sheet_sec = sheet_sec
@@ -20,6 +20,8 @@ class Personagem(pygame.sprite.Sprite):
 
         self.atacando = False
 
+        self.anim_dash = True
+
         # Atributos para geração de hitbox
         self.attack_cooldown = 1000  # ms entre ataques
         self.attack_duration = 1000  # ms de duração do golpe
@@ -28,8 +30,8 @@ class Personagem(pygame.sprite.Sprite):
         self.attack_hitbox = None
         self.attack_direction_set = False
 
-        self.MAX_HP = vida
-        self.HP = self.MAX_HP
+        self.MAX_HP = vida_max
+        self.HP = vida_atual
         self.velocidade_corrida = velocidade
         self.max_stamina = stamina
         self.dano = ataque
@@ -87,7 +89,12 @@ class Personagem(pygame.sprite.Sprite):
 
         self.usando_sprite2 = False
 
+        self.arma_equipada = False
+        self.armadura_equipada = False 
+
     def update(self, dialogo_open):
+        self.image2 = self.image
+        self.image2.set_alpha(128)
         if dialogo_open:
             return
         self.balas.update(dialogo_open)
@@ -99,6 +106,7 @@ class Personagem(pygame.sprite.Sprite):
         self.range_melee = pygame.Rect(self.rect.left-32, self.rect.top-32, self.rect.width+64, self.rect.height+64)
         self.super_range = pygame.Rect(self.rect.left-40, self.rect.top-40, self.rect.width+80, self.rect.height+80)
 
+        #print(self.anim_dash)
 
         if self.atacando_melee:
             self.usando_sprite2 = True
@@ -357,7 +365,7 @@ class Personagem(pygame.sprite.Sprite):
         self.health_width = 10
         self.health_height = 20
         self.health_ratio = (self.HP / self.MAX_HP) * self.health_width
-        # print(self.MAX_HP, self.HP)
+        #print(self.MAX_HP, self.HP)
 
         pygame.draw.rect(screen, (255, 0, 0), (20, 20, self.health_width*self.MAX_HP, self.health_height), 0, 3)
         pygame.draw.rect(screen, (0, 255, 0), (20, 20, self.health_ratio*self.HP, self.health_height), 0, 3)
@@ -398,3 +406,8 @@ class Personagem(pygame.sprite.Sprite):
             self.sheet_sec.draw(screen, x, y)
         else:
             self.sheet.draw(screen, x, y)
+
+    def draw_dash(self, screen, camera):
+        x = self.rect.x - camera.left
+        y = self.rect.y - camera.top
+        self.sheet.draw(screen, x, y-10)
