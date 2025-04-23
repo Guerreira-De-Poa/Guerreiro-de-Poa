@@ -981,7 +981,9 @@ def inicio():
                 if inimigo.sheet.tile_rect in [inimigo.sheet.cells[inimigo.sheet.action][-1]]:
                     player.get_hit(inimigo.dano)
 
-                inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
+                if not player.ivuln:
+                    inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
+                    
                 inimigo.atacando_melee = True
                 inimigo.frame_change = 10
             else:

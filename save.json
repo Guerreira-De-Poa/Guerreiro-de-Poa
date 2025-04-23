@@ -3,7 +3,7 @@
         16.25,
         8.0,
         20,
-        17.0,
+        10.0,
         6.25,
         10
     ],
@@ -30,7 +30,7 @@
             {
                 "defesa": 3
             },
-            true
+            false
         ],
         [
             "armadura",
@@ -62,7 +62,7 @@
             {
                 "defesa": 10
             },
-            false
+            true
         ]
     ],
     "menu_valores": {
