@@ -1046,5 +1046,4 @@ def inicio():
         pygame.display.flip()
 
 if __name__ == "__main__":
-    tocar_cutscene_cv2('cutscenes/cutscene_inicio.mp4', 'cutscenes/cutscene_inicio.mp3', screen)
     inicio()
