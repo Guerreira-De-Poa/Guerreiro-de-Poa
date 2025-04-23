@@ -445,6 +445,8 @@ def inicio():
         with open("save.json", "w") as f:
             json.dump(Dicionario_para_save, f, indent=4)
 
+    inimigos_spawnados = False
+
     while running:
         menu.update()
         player.atualizar_stamina()
@@ -540,12 +542,15 @@ def inicio():
             npc1.dialogo.letra_index = 0
 
         if missao_1 == True and len(inimigos) == 0:
-            enemy0 = Inimigo(player.rect, player, 1566,2322, False,spritesheet_inimigo_arco, 10, 750, 50)
-            enemy1 = Inimigo(player.rect, player, 2150,1754, False,spritesheet_inimigo_arco1, 13, 500, 20)
-            enemy2 = Inimigo(player.rect, player, 1570,2102, True,spritesheet_inimigo_arco2, 8, 650, 30)
-            enemy3 = Inimigo(player.rect, player, 2650,2266, False,spritesheet_inimigo_arco3, 9, 600, 40)
-            all_sprites.add(enemy0, enemy1, enemy2, enemy3)
-            inimigos.add(enemy0, enemy1, enemy2, enemy3)
+            if not inimigos_spawnados:
+                inimigos_spawnados = True
+                enemy0 = Inimigo(player.rect, player, 1566,2322, False,spritesheet_inimigo_arco, 10, 750, 50)
+                enemy1 = Inimigo(player.rect, player, 2150,1754, False,spritesheet_inimigo_arco1, 13, 500, 20)
+                enemy2 = Inimigo(player.rect, player, 1570,2102, True,spritesheet_inimigo_arco2, 8, 650, 30)
+                enemy3 = Inimigo(player.rect, player, 2650,2266, False,spritesheet_inimigo_arco3, 9, 600, 40)
+                all_sprites.add(enemy0, enemy1, enemy2, enemy3)
+                inimigos.add(enemy0, enemy1, enemy2, enemy3)
+            
 
         bau_perto = False
 

@@ -15,6 +15,7 @@ from boss import Boss1
 from bau import Bau
 from XP import XP
 from menu_status import Menu
+from itens import Item
 
 pause = False
 
@@ -77,9 +78,6 @@ def inicio():
     if map_spritesheet.sheet is None:
         pygame.quit()
         sys.exit()
-
-    xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
-    menu = Menu(5, 5, 5, 5, 5, 6.25, 0.0, 10, 6.25, 5.0)
 
     # Dicionário de mapeamento de tiles (coordenadas originais 16x16)
     TILE_MAPPING = {
@@ -150,27 +148,63 @@ def inicio():
     # Processar o mapa
     walls = process_map_for_collision(map_data)
     map_tiles = process_map_for_rendering(map_data)
+
+    atributos = {
+            "ataque": 6.25,
+            "defesa": 5.0,
+            "vida_max": 20,
+            "vida_atual": 10,
+            "stamina": 6.25,
+            "velocidade": 10
+    }
     
     lista_1 = [7 for i in range(4)]
     lista_2 = [4 for i in range(4)]
+    lista_2_alt = [6 for i in range (4)]
     lista_3 = [6 for i in range(8)]
     lista_4 = [13 for j in range(4)]
     lista_5 = [7 for k in range(14)]
+
+    with open('save.json', 'r') as f:
+        try:
+            save_carregado = json.load(f)
+            print(save_carregado)
+        except:
+            save_carregado = False
+            print("ERRO AO CARREGAR SAVE")
+
+    #print(save_carregado)
 
     # Criar o jogador
     try:
         player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha(2).png')
         player_sprite_path2 = os.path.join(current_dir, '..', '..', 'sprites_ataque_espada.png')
         
-        player_sprite = SpriteSheet(player_sprite_path, 0, 514, 64, 64, 4, lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-        player_sprite_ataques = SpriteSheet(player_sprite_path2, 8, 38, 128, 128, 12, [6,6,6,6], (255,255,255))
-        
-        player = Personagem(player_sprite, menu.atributos["ataque"], menu.atributos["defesa"], menu.atributos["vida"], 
-                           menu.atributos["stamina"], menu.atributos["velocidade"], player_sprite_ataques)
+        player_sprite = SpriteSheet(player_sprite_path, 0, 514, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+        player_sprite_ataques = SpriteSheet(player_sprite_path2, 18, 38, 128, 128, 12,[6,6,6,6], (255,255,255))
+        #######
+        # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ
+        if save_carregado:
+            print("SAVE CARREGADO")
+            player = Personagem(player_sprite, save_carregado['atributos'][0], save_carregado['atributos'][1], save_carregado['atributos'][2], save_carregado['atributos'][3], save_carregado['atributos'][4],save_carregado['atributos'][5],player_sprite_ataques)
+
+            itens_carregados = []
+            for item in save_carregado['itens']:
+                novo_item = Item(item[0],item[1],item[2],item[3],player)
+                itens_carregados.append(novo_item)
+            inventario1 = Inventario((50, 50, 50), 50, [itens_carregados[i] for i in range(len(itens_carregados))])
+            
+        else:
+            print("SAVE NAO CARREGADO")
+            player = Personagem(player_sprite, atributos["ataque"], atributos["defesa"], atributos["vida_max"],atributos['vida_atual'], atributos["stamina"], atributos["velocidade"],player_sprite_ataques)
+            inventario1 = Inventario((50, 50, 50), 50, [])
     except Exception as e:
         print(f"Erro ao carregar sprite do jogador: {e}")
         pygame.quit()
         sys.exit()
+
+    xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+    menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
 
     player.rect.x, player.rect.y = 1056, 800
 
