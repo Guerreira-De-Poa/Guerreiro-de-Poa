@@ -24,7 +24,8 @@ som_ligado = True  # Controle de som, por padrão está ligado
 pos_mouse = (0, 0)
 pos_menus = []
 mouse_rect = pygame.Rect(pos_mouse[0], pos_mouse[1], 1, 1)
-
+pos_espadinha_x, pos_espadinha_y = 325, 303
+retangulo_teclado = pygame.Rect(325, 303, 1, 1)
 retangulo_transparente = pygame.Rect(981, 127, 35, 42)
 
 controles_img = pygame.image.load("menu_opcoes_imagens/Controles_guerreiro_poa.png")
@@ -32,6 +33,9 @@ tamanho_img = pygame.transform.scale(controles_img, (850, 567))
 ativar_controles_img = False
 
 clock = pygame.time.Clock()
+
+# for x, y in pos_menus:
+#     retangulo_teclado = pygame.Rect(x, y, 1, 1)
 
 # Função para desenhar o menu de opções
 def desenhar_menu():
@@ -95,6 +99,11 @@ while rodando:
             elif evento.key == pygame.K_ESCAPE:
                 pausado = not pausado  # Alterna o estado de pausa
                 print(pos_menus)
+            
+            if evento.key == pygame.K_DOWN:                            
+                for x, y in pos_menus:
+                    retangulo_teclado = pygame.Rect(x, y, 1, 1)
+
         elif pausado and evento.type == pygame.MOUSEBUTTONDOWN:
             pos_mouse = pygame.mouse.get_pos()
             print(pos_mouse)
@@ -115,8 +124,17 @@ while rodando:
         pos_mouse = pygame.mouse.get_pos()
         pos_mouse_rect = pygame.Rect(pos_mouse[0], pos_mouse[1], 1, 1)
         tela.blit(escurecedor, (0, 0))
-        
-        espadinha = pygame.image.load("menu_opcoes_imagens/espadinha_menu_opcoes.png")
+
+        if retangulo_teclado.collidedict(pos_menus[0]):
+            espadinha = pygame.image.load("menu_opcoes_imagens/espadinha_menu_opcoes.png")
+            tela.blit(espadinha, (pos_espadinha_x, pos_espadinha_y))
+            continuar = pygame.image.load("menu_opcoes_imagens/Continuar_selecionado.png")
+            tela.blit(continuar, (425, 288))
+        if retangulo_teclado.collidedict(pos_menus[1]):
+            tela.blit(espadinha, (325, 383))
+            audio = pygame.image.load("menu_opcoes_imagens/Audio_selecionado.png")
+            tela.blit(audio, (425, 368))
+
         desenhar_menu()  # Exibe o menu de opções quando o jogo estiver pausado
         menu_eventos()
 
