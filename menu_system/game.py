@@ -1,6 +1,5 @@
 import pygame
 from menu import *
-from nivel_1.player_move_com_spritesheet import *
 from mapa_main.main_mapa import inicio as inicio_real
 fundo_historia = pygame.image.load('fundo_historia.png')
     
