@@ -1,6 +1,9 @@
 import pygame
 from inimigo_teste import Inimigo
 from balas import Bala
+from raios import *
+from spritesheet_explicada import SpriteSheet
+from raios import Raios
 from random import randint
 
 class Boss1(Inimigo):
@@ -51,7 +54,7 @@ class Boss1(Inimigo):
         self.contador_iframes = 0
 
     def gerar_local_a_mover(self):
-        self.local_a_mover = [randint(200,800),randint(400,1000)]
+        self.local_a_mover = [randint(1200,1600),randint(400,1000)]
 
         for i in range(2):
             if not self.local_a_mover[i] % 2 == 0:
@@ -221,6 +224,23 @@ class Boss2(Inimigo):
         self.player_rect = player_rect
 
         self.raios = pygame.sprite.Group()
+        danger_ss = SpriteSheet('DangerAnimation.png', 0, 0, 32, 32, 0, [6], (0,0,0), False)
+        strike_ss = SpriteSheet('thunderSpriteSheet.png', 0, 0, 128, 256, 0, [5], (0,0,0), False)
+
+        # configura o gerenciador de ondas de raios
+        self.raios_controller = Raios(
+            boss=self,
+            danger_sheet=danger_ss,
+            strike_sheet=strike_ss,
+            map_min_x=200, map_max_x=800,
+            map_min_y=400, map_max_y=1000,
+            safe_radius=40,
+            min_count=4, max_count=7,
+            wave_cooldown=5000,
+            danger_fc=120//6,    # 2s de aviso em 6 quadros → 20
+            strike_fc=150//5,    # 2.5s de impacto em 5 quadros → 30
+            damage=5
+        )
 
         self.mover = True
         self.gerar_local_a_mover()
@@ -269,6 +289,8 @@ class Boss2(Inimigo):
         self.pulando = True
     
     def update(self, dialogo_open):
+        self.raios_controller.update()
+
         self.old_pos_x, self.old_pos_y = self.rect.topleft[0], self.rect.topleft[1]
         if dialogo_open:
             return
@@ -333,14 +355,9 @@ class Boss2(Inimigo):
             if self.contador_iframes == self.iframes:
                 self.ivuln = False
 
-        for raio in self.raios:
-            if not raio.active:
-                self.raios.remove(raio)
-
     def draw_raios(self, screen, camera):
         for raio in self.raios:
-            if raio.active:
-                screen.blit(raio.image, (raio.rect.x - camera.left, raio.rect.y - camera.top))
+            screen.blit(raio.image, (raio.rect.x - camera.left, raio.rect.y - camera.top))
 
     def remover_todos_raios(self):
         for raio in self.raios:

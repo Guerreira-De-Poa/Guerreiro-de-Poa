@@ -18,7 +18,9 @@ from boss import *
 from bau import Bau
 from XP import XP
 from menu_status import Menu
-from raios import Raios
+from itens import Item
+
+from cutscenes.tocar_cutscene import tocar_cutscene_cv2
 
 from cutscenes.tocar_cutscene import tocar_cutscene_cv2
 
@@ -41,8 +43,8 @@ def inicio():
 
     # Obter caminhos dos arquivos
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    map_path = os.path.join(current_dir, 'map1.json')
-    spritesheet_path = os.path.join(current_dir, 'spritesheet1.png')
+    map_path = os.path.join(current_dir, 'map.json')
+    spritesheet_path = os.path.join(current_dir, 'spritesheet.png')
 
     # Carregar o arquivo JSON do mapa
     try:
@@ -54,7 +56,7 @@ def inicio():
         sys.exit()
 
     # Configurações do mapa (tamanho final desejado)
-    TILE_SIZE = 64  # Tamanho final dos tiles na tela
+    TILE_SIZE = 48  # Tamanho final dos tiles na tela
     ORIGINAL_TILE_SIZE = 16  # Tamanho original na spritesheet
     SCALE_FACTOR = TILE_SIZE // ORIGINAL_TILE_SIZE
     
@@ -86,9 +88,6 @@ def inicio():
         pygame.quit()
         sys.exit()
 
-    xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
-    menu = Menu(5, 5, 5, 5, 5, 6.25, 0.0, 10, 6.25, 5.0)
-
     # Dicionário de mapeamento de tiles (coordenadas originais 16x16)
     TILE_MAPPING = {
         '0': (0, 0), '1': (16, 0), '2': (32, 0),
@@ -104,7 +103,20 @@ def inicio():
         '30': (96, 48), '31': (112, 48), '32': (0, 64),
         '33': (16, 64), '34': (32, 64), '35': (48, 64),
         '36': (64, 64), '37': (80, 64), '38': (96, 64),
-        '39': (112, 64), '40': (0, 80),
+        '39': (112, 64), '40': (0, 80), '41': (16, 80),
+        '42': (32, 80), '43': (48, 80), '44': (64, 80),
+        '45': (80, 80), '46': (96, 80), '47': (112, 80),
+        '48': (0, 96), '49': (16, 96), '50': (32, 96),
+        '51': (48, 96), '52': (64, 96), '53': (80, 96),
+        '54': (96, 96), '55': (112, 96), '56': (0, 112),
+        '57': (16, 112), '58': (32, 112), '59': (48, 112),
+        '60': (64, 112), '61': (80, 112), '62': (96, 112),
+        '63': (112, 112), '64': (0, 128), '65': (16, 128),
+        '66': (32, 128), '67': (48, 128), '68': (64, 128),
+        '69': (80, 128), '70': (96, 128), '71': (112, 128),
+        '72': (0, 144), '73': (16, 144), '74': (32, 144),
+        '75': (48, 144), '76': (64, 144), '77': (80, 144),
+        '78': (96, 144), '79': (112, 144), '80': (0, 160),
     }
 
     def process_map_for_collision(map_data):
@@ -120,7 +132,7 @@ def inicio():
 
     def process_map_for_rendering(map_data):
         tiles = []
-        layer_order = ['Floor', 'Walls', 'Walls sides', 'Miscs', 'Doors', 'decoracoes']
+        layer_order = ['Floor', 'Walls', 'Walls sides', 'colunass','Miscs', 'colunas', 'Doors']
         
         layer_dict = {layer_name: [] for layer_name in layer_order}
         
@@ -152,42 +164,70 @@ def inicio():
     walls = process_map_for_collision(map_data)
     map_tiles = process_map_for_rendering(map_data)
     
-    lista_1 = [9 for i in range(4)]
-    lista_2 = [6 for i in range(4)]
-    lista_3 = [13 for i in range(10)]
-    lista_4 = [5 for j in range(4)]
-    lista_5 = [5 for k in range(14)]
+    atributos = {
+            "ataque": 6.25,
+            "defesa": 5.0,
+            "vida_max": 20,
+            "vida_atual": 10,
+            "stamina": 6.25,
+            "velocidade": 10
+    }
+
+    with open('save.json', 'r') as f:
+        try:
+            save_carregado = json.load(f)
+            print(save_carregado)
+        except:
+            save_carregado = False
+            print("ERRO AO CARREGAR SAVE")
+
+    # Processar o mapa
+    walls = process_map_for_collision(map_data)
+    map_tiles = process_map_for_rendering(map_data)
+    lista_1 = [7 for i in range(4)]
+    lista_2 = [4 for i in range(4)]
+    lista_3 = [6 for i in range(8)]
+    lista_4 = [13 for j in range(4)]
+    lista_5 = [7 for k in range(14)]
 
     # Criar o jogador
     try:
         player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha(2).png')
         player_sprite_path2 = os.path.join(current_dir, '..', '..', 'sprites_ataque_espada.png')
         
-        player_sprite = SpriteSheet(player_sprite_path, 0, 512, 64, 64, 4, lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-        player_sprite_ataques = SpriteSheet(player_sprite_path2, 8, 38, 128, 128, 12, [6,6,6,6], (255,255,255))
-        
-        player = Personagem(player_sprite, menu.atributos["ataque"], menu.atributos["defesa"], menu.atributos["vida"], 
-                           menu.atributos["stamina"], menu.atributos["velocidade"], player_sprite_ataques)
+        player_sprite = SpriteSheet(player_sprite_path, 0, 514, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+        player_sprite_ataques = SpriteSheet(player_sprite_path2, 18, 38, 128, 128, 12,[6,6,6,6], (255,255,255))
+        #######
+        # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ
+        if save_carregado:
+            print("SAVE CARREGADO")
+            player = Personagem(player_sprite, save_carregado['atributos'][0], save_carregado['atributos'][1], save_carregado['atributos'][2], save_carregado['atributos'][3], save_carregado['atributos'][4],save_carregado['atributos'][5],player_sprite_ataques)
+
+            itens_carregados = []
+            for item in save_carregado['itens']:
+                novo_item = Item(item[0],item[1],item[2],item[3],player)
+                itens_carregados.append(novo_item)
+            inventario1 = Inventario((50, 50, 50), 50, [itens_carregados[i] for i in range(len(itens_carregados))])
+            
+        else:
+            print("SAVE NAO CARREGADO")
+            player = Personagem(player_sprite, atributos["ataque"], atributos["defesa"], atributos["vida_max"],atributos['vida_atual'], atributos["stamina"], atributos["velocidade"],player_sprite_ataques)
+            inventario1 = Inventario((50, 50, 50), 50, [])
     except Exception as e:
         print(f"Erro ao carregar sprite do jogador: {e}")
         pygame.quit()
         sys.exit()
 
-    player.rect.x, player.rect.y = 1056, 800
+    xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+    menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
+
+    player.rect.x, player.rect.y = 1072, 1280
 
     # Configuração da câmera
     camera = pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 
-    spritesheet_inimigo_arco2 = SpriteSheet('gabrielFase2.png', 0, 522, 64, 64, 4, lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    boss = Boss2(player.rect, player, 1220, 1000, True, spritesheet_inimigo_arco2, 30, 300, 200)
-
-    spritesheet_danger = SpriteSheet('thunderSpritesheet.png', 0, 0, 128, 256, 0, [5], (0, 0, 0), False)
-    spritesheet_raio = SpriteSheet('dangerAnimation.png', 0, 0, 32, 32, 0, [6], (0, 0, 0), False)
-    
-    raios = pygame.sprite.Group()
-
-    cooldown = 180
-    cooldown_timer = 0
+    spritesheet_gabriel = SpriteSheet('gabrielFase2.png', 0, 522, 64, 64, 4, lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    boss = Boss2(player.rect, player, 1220, 1000, True, spritesheet_gabriel, 30, 300, 200)
 
     inimigos = pygame.sprite.Group()
     player_group = pygame.sprite.Group()
@@ -352,15 +392,6 @@ def inicio():
                 player.speed = velocidade_anterior
                 dash = 0
 
-        cooldown_timer += 1
-        if cooldown_timer >= cooldown:
-            for _ in range(5):
-                x = random.randint(100, 900)
-                y = random.randint(200, 1000)
-                novo_raio = Raios(spritesheet_danger, spritesheet_raio, (x, y), scale=2)
-                raios.add(novo_raio)
-            cooldown_timer = 0
-
         player_hits = pygame.sprite.groupcollide(player.balas, inimigos, False, False)
         
         for inimigo in inimigos:
@@ -476,6 +507,7 @@ def inicio():
                 inimigo.frame_change = 8
 
         player.draw(screen, camera)
+        boss.draw_raios(screen, camera)
 
         for inimigo in inimigos:
             inimigo.draw_balas(screen, camera)
@@ -527,9 +559,6 @@ def inicio():
         player.draw_health(screen)
         player.draw_stamina(screen)
         xp.render()
-
-        raios.update()
-        raios.draw(screen)
 
         for npc in npcs:
             npc.dialogo.coisa()

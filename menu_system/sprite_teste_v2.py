@@ -284,8 +284,8 @@ class Personagem(pygame.sprite.Sprite):
     
     def draw_stamina(self, screen):
         bar_width = (self.stamina / self.max_stamina) * self.stamina_width
-        pygame.draw.rect(screen, (0, 0, 0), (20, 45, self.stamina_width, self.stamina_height), 0, 3)
-        pygame.draw.rect(screen, (0, 0, 255), (20, 45, bar_width, self.stamina_height), 0, 3)
+        pygame.draw.rect(screen, (0, 0, 0), (20, 40, self.stamina_width, self.stamina_height+4), 0, 3)
+        pygame.draw.rect(screen, (0, 185, 0), (20, 45, bar_width, self.stamina_height), 0, 3)
 
     def shoot(self,mouse_pos):
         # if len(self.balas) > 0:
@@ -367,8 +367,9 @@ class Personagem(pygame.sprite.Sprite):
         self.health_ratio = (self.HP / self.MAX_HP) * self.health_width
         #print(self.MAX_HP, self.HP)
 
-        pygame.draw.rect(screen, (255, 0, 0), (20, 20, self.health_width*self.MAX_HP, self.health_height), 0, 3)
-        pygame.draw.rect(screen, (0, 255, 0), (20, 20, self.health_ratio*self.HP, self.health_height), 0, 3)
+        #pygame.draw.rect(screen, (255, 255, 255), (15, 14, (self.health_width*self.MAX_HP)+15, (self.health_height)+8), 0, 5)
+        pygame.draw.rect(screen, (255, 0, 0), (20, 18, self.health_width*self.MAX_HP, self.health_height), 0, 5)
+        pygame.draw.rect(screen, (0, 255, 0), (20, 18, self.health_ratio*self.HP, self.health_height), 0, 5)
 
     # def generate_attack_hitbox(self):
     #     # distância à frente do player
