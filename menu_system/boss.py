@@ -343,7 +343,13 @@ class Boss2(Inimigo):
                 self.contagem_ataques = 0
 
         if self.frame_count % self.frame_change == 0:
-            self.sheet.update()
+            if self.sheet.action in [18,19,20,21]:
+                if self.sheet.tile_rect == self.sheet.cells[self.sheet.action][-1]:
+                    print('FINAL')
+                else:
+                    self.sheet.update()
+            else:
+                self.sheet.update()
     
         if pygame.math.Vector2(self.rect.center).distance_to(self.local_a_mover) < self.speed:
             self.contagem_ataques += 1

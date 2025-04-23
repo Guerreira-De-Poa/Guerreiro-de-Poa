@@ -112,120 +112,6 @@ def inicio():
             "velocidade": 10
     }
 
-import pygame
-import sys
-import json
-import os
-import cv2
-
-os.environ['SDL_VIDEO_CENTERED'] = '1'
-
-
-pasta_pai = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-
-# Adicionando o diretório pai ao sys.path
-sys.path.append(pasta_pai)
-
-# Agora podemos importar diretamente a função 'inicio' do arquivo 'main_luta.py'
-from boss_fight.main_luta import inicio as boss_fight
-
-# chama ultimo nivel
-from ultimo_nivel.ultimo import inicio as ultimo_nivel
-
-# Chamando a função importada
-
-from spritesheet_explicada import SpriteSheet
-from sprite_teste_v2 import Personagem
-
-from npcs import * 
-from dialogo import *
-from inimigo_teste import *
-from inventario1 import Inventario
-from itens import Item
-from boss import Boss1
-from bau import Bau
-
-from XP import XP
-from menu_status import Menu
-
-from cutscenes.tocar_cutscene import tocar_cutscene_cv2
-
-pause = False
-
-pygame.mixer.music.stop()
-
-# Ler
-# with open('save.json', 'r') as f:
-#     estado = json.load(f)
-
-SCREEN_WIDTH = 1200
-SCREEN_HEIGHT = 800
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
-def inicio():
-    ####
-    # PRA MUSICA FUNCIONAR: ANTES DO LOOP, QUEBRE O SOM, COMEÇOU? PEGA A MUSICA
-    pygame.mixer.music.load("musicas/The Four Seasons, Winter - Vivaldi.mp3")
-    pygame.mixer.music.play(-1)  # -1 significa que a música vai tocar em loop
-    pygame.mixer.music.set_volume(0.05)  # 50% do volume máximo
-
-    # Efeitos Sonoros
-    som_andar = pygame.mixer.Sound("musicas/Efeitos sonoros/Passos.mp3")
-    canal_andar = pygame.mixer.Channel(0)
-    teclas_movimento = {pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d}
-    teclas_pressionadas = set()
-    
-    som_balançar_espada = pygame.mixer.Sound("musicas/Efeitos sonoros/Balançar espada.mp3")
-    canal_balançar_espada = pygame.mixer.Channel(1)
-    cooldown_som_balançar_espada = 0
-    delay_som_balançar_espada = 400
-    primeiro_ataque_espada = 0
-
-    som_carregar_arco = pygame.mixer.Sound("musicas/Efeitos sonoros/carregando_arco_flecha.mp3")
-    canal_carregar_arco = pygame.mixer.Channel(2)
-
-    som_atirar_flecha = pygame.mixer.Sound("musicas/Efeitos sonoros/Arco e flecha.mp3")
-    canal_atirar_flecha = pygame.mixer.Channel(3)
-    
-    boss_parado=False
-    global pause
-    # Inicialização do Pygame
-    pygame.init()
-
-    # Configurações da tela
-    SCREEN_WIDTH = 1200
-    SCREEN_HEIGHT = 800
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption("Jogo com Mapa e Colisões")
-
-    # Obter caminhos dos arquivos
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    map_path = os.path.join(current_dir, 'map.json')
-    spritesheet_path = os.path.join(current_dir, 'spritesheet.png')  # Nome correto da sua spritesheet
-
-    # Carregar o arquivo JSON do mapa
-    try:
-        with open(map_path, 'r') as f:
-            map_data = json.load(f)
-    except Exception as e:
-        # print(f"Erro ao carregar mapa: {e}")
-        pygame.quit()
-        sys.exit()
-
-    # Configurações do mapa
-    TILE_SIZE = map_data['tileSize']
-    MAP_WIDTH = map_data['mapWidth']
-    MAP_HEIGHT = map_data['mapHeight']
-
-    atributos = {
-            "ataque": 6.25,
-            "defesa": 5.0,
-            "vida_max": 20,
-            "vida_atual": 10,
-            "stamina": 6.25,
-            "velocidade": 10
-    }
-
     # Classe para carregar a spritesheet do mapa
     class MapSpriteSheet:
         def __init__(self, filename):
@@ -395,32 +281,30 @@ def inicio():
     menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
 
     # Posicionar o jogador em uma posição válida no mapa
-
-    player.rect.x,player.rect.y = 1220,1300
+    player.rect.x = 1220
+    player.rect.y = 1300
 
     # Configuração da câmera
     camera = pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 
-    ###########################################
-    # PARTE DO FPS DO JOGO
-
-    # ESTAVA DANDO PROBLEMA EM RELAÇÃO AOS FPS (CONFLITO COM O SPRITE_TESTE_V2.PY)
-    # DEIXEI DE FORMA MAIS SIMPLIFICADO, MAS DAR UMA OLHADA FUTURAMENTE
-
-    ###########################################
     # Game loop
     clock = pygame.time.Clock()
     running = True
 
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
+    imagem_inimigo = pygame.image.load('Biomech Dragon Splice.png')
+
     vida_imagem = pygame.image.load('love-always-wins(1).png')
 
-    spritesheet_inimigo_arco2 = SpriteSheet('boss_agua.png', 0, 522, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
 
-    boss = Boss1(player.rect,player,1220,1000,True,spritesheet_inimigo_arco2, 30, 300, 200)
-
-
+    spritesheet_inimigo_arco_png = pygame.image.load("inimigo_com_arco.png")
+    spritesheet_inimigo_arco = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco0 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco1 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco3 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
+    spritesheet_inimigo_arco4 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
     inimigos = pygame.sprite.Group()
 
     player_group = pygame.sprite.Group()
@@ -430,8 +314,8 @@ def inicio():
     all_sprites.add(player)
     player_group.add(player)
 
-    all_sprites.add(boss)
-    inimigos.add(boss)
+    #all_sprites.add(enemy0, enemy1, enemy2, enemy3)
+    #inimigos.add(enemy0, enemy1, enemy2, enemy3)
 
     # boss2 = Boss1(player.rect,player,400,400,True,spritesheet_inimigo_arco)
     # all_sprites.add(boss2)
@@ -441,13 +325,75 @@ def inicio():
 
     click_hold = 0
 
-    interagir_bg = pygame.image.load("caixa_dialogo_pequena.jpg")
+    interagir_bg = pygame.image.load("caixa_dialogo_pequena2.png")
 
-    npcs = pygame.sprite.Group()
+    # omori = pygame.image.load('npc_amarelo.png')
+    # omori1 = pygame.image.load('npc_cinza.png')
+    # omori2 = pygame.image.load('npc_vermelho1.png')
 
-    baus = pygame.sprite.Group()
+    # # DIALOGO NPC QUE APARECE DE PRIMEIRA
+    # texto = {
+    #     'personagem':'Morador de Poá',
+    #     'texto_1':['Ei você', 'Você parece um guerreiro formidável', 'Por favor nos ajude', 'Nossa vila está sendo invadida'],
+    #     'personagem_1': "Guerreiro de Poá",
+    #     'texto_2':['Não se preocupe senhor', 'Eu irei ajuda-los']
+    #     }
 
-    dialogo_group = []
+    # # DIALOGO NPC QUE APARECE DEPOIS QUE O JOGADOR AJUDA O NPC (PRIMEIRO)
+    # texto_1 = {
+    #     'personagem':'Morador de Poá',
+    #     'texto_1':['Obrigado por nos salvar', 'Fale com o carinha que mora logo ali','Ele viu onde o chefe dos invasores fica', 'Se você derrotar o chefe', 'Eles nunca irão nos invadir de novo' ],
+    #     'personagem_1': "Guerreiro de Poá",
+    #     'texto_2':['Não se preocupe senhor', 'Eu irei ajuda-los']
+    #     }
+
+    # # NPC ANTES DO LIGEIRO
+
+    # texto_2 = {
+    #     'personagem':'Morador de Poá',
+    #     'texto_1':['Você foi o guerreiro que nos salvou certo?', 'Muito obrigado', 'Eu posso te levar ao chefe deles', 'Isso fará com que eles desistam'],
+    #     'personagem_1': "Guerreiro de Poá",
+    #     'texto_2':['Me leve até lá']
+    #     }
+    
+    # # NPC ANTES DO GABRIEL
+    # texto_3 = {
+    #     'personagem':'Morador de Poá',
+    #     'texto_1':['Muito obrigado por nos salvar!', 'Mas agora, é a sua hora de brilhar...', 'Gabriel está neste castelo', 'pronto para aniquilar Poá', 'Apenas você pode derrotá-lo', 'Boa sorte'],
+    #     'personagem_1': "Guerreiro de Poá",
+    #     'texto_2':['Me leve até lá']
+    #     }
+    
+    # ########### 
+    # # de alguma forma, agora te que deixar o dicionario texto...
+    # ###########
+ 
+    # # posição dos npcs
+    # npc0 = NPC(omori1,screen,1151,845,texto_2, 2) # npc ligeiro
+    # npc1 = NPC(omori,screen,1955, 2150,texto, 3) # npc inicio
+    # npc2 = NPC(omori2,screen,1954, 744,texto_3, 4) # npc gabriel
+
+    # all_sprites.add(npc0,npc1)
+    # npcs = pygame.sprite.Group()
+    # npcs.add(npc0,npc1,npc2 ) 
+
+    # dialogo_group = []
+
+    # for npc in npcs:
+    #     if npc.dialogo:
+    #         dialogo_group.append(npc.dialogo)
+
+    #################
+
+    # TEORICAMENTE, caso for true, começa a missão
+    # for npc in npcs:
+    #     if npc.dialogo.missao_ativada:
+    #         print("ok")
+
+    #################
+
+    # print(dialogo_group)
+    # print(f"Total de tiles carregados: {len(map_tiles)}")
 
     #CONFIG INVENTARIO
 
@@ -460,19 +406,46 @@ def inicio():
     dragging_item = None
     dragging_from = None
 
-    # Criar as instâncias dos inventários
-    inventario1 = Inventario((50, 50, 50), 50, ["Espada", "Poção", "Escudo"])
     inventario2 = Inventario((0, 100, 0), 400)
 
-    print(boss.local_a_mover)
+    baus = pygame.sprite.Group()
+
+    iterado_teste = 0
 
     contador_ataque_melee = 0
 
-    dash = 0
-    cooldown_dash = 0
-    velocidade_anterior = 0
-
     contador_melee = 0
+
+    def salvar_game():
+        itens = []
+
+        for item in inventario1.items:
+            item_ = [item.tipo,item.nome,item.atributos,item.equipado]
+            itens.append(item_)
+
+        Dicionario_para_save = {
+            
+            'atributos':[
+                player.dano,
+                player.defesa,
+                player.MAX_HP,
+                player.HP,
+                player.max_stamina,
+                player.velocidade_corrida,
+            ],
+
+            'itens': itens,
+
+            'menu_valores': menu.valores,
+
+            'menu_atributos': menu.atributos,
+
+        }
+            # Salvar
+        with open("save.json", "w") as f:
+            json.dump(Dicionario_para_save, f, indent=4)
+
+    inimigos_spawnados = False
 
     while running:
         menu.update()
@@ -532,9 +505,9 @@ def inicio():
 
         dialogo_hitbox =  False
 
-        for npc in npcs:
-            if npc.dialogo_rect.colliderect(player.rect):
-                dialogo_hitbox = npc
+        # for npc in npcs:
+        #     if npc.dialogo_rect.colliderect(player.rect):
+        #         dialogo_hitbox = npc
 
         if dialogo_hitbox:
             dialogo_a_abrir = dialogo_hitbox.dialogo
@@ -574,7 +547,7 @@ def inicio():
         for event in pygame.event.get():
             
             if event.type == pygame.QUIT:
-                #salvar_game()
+                salvar_game()
                 pygame.quit()
                 sys.exit()
 
@@ -848,11 +821,11 @@ def inicio():
                 player.rect.x, player.rect.y = old_x, old_y
                 break
 
-        for npc in npcs:
-            if player.collision_rect.colliderect(npc):
-                # Colisão detectada, voltar para a posição anterior
-                player.rect.x, player.rect.y = old_x, old_y
-                break
+        # for npc in npcs:
+        #     if player.collision_rect.colliderect(npc):
+        #         # Colisão detectada, voltar para a posição anterior
+        #         player.rect.x, player.rect.y = old_x, old_y
+        #         break
 
                 
         # Atualizar câmera
@@ -966,8 +939,8 @@ def inicio():
         # Desenhar o jogador
         player.draw(screen, camera)
 
-        for npc in npcs:
-            screen.blit(npc.image,(npc.rect.x - camera.left, npc.rect.y - camera.top))
+        # for npc in npcs:
+        #     screen.blit(npc.image,(npc.rect.x - camera.left, npc.rect.y - camera.top))
 
         for inimigo in inimigos:
             inimigo.draw_balas(screen,camera)
@@ -1040,8 +1013,8 @@ def inicio():
 
         #print(menu.atributos,menu.valores)
 
-        for npc in npcs:
-            npc.dialogo.coisa()
+        # for npc in npcs:
+        #     npc.dialogo.coisa()
 
         pygame.display.flip()
 
