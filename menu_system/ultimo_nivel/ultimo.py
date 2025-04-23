@@ -214,7 +214,7 @@ def inicio():
     camera = pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 
     spritesheet_gabriel = SpriteSheet('gabrielFase2.png', 0, 522, 64, 64, 4, lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-    boss = Boss2(player.rect, player, 1220, 1000, True, spritesheet_gabriel, 30, 300, 200)
+    boss = Boss2(player.rect, player, 1200, 400, True, spritesheet_gabriel, 30, 300, 200)
 
     inimigos = pygame.sprite.Group()
     player_group = pygame.sprite.Group()

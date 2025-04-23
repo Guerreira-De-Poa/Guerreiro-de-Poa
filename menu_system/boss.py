@@ -3,7 +3,6 @@ from inimigo_teste import Inimigo
 from balas import Bala
 from raios import *
 from spritesheet_explicada import SpriteSheet
-from raios import Raios
 from random import randint
 
 class Boss1(Inimigo):
@@ -210,64 +209,59 @@ class Boss2(Inimigo):
     def __init__(self, player_rect, player, x, y, ataque, sprite_sheet, dano, xp, vida):
         super().__init__(player_rect, player, x, y, ataque, sprite_sheet, dano, xp, vida)
         self.sheet = sprite_sheet
+
+        # Configura surface/rect iniciais (boss sem escala)
         self.image = pygame.Surface((64, 64), pygame.SRCALPHA)
-        self.rect = self.image.get_rect()
+        self.rect  = self.image.get_rect(center=(x, y))
 
-        self.HP = 10
-        self.player = player
-        self.rect.center = (x, y)
+        # Propriedades do boss
+        self.HP           = vida
+        self.player       = player
+        self.player_rect  = player_rect
+        self.speed        = 2
+        self.pulo_speed   = self.speed * 2
 
-        self.range_pulo = pygame.Rect(0, 0, 0, 0)
-
-        self.speed = 2
-        self.pulo_speed = self.speed*2
-        self.player_rect = player_rect
-
+        # Grupo de raios e controller (4× scale, spacing 500)
         self.raios = pygame.sprite.Group()
-        danger_ss = SpriteSheet('DangerAnimation.png', 0, 0, 32, 32, 0, [6], (0,0,0), False)
-        strike_ss = SpriteSheet('thunderSpriteSheet.png', 0, 0, 128, 256, 0, [5], (0,0,0), False)
-
-        # configura o gerenciador de ondas de raios
+        danger_ss = SpriteSheet('DangerAnimation.png',
+                                0, 0, 32, 32, 0, [6], (0,0,0), False)
+        strike_ss = SpriteSheet('thunderSpriteSheet.png',
+                                0, 0, 128, 256, 0, [5], (0,0,0), False)
         self.raios_controller = Raios(
             boss=self,
             danger_sheet=danger_ss,
             strike_sheet=strike_ss,
-            map_min_x=200, map_max_x=800,
-            map_min_y=400, map_max_y=1000,
+            map_min_x=20, map_max_x=1600,
+            map_min_y=40, map_max_y=1200,
             safe_radius=40,
             min_count=4, max_count=7,
             wave_cooldown=5000,
-            danger_fc=120//6,    # 2s de aviso em 6 quadros → 20
-            strike_fc=150//5,    # 2.5s de impacto em 5 quadros → 30
-            damage=5
+            danger_fc=120//6,    # 20
+            strike_fc=150//5,    # 30
+            damage=5,
+            alert_scale=4.0,
+            strike_scale=3.0,
+            min_spacing=300
         )
 
-        self.mover = True
+        # Estado de movimento / ataques / iframes
+        self.mover                    = True
         self.gerar_local_a_mover()
+        self.ataque                   = False
+        self.pulando                  = False
+        self.atacar_ranged            = ataque
+        self.modo_ataque              = 1
+        self.frame_count              = 0
+        self.frame_change             = 5
+        self.contagem_ataques         = 0
+        self.ivuln                    = False
+        self.iframes                  = 30
+        self.contador_iframes         = 0
+        self.contagem_tempo_parado    = 0
 
-        self.ataque = False
-        self.pulando = False
-
-        self.atacar_ranged = ataque
-
-        self.modo_ataque = 1
-
-        self.frame_count = 0
-        self.frame_atual = 0
-        self.direction = 'DOWN'
-
-        self.frame_change = 5
-
-        self.contagem_frames_ataque = 0
-        self.contagem_ataques = 0
-        self.contagem_tempo_parado = 0
-
-        self.ivuln = False
-        self.iframes = 30
-        self.contador_iframes = 0
 
     def gerar_local_a_mover(self):
-        self.local_a_mover = [randint(200,800),randint(400,1000)]
+        self.local_a_mover = [randint(200,200),randint(400,1200)]
 
         for i in range(2):
             if not self.local_a_mover[i] % 2 == 0:
@@ -289,71 +283,64 @@ class Boss2(Inimigo):
         self.pulando = True
     
     def update(self, dialogo_open):
+    # 1) Atualiza o sistema de raios primeiro
         self.raios_controller.update()
 
-        self.old_pos_x, self.old_pos_y = self.rect.topleft[0], self.rect.topleft[1]
+        # 2) Controle de diálogo
         if dialogo_open:
             return
+
+        # 3) Movimento, pulo e animações do boss
         self.frame_count += 1
-        
-        if not self.contagem_ataques >= 2:
-            if self.mover:
-                if self.local_a_mover_y-self.rect.centery != 0 and self.local_a_mover_x-self.rect.centerx < 200:
-                    if self.local_a_mover_y > self.rect.centery:
-                        self.rect.y += self.speed
-                        self.sheet.action = 2
-                    else:
-                        self.rect.y -= self.speed
-                        self.sheet.action = 0
-                else:
-                    if self.local_a_mover_x > self.rect.centerx:
-                        self.rect.x += self.speed
-                        self.sheet.action = 3
-                    else:
-                        self.rect.x -= self.speed
-                        self.sheet.action = 1
 
-        if self.ataque:
-            if self.pulando:
-                if self.player_rect.centery-self.rect.centery != 0 and self.player_rect.centerx-self.rect.centerx < 200:
-                    if self.player_rect.centery > self.rect.centery:
-                        self.sheet.action = 20
-                    else:
-                        self.sheet.action = 18
-                else:
-                    if self.player_rect.centerx > self.rect.centerx:
-                        self.sheet.action = 21
-                    else:
-                        self.sheet.action = 19
-                if self.pulo_dist_restante > self.pulo_speed:
-                    desloc = self.direction * self.pulo_speed
-                    self.rect.centerx += desloc.x
-                    self.rect.centery += desloc.y
-                    self.pulo_dist_restante -= self.pulo_speed
-                else:
-                    self.rect.center = self.pos_alvo
-                    self.pulando = False
-                    self.ataque = False
-                    self.colisao_pulo()
+        # Movimento aleatório
+        if not self.contagem_ataques >= 2 and self.mover:
+            dx = self.local_a_mover_x - self.rect.centerx
+            dy = self.local_a_mover_y - self.rect.centery
+            if abs(dy) != 0 and abs(dx) < 200:
+                self.rect.y += self.speed if dy > 0 else -self.speed
+                self.sheet.action = 2 if dy > 0 else 0
+            else:
+                self.rect.x += self.speed if dx > 0 else -self.speed
+                self.sheet.action = 3 if dx > 0 else 1
 
+        # Decidir pulo
         if self.contagem_ataques >= 2:
-                self.mover = False
-                self.ataque = True
-                self.atacar()
-                self.contagem_ataques = 0
+            self.mover            = False
+            self.ataque           = True
+            self.contagem_ataques = 0
+            self.pulo(self.player_rect)
 
-        if self.frame_count % self.frame_change == 0:
+        # Execução do pulo
+        if self.pulando:
+            if self.pulo_dist_restante > self.pulo_speed:
+                desloc = self.direction * self.pulo_speed
+                self.rect.centerx += desloc.x
+                self.rect.centery += desloc.y
+                self.pulo_dist_restante -= self.pulo_speed
+            else:
+                self.rect.center  = self.pos_alvo
+                self.pulando       = False
+                self.ataque        = False
+                self.colisao_pulo()
+
+        # 4) Somente atualiza a animação de walk se NÃO estiver pulando
+        if not self.pulando and self.frame_count % self.frame_change == 0:
             self.sheet.update()
-    
-        if pygame.math.Vector2(self.rect.center).distance_to(self.local_a_mover) < self.speed:
+
+        # 5) Gerar novo ponto de destino quando chegar lá
+        if pygame.math.Vector2(self.rect.center).distance_to(
+            pygame.math.Vector2(self.local_a_mover_x, self.local_a_mover_y)
+        ) < self.speed:
             self.contagem_ataques += 1
-            print(f"[DEBUG] o contador de ataques é {self.contagem_ataques}")
             self.gerar_local_a_mover()
 
-        if self.ivuln == True:
+        # 6) I-frames
+        if self.ivuln:
             self.contador_iframes += 1
-            if self.contador_iframes == self.iframes:
+            if self.contador_iframes >= self.iframes:
                 self.ivuln = False
+
 
     def draw_raios(self, screen, camera):
         for raio in self.raios:
