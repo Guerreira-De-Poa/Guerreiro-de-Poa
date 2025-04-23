@@ -43,8 +43,8 @@ def inicio():
 
     # Obter caminhos dos arquivos
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    map_path = os.path.join(current_dir, 'map1.json')
-    spritesheet_path = os.path.join(current_dir, 'spritesheet1.png')
+    map_path = os.path.join(current_dir, 'map.json')
+    spritesheet_path = os.path.join(current_dir, 'spritesheet.png')
 
     # Carregar o arquivo JSON do mapa
     try:
@@ -56,7 +56,7 @@ def inicio():
         sys.exit()
 
     # Configurações do mapa (tamanho final desejado)
-    TILE_SIZE = 64  # Tamanho final dos tiles na tela
+    TILE_SIZE = 48  # Tamanho final dos tiles na tela
     ORIGINAL_TILE_SIZE = 16  # Tamanho original na spritesheet
     SCALE_FACTOR = TILE_SIZE // ORIGINAL_TILE_SIZE
     
@@ -103,7 +103,20 @@ def inicio():
         '30': (96, 48), '31': (112, 48), '32': (0, 64),
         '33': (16, 64), '34': (32, 64), '35': (48, 64),
         '36': (64, 64), '37': (80, 64), '38': (96, 64),
-        '39': (112, 64), '40': (0, 80),
+        '39': (112, 64), '40': (0, 80), '41': (16, 80),
+        '42': (32, 80), '43': (48, 80), '44': (64, 80),
+        '45': (80, 80), '46': (96, 80), '47': (112, 80),
+        '48': (0, 96), '49': (16, 96), '50': (32, 96),
+        '51': (48, 96), '52': (64, 96), '53': (80, 96),
+        '54': (96, 96), '55': (112, 96), '56': (0, 112),
+        '57': (16, 112), '58': (32, 112), '59': (48, 112),
+        '60': (64, 112), '61': (80, 112), '62': (96, 112),
+        '63': (112, 112), '64': (0, 128), '65': (16, 128),
+        '66': (32, 128), '67': (48, 128), '68': (64, 128),
+        '69': (80, 128), '70': (96, 128), '71': (112, 128),
+        '72': (0, 144), '73': (16, 144), '74': (32, 144),
+        '75': (48, 144), '76': (64, 144), '77': (80, 144),
+        '78': (96, 144), '79': (112, 144), '80': (0, 160),
     }
 
     def process_map_for_collision(map_data):
@@ -119,7 +132,7 @@ def inicio():
 
     def process_map_for_rendering(map_data):
         tiles = []
-        layer_order = ['Floor', 'Walls', 'Walls sides', 'Miscs', 'Doors', 'decoracoes']
+        layer_order = ['Floor', 'Walls', 'Walls sides', 'colunass','Miscs', 'colunas', 'Doors']
         
         layer_dict = {layer_name: [] for layer_name in layer_order}
         
@@ -208,7 +221,7 @@ def inicio():
     xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
     menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
 
-    player.rect.x, player.rect.y = 1056, 800
+    player.rect.x, player.rect.y = 1072, 1280
 
     # Configuração da câmera
     camera = pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)

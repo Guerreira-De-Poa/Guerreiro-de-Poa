@@ -47,7 +47,7 @@ def inicio():
         sys.exit()
 
     # Configurações do mapa (tamanho final desejado)
-    TILE_SIZE = 64  # Tamanho final dos tiles na tela
+    TILE_SIZE = 48  # Tamanho final dos tiles na tela
     ORIGINAL_TILE_SIZE = 16  # Tamanho original na spritesheet
     SCALE_FACTOR = TILE_SIZE // ORIGINAL_TILE_SIZE
     
