@@ -523,7 +523,7 @@ def inicio():
 
         else:
             if not cutscene_final_rodada:
-                tocar_cutscene_cv2('cutscenes/cutscene_final.mp4', 'cutscenes/cutscene_boss1.mp3', screen)
+                tocar_cutscene_cv2('cutscenes/cutscene_final.mp4', 'cutscenes/cutscene_final.mp3', screen)
                 cutscene_final_rodada = True
 
         if inventario1.inventory_open:
