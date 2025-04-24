@@ -31,7 +31,7 @@ def tocar_cutscene_cv2(video_path, audio_path, screen):
                 pygame.quit()
                 exit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
+                if event.key == pygame.K_SPACE:
                     cap.release()
                     pygame.mixer.music.stop()
                     return

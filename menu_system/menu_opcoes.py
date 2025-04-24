@@ -57,8 +57,8 @@ class MenuOpcoes:
             self.tela.blit(imagem, (425, y))
             self.pos_menus.append(pygame.Rect(425, y, 350, 74))
 
-    def processar_eventos(self):
-        for evento in pygame.event.get():
+    def processar_eventos(self, evento):
+        # for evento in pygame.event.get():
             if evento.type == pygame.QUIT or (evento.type == pygame.KEYDOWN and evento.key == pygame.K_0):
                 self.rodando = False
 
@@ -71,7 +71,6 @@ class MenuOpcoes:
                     elif self.opcao_selecionada == 2:
                         self.ativar_controles_img = True
                         self.evento_ativado = True
-
                     elif self.opcao_selecionada == 3:
                         self.rodando = False
                     
@@ -87,6 +86,7 @@ class MenuOpcoes:
                         self.pausado = not self.pausado
 
                 elif evento.key == pygame.K_DOWN and self.pausado:
+                    print("A")
                     if self.opcao_selecionada < len(self.pos_menus) - 1:
                         self.opcao_selecionada += 1
                         self.pos_espadinha_y_final += 80
@@ -109,7 +109,7 @@ class MenuOpcoes:
                 self.mudar_opcao_cima = False
 
     def desenhar(self):
-        self.tela.fill(self.branco)
+        # self.tela.fill(self.branco)
 
         if self.pausado:
             self.tela.blit(self.escurecedor, (0, 0))
@@ -138,6 +138,6 @@ class MenuOpcoes:
         pygame.quit()
         sys.exit()
 
-# Iniciar o menu
-menu = MenuOpcoes(width, height, tela, rodando)
-menu.executar()
+# # Iniciar o menu
+# menu = MenuOpcoes(width, height, tela, rodando)
+# menu.executar()
