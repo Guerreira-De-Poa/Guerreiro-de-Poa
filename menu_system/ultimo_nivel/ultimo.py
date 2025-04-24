@@ -25,6 +25,8 @@ from cutscenes.tocar_cutscene import tocar_cutscene_cv2
 
 from cutscenes.tocar_cutscene import tocar_cutscene_cv2
 
+from menu_opcoes import MenuOpcoes
+
 pause = False
 
 def inicio():
@@ -267,8 +269,9 @@ def inicio():
     # Game loop
     clock = pygame.time.Clock()
     running = True
+    menu_opcoes = MenuOpcoes(SCREEN_WIDTH, SCREEN_HEIGHT, screen, running)
 
-    while running:
+    while menu_opcoes.pausado:
         if player.HP == 0:
             running = False
         player.atualizar_stamina()
@@ -323,7 +326,10 @@ def inicio():
                 pygame.quit()
                 sys.exit()
 
+
             if event.type == pygame.KEYDOWN:
+                menu_opcoes.processar_eventos()
+
                 if event.key == pygame.K_w:
                     player.nova_direcao = True
                 elif event.key == pygame.K_s:
@@ -435,7 +441,7 @@ def inicio():
 
         old_x, old_y = player.rect.x, player.rect.y
 
-        if dialogo_a_abrir:
+        if dialogo_a_abrir or menu_opcoes.pausado:
             all_sprites.update(dialogo_a_abrir.texto_open)
         else:
             all_sprites.update(False)
@@ -563,9 +569,21 @@ def inicio():
         if dragging_item:
             inventario1.draw_dragging_item(screen, dragging_item)
 
-        player.draw_health(screen)
-        player.draw_stamina(screen)
-        xp.render()
+        if menu_opcoes.pausado:
+            menu_opcoes.atualizar()
+            menu_opcoes.desenhar()
+
+        if not menu_opcoes.pausado:
+            player.draw_health(screen)
+            player.draw_stamina(screen)
+            if not dialogo_a_abrir:
+                xp.render()
+            else:
+                if dialogo_a_abrir.texto_open == False:
+                    xp.render()
+
+        raios.update()
+        raios.draw(screen)
 
         for npc in npcs:
             npc.dialogo.coisa()
