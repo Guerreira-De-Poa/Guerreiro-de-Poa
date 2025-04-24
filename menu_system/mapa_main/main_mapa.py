@@ -114,8 +114,8 @@ def inicio():
             "ataque": 6.25,
             "defesa": 5.0,
             "vida_max": 20,
-            "vida_atual": 10,
-            "stamina": 6.25,
+            "vida_atual": 20,
+            "stamina": 96.25,
             "velocidade": 10
     }
 
@@ -246,13 +246,15 @@ def inicio():
     lista_4 = [13 for j in range(4)]
     lista_5 = [7 for k in range(14)]
 
-    with open('save.json', 'r') as f:
-        try:
-            save_carregado = json.load(f)
-            print(save_carregado)
-        except:
-            save_carregado = False
-            print("ERRO AO CARREGAR SAVE")
+    # with open('save.json', 'r') as f:
+    #     try:
+    #         save_carregado = json.load(f)
+    #         print(save_carregado)
+    #     except:
+    #         save_carregado = False
+    #         print("ERRO AO CARREGAR SAVE")
+
+    save_carregado = False
 
     #print(save_carregado)
 
@@ -454,7 +456,16 @@ def inicio():
         with open("save.json", "w") as f:
             json.dump(Dicionario_para_save, f, indent=4)
 
+    inimigos_spawnados = False
+
+    tocar_cutscene_cv2('cutscenes/cutscene_inicio.mp4', 'cutscenes/cutscene_inicio.mp3', screen)
+
     while menu_opcoes.rodando:
+        if player.HP == 0:
+            running = False
+
+        if len(inimigos) == 0 and player.rect.y < 64:
+            mapa_antes_ligeiro()
         menu.update()
         player.atualizar_stamina()
 
@@ -502,17 +513,7 @@ def inicio():
         missao_3 = npc2.dialogo.missao_ativada
 
         if missao_3 == True:
-            pygame.mixer.music.stop()
-            pygame.mixer.music.load("musicas/sfx-menu12.mp3")
-            pygame.mixer.music.play(1)  # -1 significa que a música vai tocar em loop
-            pygame.mixer.music.set_volume(0.2)  # 50% do volume máximo
-            # ULTIMO NIVEL!
-            running = False
-            screen.fill((0, 0, 0))
-            pygame.display.flip()
-            pygame.time.delay(500)
-            print('ok')
-            tocar_cutscene_cv2('cutscenes/cutscene_bossFinal.mp4', 'cutscenes/cutscene_bossFinal.mp3', screen)
+            mapa_antes_final()
             ultimo_nivel() # AQUI É MELHOR
         if missao_2 == True:
             pygame.mixer.music.stop()
@@ -1094,5 +1095,4 @@ def inicio():
     Game_over(inicio)
 
 if __name__ == "__main__":
-    tocar_cutscene_cv2('cutscenes/cutscene_inicio.mp4', 'cutscenes/cutscene_inicio.mp3', screen)
     inicio()
