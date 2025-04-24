@@ -48,6 +48,8 @@ SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
+
+
 def inicio():
     ####
     # PRA MUSICA FUNCIONAR: ANTES DO LOOP, QUEBRE O SOM, COMEÇOU? PEGA A MUSICA
@@ -349,9 +351,16 @@ def inicio():
 
     # NPC ANTES DO LIGEIRO
 
+    texto_2_antes = {
+        'personagem':'Morador de Poá',
+        'texto_1':['Calma aí', 'Você ainda não fez a primeira missão', 'Fale com o morador perto da praia'],
+        'personagem_1': "Guerreiro de Poá",
+        'texto_2':['Eu irei ajudar!']
+        }
+
     texto_2 = {
         'personagem':'Morador de Poá',
-        'texto_1':['Você foi o guerreiro que nos salvou certo?', 'Muito obrigado', 'Eu posso te levar ao chefe deles', 'Isso fará com que eles desistam'],
+        'texto_1':['Você foi o guerreiro que nos salvou certo?', 'Muito obrigado', 'Eu posso te levar ao chefe deles', 'Ele mora logo ali naquela ilha ao norte', 'Isso fará com que eles desistam'],
         'personagem_1': "Guerreiro de Poá",
         'texto_2':['Me leve até lá']
         }
@@ -373,15 +382,20 @@ def inicio():
     npc1 = NPC(omori,screen,1955, 2150,texto, 3) # npc inicio
     npc2 = NPC(omori2,screen,1954, 744,texto_3, 4) # npc gabriel
 
+    npcteste = NPC(omori1,screen,1151, 845,texto_2_antes) # npc inicio    
+   
     all_sprites.add(npc0,npc1)
     npcs = pygame.sprite.Group()
-    npcs.add(npc0,npc1,npc2 ) 
+    npcs.add(npc0,npc1,npc2, npcteste)  
 
     dialogo_group = []
 
     for npc in npcs:
         if npc.dialogo:
             dialogo_group.append(npc.dialogo)
+
+    ### CHAVE ENTRADA LIGEIRO
+    chave_entrada = False
 
     #################
 
@@ -494,6 +508,14 @@ def inicio():
         missao_2 = npc0.dialogo.missao_ativada
         missao_3 = npc2.dialogo.missao_ativada
 
+        # Remover o NPC do ligeiro (e adiciona caso necessário)
+        if inimigos_spawnados == False:
+            all_sprites.remove(npc0)
+            npcs.remove(npc0)
+        elif inimigos_spawnados == True:
+            all_sprites.add(npc0)
+            npcs.add(npc0)
+
         if missao_3 == True:
             pygame.mixer.music.stop()
             pygame.mixer.music.load("musicas/sfx-menu12.mp3")
@@ -507,7 +529,7 @@ def inicio():
             print('ok')
             tocar_cutscene_cv2('cutscenes/cutscene_bossFinal.mp4', 'cutscenes/cutscene_bossFinal.mp3', screen)
             ultimo_nivel() # AQUI É MELHOR
-        if missao_2 == True:
+        if missao_2 == True and chave_entrada == True:
             pygame.mixer.music.stop()
             pygame.mixer.music.load("musicas/sfx-menu12.mp3")
             pygame.mixer.music.play(1)  # -1 significa que a música vai tocar em loop
@@ -550,6 +572,19 @@ def inicio():
                 enemy3 = Inimigo(player.rect, player, 2650,2266, False,spritesheet_inimigo_arco3, 9, 600, 40)
                 all_sprites.add(enemy0, enemy1, enemy2, enemy3)
                 inimigos.add(enemy0, enemy1, enemy2, enemy3)
+                
+                # Remover o NPC teste
+                all_sprites.remove(npcteste)
+                npcs.remove(npcteste)
+                
+                # Adicionar o NPC do Ligeiro se ainda não estiver no grupo
+                if npc0 not in npcs:
+                    all_sprites.add(npc0)
+                    npcs.add(npc0)
+                    
+                # Atualizar o grupo de diálogos
+                dialogo_group = [npc.dialogo for npc in npcs if npc.dialogo]
+
             
 
         bau_perto = False
@@ -845,7 +880,7 @@ def inicio():
                 for item in inimigos:
                     if value[0] == item:
                         item.get_hit(player.dano)
-                        print(item.HP)
+                        # print(item.HP)
             i = 0
             for inimigo in inimigos:
                 i+=1
@@ -969,7 +1004,7 @@ def inicio():
                     player.atacando_melee = True
                     player.hold_arrow(mouse_pos,camera)
 
-        print(contador_melee)
+        # print(contador_melee)
         
         # Renderização
         screen.fill((0, 0, 0))  # Fundo preto
@@ -1001,6 +1036,14 @@ def inicio():
 
         # Desenhar o jogador
         player.draw(screen, camera)
+
+        ####
+        # paramantro para passaor de fase pro ligeiro
+        ####
+
+        if player.rect.y < 150:
+            chave_entrada = True
+            print("teste")
 
         for npc in npcs:
             screen.blit(npc.image,(npc.rect.x - camera.left, npc.rect.y - camera.top))
