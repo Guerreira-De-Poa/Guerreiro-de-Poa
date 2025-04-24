@@ -269,6 +269,8 @@ def inicio():
     running = True
 
     while running:
+        if player.HP == 0:
+            running = False
         player.atualizar_stamina()
         bau_perto = False
 

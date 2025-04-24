@@ -18,10 +18,6 @@ from boss_fight.main_luta import inicio as boss_fight
 # chama ultimo nivel
 from ultimo_nivel.ultimo import inicio as ultimo_nivel
 
-from antes_ligeiro.luta_antes_ligeiro import inicio as mapa_antes_ligeiro
-
-from antes_ultimo.antes_ultimo import inicio as mapa_antes_final
-
 # Chamando a função importada
 
 from spritesheet_explicada import SpriteSheet
@@ -286,8 +282,8 @@ def inicio():
     menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
 
     # Posicionar o jogador em uma posição válida no mapa
-    player.rect.x = 33 * TILE_SIZE
-    player.rect.y = 36 * TILE_SIZE
+    player.rect.x = 1220
+    player.rect.y = 1300
 
     # Configuração da câmera
     camera = pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -332,61 +328,61 @@ def inicio():
 
     interagir_bg = pygame.image.load("caixa_dialogo_pequena2.png")
 
-    omori = pygame.image.load('npc_amarelo.png')
-    omori1 = pygame.image.load('npc_cinza.png')
-    omori2 = pygame.image.load('npc_vermelho1.png')
+    # omori = pygame.image.load('npc_amarelo.png')
+    # omori1 = pygame.image.load('npc_cinza.png')
+    # omori2 = pygame.image.load('npc_vermelho1.png')
 
-    # DIALOGO NPC QUE APARECE DE PRIMEIRA
-    texto = {
-        'personagem':'Morador de Poá',
-        'texto_1':['Ei você', 'Você parece um guerreiro formidável', 'Por favor nos ajude', 'Nossa vila está sendo invadida'],
-        'personagem_1': "Guerreiro de Poá",
-        'texto_2':['Não se preocupe senhor', 'Eu irei ajuda-los']
-        }
+    # # DIALOGO NPC QUE APARECE DE PRIMEIRA
+    # texto = {
+    #     'personagem':'Morador de Poá',
+    #     'texto_1':['Ei você', 'Você parece um guerreiro formidável', 'Por favor nos ajude', 'Nossa vila está sendo invadida'],
+    #     'personagem_1': "Guerreiro de Poá",
+    #     'texto_2':['Não se preocupe senhor', 'Eu irei ajuda-los']
+    #     }
 
-    # DIALOGO NPC QUE APARECE DEPOIS QUE O JOGADOR AJUDA O NPC (PRIMEIRO)
-    texto_1 = {
-        'personagem':'Morador de Poá',
-        'texto_1':['Obrigado por nos salvar', 'Fale com o carinha que mora logo ali','Ele viu onde o chefe dos invasores fica', 'Se você derrotar o chefe', 'Eles nunca irão nos invadir de novo' ],
-        'personagem_1': "Guerreiro de Poá",
-        'texto_2':['Não se preocupe senhor', 'Eu irei ajuda-los']
-        }
+    # # DIALOGO NPC QUE APARECE DEPOIS QUE O JOGADOR AJUDA O NPC (PRIMEIRO)
+    # texto_1 = {
+    #     'personagem':'Morador de Poá',
+    #     'texto_1':['Obrigado por nos salvar', 'Fale com o carinha que mora logo ali','Ele viu onde o chefe dos invasores fica', 'Se você derrotar o chefe', 'Eles nunca irão nos invadir de novo' ],
+    #     'personagem_1': "Guerreiro de Poá",
+    #     'texto_2':['Não se preocupe senhor', 'Eu irei ajuda-los']
+    #     }
 
-    # NPC ANTES DO LIGEIRO
+    # # NPC ANTES DO LIGEIRO
 
-    texto_2 = {
-        'personagem':'Morador de Poá',
-        'texto_1':['Você foi o guerreiro que nos salvou certo?', 'Muito obrigado', 'Eu posso te levar ao chefe deles', 'Isso fará com que eles desistam'],
-        'personagem_1': "Guerreiro de Poá",
-        'texto_2':['Me leve até lá']
-        }
+    # texto_2 = {
+    #     'personagem':'Morador de Poá',
+    #     'texto_1':['Você foi o guerreiro que nos salvou certo?', 'Muito obrigado', 'Eu posso te levar ao chefe deles', 'Isso fará com que eles desistam'],
+    #     'personagem_1': "Guerreiro de Poá",
+    #     'texto_2':['Me leve até lá']
+    #     }
     
-    # NPC ANTES DO GABRIEL
-    texto_3 = {
-        'personagem':'Morador de Poá',
-        'texto_1':['Muito obrigado por nos salvar!', 'Mas agora, é a sua hora de brilhar...', 'Gabriel está neste castelo', 'pronto para aniquilar Poá', 'Apenas você pode derrotá-lo', 'Boa sorte'],
-        'personagem_1': "Guerreiro de Poá",
-        'texto_2':['Me leve até lá']
-        }
+    # # NPC ANTES DO GABRIEL
+    # texto_3 = {
+    #     'personagem':'Morador de Poá',
+    #     'texto_1':['Muito obrigado por nos salvar!', 'Mas agora, é a sua hora de brilhar...', 'Gabriel está neste castelo', 'pronto para aniquilar Poá', 'Apenas você pode derrotá-lo', 'Boa sorte'],
+    #     'personagem_1': "Guerreiro de Poá",
+    #     'texto_2':['Me leve até lá']
+    #     }
     
-    ########### 
-    # de alguma forma, agora te que deixar o dicionario texto...
-    ###########
+    # ########### 
+    # # de alguma forma, agora te que deixar o dicionario texto...
+    # ###########
  
-    # posição dos npcs
-    npc0 = NPC(omori1,screen,1151,845,texto_2, 2) # npc ligeiro
-    npc1 = NPC(omori,screen,1955, 2150,texto, 3) # npc inicio
-    npc2 = NPC(omori2,screen,1954, 744,texto_3, 4) # npc gabriel
+    # # posição dos npcs
+    # npc0 = NPC(omori1,screen,1151,845,texto_2, 2) # npc ligeiro
+    # npc1 = NPC(omori,screen,1955, 2150,texto, 3) # npc inicio
+    # npc2 = NPC(omori2,screen,1954, 744,texto_3, 4) # npc gabriel
 
-    all_sprites.add(npc0,npc1)
-    npcs = pygame.sprite.Group()
-    npcs.add(npc0,npc1,npc2 ) 
+    # all_sprites.add(npc0,npc1)
+    # npcs = pygame.sprite.Group()
+    # npcs.add(npc0,npc1,npc2 ) 
 
-    dialogo_group = []
+    # dialogo_group = []
 
-    for npc in npcs:
-        if npc.dialogo:
-            dialogo_group.append(npc.dialogo)
+    # for npc in npcs:
+    #     if npc.dialogo:
+    #         dialogo_group.append(npc.dialogo)
 
     #################
 
@@ -456,9 +452,17 @@ def inicio():
         if player.HP == 0:
             running = False
 
-        if inimigos_spawnados and player.rect.y <64:
-            salvar_game()
-            mapa_antes_ligeiro()
+        if len(inimigos) == 0 and player.rect.y < 100:
+            screen.fill((0, 0, 0))
+            fundo_loading = pygame.image.load('tela_loading_ligeiro.png').convert_alpha()
+            fundo_loading = pygame.transform.scale(fundo_loading, (1152, 648))
+            screen.blit(fundo_loading, (0, 0))
+            pygame.display.flip()
+            pygame.time.delay(1500)
+            print('ok')
+            tocar_cutscene_cv2('cutscenes/cutscene_boss1.mp4', 'cutscenes/cutscene_boss1.mp3', screen)
+            boss_fight() # AQUI É MELHOR
+
         menu.update()
         player.atualizar_stamina()
 
@@ -499,69 +503,6 @@ def inicio():
                             if item:
                                 dragging_item = item
                                 dragging_from = "inventory2"
-            
-
-        missao_1 = npc1.dialogo.missao_ativada
-        missao_2 = npc0.dialogo.missao_ativada
-        missao_3 = npc2.dialogo.missao_ativada
-
-        if missao_3 == True:
-            pygame.mixer.music.stop()
-            pygame.mixer.music.load("musicas/sfx-menu12.mp3")
-            pygame.mixer.music.play(1)  # -1 significa que a música vai tocar em loop
-            pygame.mixer.music.set_volume(0.2)  # 50% do volume máximo
-            # ULTIMO NIVEL!
-            running = False
-            screen.fill((0, 0, 0))
-            pygame.display.flip()
-            pygame.time.delay(500)
-            print('ok')
-            tocar_cutscene_cv2('cutscenes/cutscene_bossFinal.mp4', 'cutscenes/cutscene_bossFinal.mp3', screen)
-            ultimo_nivel() # AQUI É MELHOR
-        if missao_2 == True:
-            pygame.mixer.music.stop()
-            pygame.mixer.music.load("musicas/sfx-menu12.mp3")
-            pygame.mixer.music.play(1)  # -1 significa que a música vai tocar em loop
-            pygame.mixer.music.set_volume(0.2)  # 50% do volume máximo
-            ####################
-            #
-            # ADICIONA NIVEL 1 - BOSS FIGHT "CHEFE 1"
-            #
-            ####################
-            running = False
-            ####################
-            #
-            #PARA ADICIONAR CUTSCENES
-            #
-            ####################
-            screen.fill((0, 0, 0))
-            fundo_loading = pygame.image.load('tela_loading_ligeiro.png').convert_alpha()
-            fundo_loading = pygame.transform.scale(fundo_loading, (1152, 648))
-            screen.blit(fundo_loading, (0, 0))
-            pygame.display.flip()
-            pygame.time.delay(1500)
-            print('ok')
-            tocar_cutscene_cv2('cutscenes/cutscene_boss1.mp4', 'cutscenes/cutscene_boss1.mp3', screen)
-            boss_fight() # AQUI É MELHOR
-
-        if missao_1 == True and iterado_teste == 0:
-            iterado_teste+=1
-            npc.dialogo.frase = ''
-            npc1.dialogo.texto = texto_1
-            npc1.dialogo.iter_texto = 0
-            npc1.dialogo.texto_index = 0
-            npc1.dialogo.letra_index = 0
-
-        if missao_1 == True and len(inimigos) == 0:
-            if not inimigos_spawnados:
-                inimigos_spawnados = True
-                enemy0 = Inimigo(player.rect, player, 1566,2322, False,spritesheet_inimigo_arco, 10, 750, 50)
-                enemy1 = Inimigo(player.rect, player, 2150,1754, False,spritesheet_inimigo_arco1, 13, 500, 20)
-                enemy2 = Inimigo(player.rect, player, 1570,2102, True,spritesheet_inimigo_arco2, 8, 650, 30)
-                enemy3 = Inimigo(player.rect, player, 2650,2266, False,spritesheet_inimigo_arco3, 9, 600, 40)
-                all_sprites.add(enemy0, enemy1, enemy2, enemy3)
-                inimigos.add(enemy0, enemy1, enemy2, enemy3)
-            
 
         bau_perto = False
 
@@ -579,9 +520,9 @@ def inicio():
 
         dialogo_hitbox =  False
 
-        for npc in npcs:
-            if npc.dialogo_rect.colliderect(player.rect):
-                dialogo_hitbox = npc
+        # for npc in npcs:
+        #     if npc.dialogo_rect.colliderect(player.rect):
+        #         dialogo_hitbox = npc
 
         if dialogo_hitbox:
             dialogo_a_abrir = dialogo_hitbox.dialogo
@@ -895,11 +836,11 @@ def inicio():
                 player.rect.x, player.rect.y = old_x, old_y
                 break
 
-        for npc in npcs:
-            if player.collision_rect.colliderect(npc):
-                # Colisão detectada, voltar para a posição anterior
-                player.rect.x, player.rect.y = old_x, old_y
-                break
+        # for npc in npcs:
+        #     if player.collision_rect.colliderect(npc):
+        #         # Colisão detectada, voltar para a posição anterior
+        #         player.rect.x, player.rect.y = old_x, old_y
+        #         break
 
                 
         # Atualizar câmera
@@ -1013,8 +954,8 @@ def inicio():
         # Desenhar o jogador
         player.draw(screen, camera)
 
-        for npc in npcs:
-            screen.blit(npc.image,(npc.rect.x - camera.left, npc.rect.y - camera.top))
+        # for npc in npcs:
+        #     screen.blit(npc.image,(npc.rect.x - camera.left, npc.rect.y - camera.top))
 
         for inimigo in inimigos:
             inimigo.draw_balas(screen,camera)
@@ -1087,13 +1028,11 @@ def inicio():
 
         #print(menu.atributos,menu.valores)
 
-        for npc in npcs:
-            npc.dialogo.coisa()
+        # for npc in npcs:
+        #     npc.dialogo.coisa()
 
         pygame.display.flip()
-    
     Game_over(inicio)
 
 if __name__ == "__main__":
-    tocar_cutscene_cv2('cutscenes/cutscene_inicio.mp4', 'cutscenes/cutscene_inicio.mp3', screen)
     inicio()

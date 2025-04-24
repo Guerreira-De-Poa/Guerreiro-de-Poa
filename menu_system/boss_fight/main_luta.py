@@ -272,6 +272,9 @@ def inicio():
 
     while running:
 
+        if player.HP == 0:
+            running = False
+            
         #print("LEN = ",len([player.sheet.action]),"NUM = ",player.sheet.index % len(player.sheet.cells[player.sheet.action]))
         # print(player.sheet.action)
         # print(player.sheet.cells[0])

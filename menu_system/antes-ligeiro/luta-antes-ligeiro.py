@@ -449,6 +449,8 @@ def inicio():
     inimigos_spawnados = False
 
     while running:
+        if player.HP == 0:
+            running = False
         menu.update()
         player.atualizar_stamina()
 

@@ -18,10 +18,6 @@ from boss_fight.main_luta import inicio as boss_fight
 # chama ultimo nivel
 from ultimo_nivel.ultimo import inicio as ultimo_nivel
 
-from antes_ligeiro.luta_antes_ligeiro import inicio as mapa_antes_ligeiro
-
-from antes_ultimo.antes_ultimo import inicio as mapa_antes_final
-
 # Chamando a função importada
 
 from spritesheet_explicada import SpriteSheet
@@ -92,46 +88,42 @@ def inicio():
     # Obter caminhos dos arquivos
     current_dir = os.path.dirname(os.path.abspath(__file__))
     map_path = os.path.join(current_dir, 'map.json')
-    spritesheet_path = os.path.join(current_dir, 'spritesheet.png')  # Nome correto da sua spritesheet
+    spritesheet_path = os.path.join(current_dir, 'spritesheet.png')
 
     # Carregar o arquivo JSON do mapa
     try:
         with open(map_path, 'r') as f:
             map_data = json.load(f)
     except Exception as e:
-        # print(f"Erro ao carregar mapa: {e}")
+        print(f"Erro ao carregar mapa: {e}")
         pygame.quit()
         sys.exit()
 
-    # Configurações do mapa
-    TILE_SIZE = map_data['tileSize']
+    # Configurações do mapa (tamanho final desejado)
+    TILE_SIZE = 48  # Tamanho final dos tiles na tela
+    ORIGINAL_TILE_SIZE = 16  # Tamanho original na spritesheet
+    SCALE_FACTOR = TILE_SIZE // ORIGINAL_TILE_SIZE
+    
     MAP_WIDTH = map_data['mapWidth']
     MAP_HEIGHT = map_data['mapHeight']
 
-    atributos = {
-            "ataque": 6.25,
-            "defesa": 5.0,
-            "vida_max": 20,
-            "vida_atual": 10,
-            "stamina": 6.25,
-            "velocidade": 10
-    }
-
-    # Classe para carregar a spritesheet do mapa
+    # Classe para carregar a spritesheet do mapa (corrigida)
     class MapSpriteSheet:
         def __init__(self, filename):
             try:
                 self.sheet = pygame.image.load(filename).convert_alpha()
-                # print(f"Spritesheet {filename} carregada com sucesso!")
+                print(f"Spritesheet {filename} carregada com sucesso!")
             except Exception as e:
-                # print(f"Erro ao carregar spritesheet: {e}")
+                print(f"Erro ao carregar spritesheet: {e}")
                 self.sheet = None
         
         def get_sprite(self, x, y, width, height):
             if self.sheet:
-                sprite = pygame.Surface((width, height), pygame.SRCALPHA)
-                sprite.blit(self.sheet, (0, 0), (x, y, width, height))
-                return sprite
+                # Pegar o tile no tamanho original (16x16)
+                sprite = pygame.Surface((ORIGINAL_TILE_SIZE, ORIGINAL_TILE_SIZE), pygame.SRCALPHA)
+                sprite.blit(self.sheet, (0, 0), (x, y, ORIGINAL_TILE_SIZE, ORIGINAL_TILE_SIZE))
+                # Escalar para o tamanho desejado (64x64)
+                return pygame.transform.scale(sprite, (TILE_SIZE, TILE_SIZE))
             return None
 
     # Carregar a spritesheet do mapa
@@ -140,54 +132,29 @@ def inicio():
         pygame.quit()
         sys.exit()
 
-    # Dicionário de mapeamento de tiles
+    # Dicionário de mapeamento de tiles (coordenadas originais 16x16)
     TILE_MAPPING = {
-    '0': (0, 0), '1': (64, 0), '2': (128, 0),
-    '3': (192, 0), '4': (256, 0), '5': (320, 0),
-    '6': (384, 0), '7': (448, 0), '8': (0, 64),
-    '9': (64, 64), '10': (128, 64), '11': (192, 64),
-    '12': (256, 64), '13': (320, 64), '14': (384, 64),
-    '15': (448, 64), '16': (0, 128), '17': (64, 128),
-    '18': (128, 128), '19': (192, 128), '20': (256, 128),
-    '21': (320, 128), '22': (384, 128), '23': (448, 128),
-    '24': (0, 192), '25': (64, 192), '26': (128, 192),
-    '27': (192, 192), '28': (256, 192), '29': (320, 192),
-    '30': (384, 192), '31': (448, 192), '32': (0, 256),
-    '33': (64, 256), '34': (128, 256), '35': (192, 256),
-    '36': (256, 256), '37': (320, 256), '38': (384, 256),
-    '39': (448, 256), '40': (0, 320), '41': (64, 320),
-    '42': (128, 320), '43': (192, 320), '44': (256, 320),
-    '45': (320, 320), '46': (384, 320), '47': (448, 320),
-    '48': (0, 384), '49': (64, 384), '50': (128, 384),
-    '51': (192, 384), '52': (256, 384), '53': (320, 384),
-    '54': (384, 384), '55': (448, 384), '56': (0, 448),
-    '57': (64, 448), '58': (128, 448), '59': (192, 448),
-    '60': (256, 448), '61': (320, 448), '62': (384, 448),
-    '63': (448, 448), '64': (0, 512), '65': (64, 512),
-    '66': (128, 512), '67': (192, 512), '68': (256, 512),
-    '69': (320, 512), '70': (384, 512), '71': (448, 512),
-    '72': (0, 576), '73': (64, 576), '74': (128, 576),
-    '75': (192, 576), '76': (256, 576), '77': (320, 576),
-    '78': (384, 576), '79': (448, 576), '80': (0, 640),
-    '81': (64, 640), '82': (128, 640), '83': (192, 640),
-    '84': (256, 640), '85': (320, 640), '86': (384, 640),
-    '87': (448, 640), '88': (0, 704), '89': (64, 704),
-    '90': (128, 704), '91': (192, 704), '92': (256, 704),
-    '93': (320, 704), '94': (384, 704), '95': (448, 704),
-    '96': (0, 768), '97': (64, 768), '98': (128, 768),
-    '99': (192, 768), '100': (256, 768), '101': (320, 768),
-    '102': (384, 768), '103': (448, 768), '104': (0, 832),
-    '105': (64, 832), '106': (128, 832), '107': (192, 832),
-    '108': (256, 832), '109': (320, 832), '110': (384, 832),
-    '111': (448, 832), '112': (0, 896), '113': (64, 896),
-    '114': (128, 896), '115': (192, 896), '116': (256, 896),
-    '117': (320, 896), '118': (384, 896), '119': (448, 896),
-    '120': (0, 960), '121': (64, 960), '122': (128, 960),
-    '123': (192, 960), '124': (256, 960), '125': (320, 960),
-    '126': (384, 960), '127': (448, 960), '128': (0, 1024),
-    '129': (64, 1024), '130': (128, 1024), '131': (192, 1024),
-    '132': (256, 1024), '133': (320, 1024), '134': (384, 1024),
-    '135': (448, 1024), 
+        '0': (0, 0), '1': (16, 0), '2': (32, 0),
+        '3': (48, 0), '4': (64, 0), '5': (80, 0),
+        '6': (96, 0), '7': (112, 0), '8': (0, 16),
+        '9': (16, 16), '10': (32, 16), '11': (48, 16),
+        '12': (64, 16), '13': (80, 16), '14': (96, 16),
+        '15': (112, 16), '16': (0, 32), '17': (16, 32),
+        '18': (32, 32), '19': (48, 32), '20': (64, 32),
+        '21': (80, 32), '22': (96, 32), '23': (112, 32),
+        '24': (0, 48), '25': (16, 48), '26': (32, 48),
+        '27': (48, 48), '28': (64, 48), '29': (80, 48),
+        '30': (96, 48), '31': (112, 48), '32': (0, 64),
+        '33': (16, 64), '34': (32, 64), '35': (48, 64),
+        '36': (64, 64), '37': (80, 64), '38': (96, 64),
+        '39': (112, 64), '40': (0, 80), '41': (16, 80),
+        '42': (32, 80), '43': (48, 80), '44': (64, 80),
+        '45': (80, 80), '46': (96, 80), '47': (112, 80),
+        '48': (0, 96), '49': (16, 96), '50': (32, 96),
+        '51': (48, 96), '52': (64, 96), '53': (80, 96),
+        '54': (96, 96), '55': (112, 96), '56': (0, 112),
+        '57': (16, 112), '58': (32, 112), '59': (48, 112),
+        '60': (64, 112),
     }
 
     def process_map_for_collision(map_data):
@@ -195,6 +162,7 @@ def inicio():
         for layer in map_data['layers']:
             if layer['collider']:
                 for tile in layer['tiles']:
+                    # Usar TILE_SIZE (64) para colisões
                     x = int(tile['x']) * TILE_SIZE
                     y = int(tile['y']) * TILE_SIZE
                     walls.append(pygame.Rect(x, y, TILE_SIZE, TILE_SIZE))
@@ -202,7 +170,7 @@ def inicio():
 
     def process_map_for_rendering(map_data):
         tiles = []
-        layer_order = ['Background', 'Background-colisoes',  'Sand', 'Layer_18', 'Cliff', 'Rocks', 'Grass', 'Miscs (Copy)', 'placas', 'Buildings (Copy)', 'torres', 'Miscs', 'detalinhos', 'pedra_mar', 'casas', 'arvores']
+        layer_order = ['Floor', 'Walls', 'Walls sides', 'Miscs', 'Doors', 'colunas']
         
         layer_dict = {layer_name: [] for layer_name in layer_order}
         
@@ -213,14 +181,16 @@ def inicio():
             
             for tile in layer['tiles']:
                 tile_id = str(tile['id'])
-                x = int(tile['x']) * TILE_SIZE
-                y = int(tile['y']) * TILE_SIZE
+                # Usar coordenadas originais (16) para posicionamento
+                x = int(tile['x']) * ORIGINAL_TILE_SIZE
+                y = int(tile['y']) * ORIGINAL_TILE_SIZE
                 
                 if tile_id in TILE_MAPPING and map_spritesheet.sheet:
                     sprite_x, sprite_y = TILE_MAPPING[tile_id]
-                    image = map_spritesheet.get_sprite(sprite_x, sprite_y, TILE_SIZE, TILE_SIZE)
+                    image = map_spritesheet.get_sprite(sprite_x, sprite_y, ORIGINAL_TILE_SIZE, ORIGINAL_TILE_SIZE)
                     if image:
-                        layer_dict[layer_name].append((x, y, image))
+                        # Multiplicar por SCALE_FACTOR para posicionar corretamente
+                        layer_dict[layer_name].append((x * SCALE_FACTOR, y * SCALE_FACTOR, image))
         
         for layer_name in layer_order:
             if layer_name in layer_dict:
@@ -251,6 +221,15 @@ def inicio():
         except:
             save_carregado = False
             print("ERRO AO CARREGAR SAVE")
+
+    atributos = {
+            "ataque": 6.25,
+            "defesa": 5.0,
+            "vida_max": 20,
+            "vida_atual": 10,
+            "stamina": 6.25,
+            "velocidade": 10
+    }
 
     #print(save_carregado)
 
@@ -286,8 +265,8 @@ def inicio():
     menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
 
     # Posicionar o jogador em uma posição válida no mapa
-    player.rect.x = 33 * TILE_SIZE
-    player.rect.y = 36 * TILE_SIZE
+    player.rect.x = 600
+    player.rect.y = 800
 
     # Configuração da câmera
     camera = pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -332,61 +311,61 @@ def inicio():
 
     interagir_bg = pygame.image.load("caixa_dialogo_pequena2.png")
 
-    omori = pygame.image.load('npc_amarelo.png')
-    omori1 = pygame.image.load('npc_cinza.png')
-    omori2 = pygame.image.load('npc_vermelho1.png')
+    # omori = pygame.image.load('npc_amarelo.png')
+    # omori1 = pygame.image.load('npc_cinza.png')
+    # omori2 = pygame.image.load('npc_vermelho1.png')
 
-    # DIALOGO NPC QUE APARECE DE PRIMEIRA
-    texto = {
-        'personagem':'Morador de Poá',
-        'texto_1':['Ei você', 'Você parece um guerreiro formidável', 'Por favor nos ajude', 'Nossa vila está sendo invadida'],
-        'personagem_1': "Guerreiro de Poá",
-        'texto_2':['Não se preocupe senhor', 'Eu irei ajuda-los']
-        }
+    # # DIALOGO NPC QUE APARECE DE PRIMEIRA
+    # texto = {
+    #     'personagem':'Morador de Poá',
+    #     'texto_1':['Ei você', 'Você parece um guerreiro formidável', 'Por favor nos ajude', 'Nossa vila está sendo invadida'],
+    #     'personagem_1': "Guerreiro de Poá",
+    #     'texto_2':['Não se preocupe senhor', 'Eu irei ajuda-los']
+    #     }
 
-    # DIALOGO NPC QUE APARECE DEPOIS QUE O JOGADOR AJUDA O NPC (PRIMEIRO)
-    texto_1 = {
-        'personagem':'Morador de Poá',
-        'texto_1':['Obrigado por nos salvar', 'Fale com o carinha que mora logo ali','Ele viu onde o chefe dos invasores fica', 'Se você derrotar o chefe', 'Eles nunca irão nos invadir de novo' ],
-        'personagem_1': "Guerreiro de Poá",
-        'texto_2':['Não se preocupe senhor', 'Eu irei ajuda-los']
-        }
+    # # DIALOGO NPC QUE APARECE DEPOIS QUE O JOGADOR AJUDA O NPC (PRIMEIRO)
+    # texto_1 = {
+    #     'personagem':'Morador de Poá',
+    #     'texto_1':['Obrigado por nos salvar', 'Fale com o carinha que mora logo ali','Ele viu onde o chefe dos invasores fica', 'Se você derrotar o chefe', 'Eles nunca irão nos invadir de novo' ],
+    #     'personagem_1': "Guerreiro de Poá",
+    #     'texto_2':['Não se preocupe senhor', 'Eu irei ajuda-los']
+    #     }
 
-    # NPC ANTES DO LIGEIRO
+    # # NPC ANTES DO LIGEIRO
 
-    texto_2 = {
-        'personagem':'Morador de Poá',
-        'texto_1':['Você foi o guerreiro que nos salvou certo?', 'Muito obrigado', 'Eu posso te levar ao chefe deles', 'Isso fará com que eles desistam'],
-        'personagem_1': "Guerreiro de Poá",
-        'texto_2':['Me leve até lá']
-        }
+    # texto_2 = {
+    #     'personagem':'Morador de Poá',
+    #     'texto_1':['Você foi o guerreiro que nos salvou certo?', 'Muito obrigado', 'Eu posso te levar ao chefe deles', 'Isso fará com que eles desistam'],
+    #     'personagem_1': "Guerreiro de Poá",
+    #     'texto_2':['Me leve até lá']
+    #     }
     
-    # NPC ANTES DO GABRIEL
-    texto_3 = {
-        'personagem':'Morador de Poá',
-        'texto_1':['Muito obrigado por nos salvar!', 'Mas agora, é a sua hora de brilhar...', 'Gabriel está neste castelo', 'pronto para aniquilar Poá', 'Apenas você pode derrotá-lo', 'Boa sorte'],
-        'personagem_1': "Guerreiro de Poá",
-        'texto_2':['Me leve até lá']
-        }
+    # # NPC ANTES DO GABRIEL
+    # texto_3 = {
+    #     'personagem':'Morador de Poá',
+    #     'texto_1':['Muito obrigado por nos salvar!', 'Mas agora, é a sua hora de brilhar...', 'Gabriel está neste castelo', 'pronto para aniquilar Poá', 'Apenas você pode derrotá-lo', 'Boa sorte'],
+    #     'personagem_1': "Guerreiro de Poá",
+    #     'texto_2':['Me leve até lá']
+    #     }
     
-    ########### 
-    # de alguma forma, agora te que deixar o dicionario texto...
-    ###########
+    # ########### 
+    # # de alguma forma, agora te que deixar o dicionario texto...
+    # ###########
  
-    # posição dos npcs
-    npc0 = NPC(omori1,screen,1151,845,texto_2, 2) # npc ligeiro
-    npc1 = NPC(omori,screen,1955, 2150,texto, 3) # npc inicio
-    npc2 = NPC(omori2,screen,1954, 744,texto_3, 4) # npc gabriel
+    # # posição dos npcs
+    # npc0 = NPC(omori1,screen,1151,845,texto_2, 2) # npc ligeiro
+    # npc1 = NPC(omori,screen,1955, 2150,texto, 3) # npc inicio
+    # npc2 = NPC(omori2,screen,1954, 744,texto_3, 4) # npc gabriel
 
-    all_sprites.add(npc0,npc1)
-    npcs = pygame.sprite.Group()
-    npcs.add(npc0,npc1,npc2 ) 
+    # all_sprites.add(npc0,npc1)
+    # npcs = pygame.sprite.Group()
+    # npcs.add(npc0,npc1,npc2 ) 
 
-    dialogo_group = []
+    # dialogo_group = []
 
-    for npc in npcs:
-        if npc.dialogo:
-            dialogo_group.append(npc.dialogo)
+    # for npc in npcs:
+    #     if npc.dialogo:
+    #         dialogo_group.append(npc.dialogo)
 
     #################
 
@@ -456,9 +435,21 @@ def inicio():
         if player.HP == 0:
             running = False
 
-        if inimigos_spawnados and player.rect.y <64:
-            salvar_game()
-            mapa_antes_ligeiro()
+        if len(inimigos) == 0 and player.rect.y < 135:
+            if player.rect.x > 930 and player.rect.x < 1109:
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load("musicas/sfx-menu12.mp3")
+                pygame.mixer.music.play(1)  # -1 significa que a música vai tocar em loop
+                pygame.mixer.music.set_volume(0.2)  # 50% do volume máximo
+                # ULTIMO NIVEL!
+                running = False
+                screen.fill((0, 0, 0))
+                pygame.display.flip()
+                pygame.time.delay(500)
+                print('ok')
+                tocar_cutscene_cv2('cutscenes/cutscene_bossFinal.mp4', 'cutscenes/cutscene_bossFinal.mp3', screen)
+                ultimo_nivel() # AQUI É MELHOR
+
         menu.update()
         player.atualizar_stamina()
 
@@ -499,69 +490,6 @@ def inicio():
                             if item:
                                 dragging_item = item
                                 dragging_from = "inventory2"
-            
-
-        missao_1 = npc1.dialogo.missao_ativada
-        missao_2 = npc0.dialogo.missao_ativada
-        missao_3 = npc2.dialogo.missao_ativada
-
-        if missao_3 == True:
-            pygame.mixer.music.stop()
-            pygame.mixer.music.load("musicas/sfx-menu12.mp3")
-            pygame.mixer.music.play(1)  # -1 significa que a música vai tocar em loop
-            pygame.mixer.music.set_volume(0.2)  # 50% do volume máximo
-            # ULTIMO NIVEL!
-            running = False
-            screen.fill((0, 0, 0))
-            pygame.display.flip()
-            pygame.time.delay(500)
-            print('ok')
-            tocar_cutscene_cv2('cutscenes/cutscene_bossFinal.mp4', 'cutscenes/cutscene_bossFinal.mp3', screen)
-            ultimo_nivel() # AQUI É MELHOR
-        if missao_2 == True:
-            pygame.mixer.music.stop()
-            pygame.mixer.music.load("musicas/sfx-menu12.mp3")
-            pygame.mixer.music.play(1)  # -1 significa que a música vai tocar em loop
-            pygame.mixer.music.set_volume(0.2)  # 50% do volume máximo
-            ####################
-            #
-            # ADICIONA NIVEL 1 - BOSS FIGHT "CHEFE 1"
-            #
-            ####################
-            running = False
-            ####################
-            #
-            #PARA ADICIONAR CUTSCENES
-            #
-            ####################
-            screen.fill((0, 0, 0))
-            fundo_loading = pygame.image.load('tela_loading_ligeiro.png').convert_alpha()
-            fundo_loading = pygame.transform.scale(fundo_loading, (1152, 648))
-            screen.blit(fundo_loading, (0, 0))
-            pygame.display.flip()
-            pygame.time.delay(1500)
-            print('ok')
-            tocar_cutscene_cv2('cutscenes/cutscene_boss1.mp4', 'cutscenes/cutscene_boss1.mp3', screen)
-            boss_fight() # AQUI É MELHOR
-
-        if missao_1 == True and iterado_teste == 0:
-            iterado_teste+=1
-            npc.dialogo.frase = ''
-            npc1.dialogo.texto = texto_1
-            npc1.dialogo.iter_texto = 0
-            npc1.dialogo.texto_index = 0
-            npc1.dialogo.letra_index = 0
-
-        if missao_1 == True and len(inimigos) == 0:
-            if not inimigos_spawnados:
-                inimigos_spawnados = True
-                enemy0 = Inimigo(player.rect, player, 1566,2322, False,spritesheet_inimigo_arco, 10, 750, 50)
-                enemy1 = Inimigo(player.rect, player, 2150,1754, False,spritesheet_inimigo_arco1, 13, 500, 20)
-                enemy2 = Inimigo(player.rect, player, 1570,2102, True,spritesheet_inimigo_arco2, 8, 650, 30)
-                enemy3 = Inimigo(player.rect, player, 2650,2266, False,spritesheet_inimigo_arco3, 9, 600, 40)
-                all_sprites.add(enemy0, enemy1, enemy2, enemy3)
-                inimigos.add(enemy0, enemy1, enemy2, enemy3)
-            
 
         bau_perto = False
 
@@ -579,9 +507,9 @@ def inicio():
 
         dialogo_hitbox =  False
 
-        for npc in npcs:
-            if npc.dialogo_rect.colliderect(player.rect):
-                dialogo_hitbox = npc
+        # for npc in npcs:
+        #     if npc.dialogo_rect.colliderect(player.rect):
+        #         dialogo_hitbox = npc
 
         if dialogo_hitbox:
             dialogo_a_abrir = dialogo_hitbox.dialogo
@@ -895,11 +823,11 @@ def inicio():
                 player.rect.x, player.rect.y = old_x, old_y
                 break
 
-        for npc in npcs:
-            if player.collision_rect.colliderect(npc):
-                # Colisão detectada, voltar para a posição anterior
-                player.rect.x, player.rect.y = old_x, old_y
-                break
+        # for npc in npcs:
+        #     if player.collision_rect.colliderect(npc):
+        #         # Colisão detectada, voltar para a posição anterior
+        #         player.rect.x, player.rect.y = old_x, old_y
+        #         break
 
                 
         # Atualizar câmera
@@ -979,8 +907,6 @@ def inicio():
                 else:
                     player.atacando_melee = True
                     player.hold_arrow(mouse_pos,camera)
-
-        print(contador_melee)
         
         # Renderização
         screen.fill((0, 0, 0))  # Fundo preto
@@ -1013,8 +939,8 @@ def inicio():
         # Desenhar o jogador
         player.draw(screen, camera)
 
-        for npc in npcs:
-            screen.blit(npc.image,(npc.rect.x - camera.left, npc.rect.y - camera.top))
+        # for npc in npcs:
+        #     screen.blit(npc.image,(npc.rect.x - camera.left, npc.rect.y - camera.top))
 
         for inimigo in inimigos:
             inimigo.draw_balas(screen,camera)
@@ -1087,13 +1013,11 @@ def inicio():
 
         #print(menu.atributos,menu.valores)
 
-        for npc in npcs:
-            npc.dialogo.coisa()
+        # for npc in npcs:
+        #     npc.dialogo.coisa()
 
         pygame.display.flip()
-    
     Game_over(inicio)
 
 if __name__ == "__main__":
-    tocar_cutscene_cv2('cutscenes/cutscene_inicio.mp4', 'cutscenes/cutscene_inicio.mp3', screen)
     inicio()
