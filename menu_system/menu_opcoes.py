@@ -4,205 +4,140 @@ import sys
 pygame.init()
 
 width, height = 1200, 800
-
 tela = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Pressione 0 para sair")
-
-branco = (255, 255, 255)
-preto = (0, 0, 0)
-verde = (0, 255, 0)
-cinza = (169, 169, 169)
-escurecedor = pygame.Surface((1200, 800), pygame.SRCALPHA)
-preto_opaco = (0, 0, 0, 80)  # Preto com alpha (transparência)
-escurecedor.fill(preto_opaco)
-
-mostrar_quadrado = False  # Começa sem mostrar o quadrado
 rodando = True
-pausado = False  # Variável para controlar se o jogo está pausado ou não
-som_ligado = True  # Controle de som, por padrão está ligado
 
-pos_mouse = (0, 0)
-pos_menus = []
-mouse_rect = pygame.Rect(pos_mouse[0], pos_mouse[1], 1, 1)
-pos_espadinha_x, pos_espadinha_y = 325, 303
-retangulo_teclado = pygame.Rect(325, 303, 1, 1)
-retangulo_transparente = pygame.Rect(981, 127, 35, 42)
+class MenuOpcoes:
+    def __init__(self, width, height, tela, rodando):
+        self.width, self.height = width, height
+        self.tela = tela
 
-controles_img = pygame.image.load("menu_opcoes_imagens/Controles_guerreiro_poa.png")
-tamanho_img = pygame.transform.scale(controles_img, (850, 567))
-ativar_controles_img = False
+        self.branco = (255, 255, 255)
+        self.preto = (0, 0, 0)
+        self.escurecedor = pygame.Surface((1200, 800), pygame.SRCALPHA)
+        self.escurecedor.fill((0, 0, 0, 80))
 
-clock = pygame.time.Clock()
+        self.clock = pygame.time.Clock()
+        self.rodando = rodando
+        self.pausado = False
+        self.som_ligado = True
+        self.evento_ativado = False
 
+        self.opcao_selecionada = 0
+        self.pos_espadinha_x, self.pos_espadinha_y = 325, 303
+        self.pos_espadinha_y_final = self.pos_espadinha_y
+        self.mudar_opcao_baixo = False
+        self.mudar_opcao_cima = False
 
-opcao_selecionada = 0
-pos_espadinha_y_final = pos_espadinha_y
-mudar_opcao_baixo = False
-mudar_opcao_cima = False
-# for x, y in pos_menus:
-#     retangulo_teclado = pygame.Rect(x, y, 1, 1)
+        self.ativar_controles_img = False
+        self.pos_menus = []
 
-# Função para desenhar o menu de opções
-def desenhar_menu():
-    pos_menus.clear()
-    fonte = pygame.font.Font(None, 60)
-    texto_paused = fonte.render("Jogo Pausado", True, preto)
-    tela.blit(texto_paused, (width // 2 - texto_paused.get_width() // 2, height // 2 - 200))
+        self.retangulo_transparente = pygame.Rect(981, 127, 35, 42)
 
-    continuar = pygame.image.load("menu_opcoes_imagens/Continuar.png")
-    tela.blit(continuar, (425, 288))
-    audio = pygame.image.load("menu_opcoes_imagens/Audio.png")
-    tela.blit(audio, (425, 368))
-    opcao_controles = pygame.image.load("menu_opcoes_imagens/Controles.png")
-    tela.blit(opcao_controles, (425, 448))
-    sair = pygame.image.load("menu_opcoes_imagens/Sair.png")
-    tela.blit(sair, (425, 528))
-    # Opções do menu
-    opcoes = [continuar, audio, opcao_controles, sair]
-    
-    for i, opcao in enumerate(opcoes):
-        # texto = fonte.render(opcao, True, preto)
-        retangulo_opcoes = pygame.Rect(width // 2 - 175, height // 2 - 112 + i * 80, 350, 74)
-        pos_menus.append(retangulo_opcoes)
-        # tela.blit(texto, (width // 2 - texto.get_width() // 2, height // 2 - 100 + i * 80))
+        # Imagens
+        self.imgs = {
+            "controles": pygame.transform.scale(
+                pygame.image.load("menu_opcoes_imagens/Controles_guerreiro_poa.png"), (850, 567)
+            ),
+            "espadinha": pygame.image.load("menu_opcoes_imagens/espadinha_menu_opcoes.png"),
+        }
 
-# Função para lidar com as teclas do menu
-def menu_eventos():
-    global pausado, som_ligado, rodando
-    for evento in pygame.event.get():
-        if evento.type == pygame.QUIT:
-            rodando = False
-        elif evento.type == pygame.KEYDOWN:
-            if evento.key == pygame.K_0:
-                rodando = False
-            elif evento.key == pygame.K_ESCAPE:
-                pausado = not pausado  # Alterna o estado de pausa
-            elif evento.key == pygame.K_DOWN and pausado:
-                # Aqui podemos adicionar a navegação entre as opções
-                pass
-            elif evento.key == pygame.K_UP and pausado:
-                # Aqui podemos adicionar a navegação entre as opções
-                pass
-            elif evento.key == pygame.K_RETURN:
-                # if pausado:
-                #     # Se a opção "Voltar para o Jogo" for selecionada
-                #     pausado = False
-                # Se a opção "Som" for selecionada
-                if som_ligado:
-                    som_ligado = False
-                else:
-                    som_ligado = True
+    def desenhar_menu(self):
+        fonte = pygame.font.Font(None, 60)
+        texto_paused = fonte.render("Jogo Pausado", True, self.preto)
+        self.tela.blit(texto_paused, (self.width // 2 - texto_paused.get_width() // 2, self.height // 2 - 200))
 
-# Loop principal
-while rodando:
-    for evento in pygame.event.get():
-        if evento.type == pygame.QUIT:
-            rodando = False
-        elif evento.type == pygame.KEYDOWN:
-            if evento.key == pygame.K_0:
-                rodando = False
-            elif evento.key == pygame.K_ESCAPE:
-                pausado = not pausado  # Alterna o estado de pausa
-                print(pos_menus)
-            
-            if evento.key == pygame.K_DOWN and pausado:
-                if opcao_selecionada < len(pos_menus) - 1:
-                    opcao_selecionada += 1
-                    pos_espadinha_y_final += 80
-                    print(pos_espadinha_y_final)
-                    mudar_opcao_baixo = True
-            
-            elif evento.key == pygame.K_UP and pausado:
-                if opcao_selecionada > 0:
-                    opcao_selecionada -= 1
-                    pos_espadinha_y_final -= 80
-                    print(pos_espadinha_y_final)
-                    mudar_opcao_cima = True
-            
-            elif evento.key == pygame.K_SPACE and pausado:
-                if opcao_selecionada == 0:
-                    pausado = False
-                if opcao_selecionada == 1:
-                    som_ligado = not som_ligado
-                if opcao_selecionada == 2:
-                    ativar_controles_img = True
-                if opcao_selecionada == 3:
-                    rodando = False
+        nomes = ["Continuar", "Audio", "Controles", "Sair"]
+        self.pos_menus = []
 
-        elif pausado and evento.type == pygame.MOUSEBUTTONDOWN:
-            pos_mouse = pygame.mouse.get_pos()
-            print(pos_mouse)
-            mouse_rect = pygame.Rect(pos_mouse[0], pos_mouse[1], 1, 1)
+        for i, nome in enumerate(nomes):
+            y = 288 + i * 80
+            imagem = pygame.image.load(f"menu_opcoes_imagens/{nome}.png")
+            self.tela.blit(imagem, (425, y))
+            self.pos_menus.append(pygame.Rect(425, y, 350, 74))
 
+    def processar_eventos(self):
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT or (evento.type == pygame.KEYDOWN and evento.key == pygame.K_0):
+                self.rodando = False
 
-    tela.fill(branco)  # limpa a tela
+            elif evento.type == pygame.KEYDOWN:
+                if evento.key == pygame.K_SPACE and self.pausado and self.evento_ativado == False:
+                    if self.opcao_selecionada == 0:
+                        self.pausado = False
+                    elif self.opcao_selecionada == 1:
+                        self.som_ligado = not self.som_ligado
+                    elif self.opcao_selecionada == 2:
+                        self.ativar_controles_img = True
+                        self.evento_ativado = True
 
-    if pausado:
-        if mudar_opcao_baixo:
-            pos_espadinha_y += 8
-            if pos_espadinha_y == pos_espadinha_y_final:
-                mudar_opcao_baixo = False
-        if mudar_opcao_cima:
-            pos_espadinha_y -= 8
-            if pos_espadinha_y == pos_espadinha_y_final:
-                mudar_opcao_cima = False
-            
-        pos_mouse = pygame.mouse.get_pos()
-        pos_mouse_rect = pygame.Rect(pos_mouse[0], pos_mouse[1], 1, 1)
-        tela.blit(escurecedor, (0, 0))
+                    elif self.opcao_selecionada == 3:
+                        self.rodando = False
+                    
+                elif evento.key == pygame.K_SPACE and self.pausado and self.evento_ativado and self.ativar_controles_img == True:
+                    self.ativar_controles_img = False
+                    self.evento_ativado = False
 
+                elif evento.key == pygame.K_ESCAPE:
+                    if self.evento_ativado and self.ativar_controles_img:
+                        self.ativar_controles_img = False
+                        self.evento_ativado = False
+                    else:
+                        self.pausado = not self.pausado
 
-        desenhar_menu()  # Exibe o menu de opções quando o jogo estiver pausado
-        menu_eventos()
-    espadinha = pygame.image.load("menu_opcoes_imagens/espadinha_menu_opcoes.png")  # Uma vez apenas
+                elif evento.key == pygame.K_DOWN and self.pausado:
+                    if self.opcao_selecionada < len(self.pos_menus) - 1:
+                        self.opcao_selecionada += 1
+                        self.pos_espadinha_y_final += 80
+                        self.mudar_opcao_baixo = True
+                elif evento.key == pygame.K_UP and self.pausado:
+                    if self.opcao_selecionada > 0:
+                        self.opcao_selecionada -= 1
+                        self.pos_espadinha_y_final -= 80
+                        self.mudar_opcao_cima = True
 
-    if pausado:
-        if mudar_opcao_baixo:
-            pos_espadinha_y += 8
-            if pos_espadinha_y == pos_espadinha_y_final:
-                mudar_opcao_baixo = False
-        if mudar_opcao_cima:
-            pos_espadinha_y -= 8
-            if pos_espadinha_y == pos_espadinha_y_final:
-                mudar_opcao_cima = False
+    def atualizar(self):
+        if self.mudar_opcao_baixo:
+            self.pos_espadinha_y += 8
+            if self.pos_espadinha_y >= self.pos_espadinha_y_final:
+                self.mudar_opcao_baixo = False
 
-        pos_mouse = pygame.mouse.get_pos()
-        pos_mouse_rect = pygame.Rect(pos_mouse[0], pos_mouse[1], 1, 1)
-        tela.blit(escurecedor, (0, 0))
+        if self.mudar_opcao_cima:
+            self.pos_espadinha_y -= 8
+            if self.pos_espadinha_y <= self.pos_espadinha_y_final:
+                self.mudar_opcao_cima = False
 
-        desenhar_menu()  # Exibe o menu de opções quando o jogo estiver pausado
-        menu_eventos()
+    def desenhar(self):
+        self.tela.fill(self.branco)
 
-        # Verifica se o mouse está fora de qualquer menu
-        
-        if opcao_selecionada == 0:
-            tela.blit(espadinha, (pos_espadinha_x, pos_espadinha_y))
-            continuar = pygame.image.load("menu_opcoes_imagens/Continuar_selecionado.png")
-            tela.blit(continuar, (425, 288))
-        elif opcao_selecionada == 1:
-            tela.blit(espadinha, (pos_espadinha_x, pos_espadinha_y))
-            audio = pygame.image.load("menu_opcoes_imagens/Audio_selecionado.png")
-            tela.blit(audio, (425, 368))
-        elif opcao_selecionada == 2:
-            tela.blit(espadinha, (pos_espadinha_x, pos_espadinha_y))
-            opcao_controles = pygame.image.load("menu_opcoes_imagens/Controles_selecionado.png")
-            tela.blit(opcao_controles, (425, 448))
-        elif opcao_selecionada == 3:
-            tela.blit(espadinha, (pos_espadinha_x, pos_espadinha_y))
-            sair = pygame.image.load("menu_opcoes_imagens/Sair_selecionado.png")
-            tela.blit(sair, (425, 528))
+        if self.pausado:
+            self.tela.blit(self.escurecedor, (0, 0))
+            self.desenhar_menu()
 
-        if ativar_controles_img == True:
-            tela.blit(tamanho_img, (width // 2 - 425, height // 2 - 284))
-            if mouse_rect.colliderect(retangulo_transparente):
-                ativar_controles_img = False
+            self.tela.blit(self.imgs["espadinha"], (self.pos_espadinha_x, self.pos_espadinha_y))
 
-    else:
-        if mostrar_quadrado:
-            pygame.draw.rect(tela, preto, (width // 2 - 300, height // 2 - 200, 600, 400), 0, 30)  # desenha o quadrado
+            nomes = ["Continuar", "Audio", "Controles", "Sair"]
+            if 0 <= self.opcao_selecionada < len(nomes):
+                nome = nomes[self.opcao_selecionada]
+                imagem = pygame.image.load(f"menu_opcoes_imagens/{nome}_selecionado.png")
+                self.tela.blit(imagem, (425, 288 + self.opcao_selecionada * 80))
 
-    pygame.display.flip()
-    clock.tick(60)
+            if self.ativar_controles_img:
+                self.tela.blit(self.imgs["controles"], (self.width // 2 - 425, self.height // 2 - 284))
 
-pygame.quit()
-sys.exit()
+        pygame.display.flip()
+
+    def executar(self):
+        while self.rodando:
+            self.processar_eventos()
+            self.atualizar()
+            self.desenhar()
+            self.clock.tick(60)
+
+        pygame.quit()
+        sys.exit()
+
+# Iniciar o menu
+menu = MenuOpcoes(width, height, tela, rodando)
+menu.executar()
