@@ -12,7 +12,7 @@ class Boss1(Inimigo):
         self.sheet = sprite_sheet
         self.image = pygame.Surface((64, 64), pygame.SRCALPHA)  # A imagem inicial
         self.rect = self.image.get_rect()  # Obtém o retângulo da imagem para movimentação
-        self.bullet_img = pygame.image.load('bullet.png').convert_alpha()
+        self.bullet_img = pygame.image.load('boss_agua(Slash).png').convert_alpha()
 
         self.HP = 5
 
@@ -119,17 +119,17 @@ class Boss1(Inimigo):
             if self.player_rect.centery-self.rect.centery != 0 and self.player_rect.centerx-self.rect.centerx < 200:
             
                 if self.player_rect.centery > self.rect.centery:
-                    self.sheet.action = 10
+                    self.sheet.action = 6
                 elif self.player_rect.centery < self.rect.centery:
-                    self.sheet.action = 8
+                    self.sheet.action = 4
                 else:
                     pass
 
             else:
                 if self.player_rect.centerx > self.rect.centerx:
-                    self.sheet.action = 11
+                    self.sheet.action = 7
                 elif self.player_rect.centerx < self.rect.centerx:
-                    self.sheet.action = 9
+                    self.sheet.action = 5
                 else:
                     pass
 
@@ -139,7 +139,7 @@ class Boss1(Inimigo):
                     if self.player_rect.centery > self.rect.centery:
                         self.sheet.action = 6
                     elif self.player_rect.centery < self.rect.centery:
-                        self.sheet.action =4
+                        self.sheet.action = 4
                     else:
                         pass
 
@@ -343,7 +343,13 @@ class Boss2(Inimigo):
                 self.contagem_ataques = 0
 
         if self.frame_count % self.frame_change == 0:
-            self.sheet.update()
+            if self.sheet.action in [18,19,20,21]:
+                if self.sheet.tile_rect == self.sheet.cells[self.sheet.action][-1]:
+                    print('FINAL')
+                else:
+                    self.sheet.update()
+            else:
+                self.sheet.update()
     
         if pygame.math.Vector2(self.rect.center).distance_to(self.local_a_mover) < self.speed:
             self.contagem_ataques += 1
