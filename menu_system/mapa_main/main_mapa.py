@@ -30,6 +30,7 @@ from inventario1 import Inventario
 from itens import Item
 from boss import Boss1
 from bau import Bau
+from game_over import Game_over
 
 from XP import XP
 from menu_status import Menu
@@ -448,6 +449,8 @@ def inicio():
     inimigos_spawnados = False
 
     while running:
+        if player.HP == 0:
+            running = False
         menu.update()
         player.atualizar_stamina()
 
@@ -1080,6 +1083,8 @@ def inicio():
             npc.dialogo.coisa()
 
         pygame.display.flip()
+    
+    Game_over(inicio)
 
 if __name__ == "__main__":
     tocar_cutscene_cv2('cutscenes/cutscene_inicio.mp4', 'cutscenes/cutscene_inicio.mp3', screen)

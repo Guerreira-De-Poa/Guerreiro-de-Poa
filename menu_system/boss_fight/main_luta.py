@@ -15,6 +15,7 @@ from inventario1 import Inventario
 from boss import Boss1
 from bau import Bau
 from itens import Item
+from game_over import Game_over
 
 from XP import XP
 from menu_status import Menu
@@ -637,8 +638,7 @@ def inicio():
             npc.dialogo.coisa()
         pygame.display.flip()
 
-    pygame.quit()
-    sys.exit()
+    Game_over(inicio)
 
 if __name__ == "__main__":
     inicio()
