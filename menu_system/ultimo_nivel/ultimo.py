@@ -19,6 +19,7 @@ from bau import Bau
 from XP import XP
 from menu_status import Menu
 from itens import Item
+from game_over import Game_over
 
 from cutscenes.tocar_cutscene import tocar_cutscene_cv2
 
@@ -268,6 +269,8 @@ def inicio():
     running = True
 
     while running:
+        if player.HP == 0:
+            running = False
         player.atualizar_stamina()
         bau_perto = False
 
@@ -568,8 +571,7 @@ def inicio():
             npc.dialogo.coisa()
         pygame.display.flip()
 
-    pygame.quit()
-    sys.exit()
+    Game_over(inicio)
 
 if __name__ == "__main__":
     inicio()

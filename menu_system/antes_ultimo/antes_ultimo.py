@@ -30,6 +30,7 @@ from inventario1 import Inventario
 from itens import Item
 from boss import Boss1
 from bau import Bau
+from game_over import Game_over
 
 from XP import XP
 from menu_status import Menu
@@ -431,6 +432,24 @@ def inicio():
     inimigos_spawnados = False
 
     while running:
+        if player.HP == 0:
+            running = False
+
+        if len(inimigos) == 0 and player.rect.y < 135:
+            if player.rect.x > 930 and player.rect.x < 1109:
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load("musicas/sfx-menu12.mp3")
+                pygame.mixer.music.play(1)  # -1 significa que a música vai tocar em loop
+                pygame.mixer.music.set_volume(0.2)  # 50% do volume máximo
+                # ULTIMO NIVEL!
+                running = False
+                screen.fill((0, 0, 0))
+                pygame.display.flip()
+                pygame.time.delay(500)
+                print('ok')
+                tocar_cutscene_cv2('cutscenes/cutscene_bossFinal.mp4', 'cutscenes/cutscene_bossFinal.mp3', screen)
+                ultimo_nivel() # AQUI É MELHOR
+
         menu.update()
         player.atualizar_stamina()
 
@@ -888,8 +907,6 @@ def inicio():
                 else:
                     player.atacando_melee = True
                     player.hold_arrow(mouse_pos,camera)
-
-        print(contador_melee)
         
         # Renderização
         screen.fill((0, 0, 0))  # Fundo preto
@@ -1000,6 +1017,7 @@ def inicio():
         #     npc.dialogo.coisa()
 
         pygame.display.flip()
+    Game_over(inicio)
 
 if __name__ == "__main__":
     inicio()

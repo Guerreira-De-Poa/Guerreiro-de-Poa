@@ -3,7 +3,7 @@
         16.25,
         8.0,
         20,
-        10.0,
+        13.0,
         6.25,
         10
     ],
@@ -11,6 +11,54 @@
         [
             "arma",
             "Espada",
+            {
+                "dano": 10
+            },
+            true
+        ],
+        [
+            "consumivel",
+            "Po\u00c3\u00a7\u00c3\u00a3o",
+            {
+                "dano": 10
+            },
+            false
+        ],
+        [
+            "consumivel",
+            "Po\u00c3\u0192\u00c2\u00a7\u00c3\u0192\u00c2\u00a3o",
+            {
+                "dano": 10
+            },
+            false
+        ],
+        [
+            "consumivel",
+            "Po\u00c3\u0192\u00c2\u00a7\u00c3\u0192\u00c2\u00a3o",
+            {
+                "dano": 10
+            },
+            false
+        ],
+        [
+            "consumivel",
+            "Po\u00c3\u0192\u00c2\u00a7\u00c3\u0192\u00c2\u00a3o",
+            {
+                "dano": 10
+            },
+            false
+        ],
+        [
+            "consumivel",
+            "Po\u00c3\u0192\u00c2\u00a7\u00c3\u0192\u00c2\u00a3o",
+            {
+                "dano": 10
+            },
+            false
+        ],
+        [
+            "consumivel",
+            "Po\u00c3\u0192\u00c2\u00a7\u00c3\u0192\u00c2\u00a3o",
             {
                 "dano": 10
             },

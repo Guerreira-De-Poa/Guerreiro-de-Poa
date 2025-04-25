@@ -2,7 +2,7 @@ import pygame
 import sys
 import os
 
-def game_over():
+def Game_over(funcao):
 
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
@@ -26,7 +26,7 @@ def game_over():
 
     escolha = True
 
-    while True:
+    while running:
         if escolha == True:
             text_pos = 472
         elif escolha == False:
@@ -44,10 +44,11 @@ def game_over():
                 elif event.key == pygame.K_RETURN:
                     if escolha == True:
                         print("RESTART")
+                        running = False
+                        funcao()
                     else:
                         print("GAME OVER")
-
-                
+                        running = False
 
         screen.fill((50,20,50))
 
@@ -56,4 +57,3 @@ def game_over():
         screen.blit(text,(130,text_pos))
         pygame.display.flip()
 
-game_over()

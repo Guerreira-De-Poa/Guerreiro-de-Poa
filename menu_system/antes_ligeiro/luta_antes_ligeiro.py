@@ -30,6 +30,7 @@ from inventario1 import Inventario
 from itens import Item
 from boss import Boss1
 from bau import Bau
+from game_over import Game_over
 
 from XP import XP
 from menu_status import Menu
@@ -448,6 +449,20 @@ def inicio():
     inimigos_spawnados = False
 
     while running:
+        if player.HP == 0:
+            running = False
+
+        if len(inimigos) == 0 and player.rect.y < 100:
+            screen.fill((0, 0, 0))
+            fundo_loading = pygame.image.load('tela_loading_ligeiro.png').convert_alpha()
+            fundo_loading = pygame.transform.scale(fundo_loading, (1152, 648))
+            screen.blit(fundo_loading, (0, 0))
+            pygame.display.flip()
+            pygame.time.delay(1500)
+            print('ok')
+            tocar_cutscene_cv2('cutscenes/cutscene_boss1.mp4', 'cutscenes/cutscene_boss1.mp3', screen)
+            boss_fight() # AQUI É MELHOR
+
         menu.update()
         player.atualizar_stamina()
 
@@ -1017,6 +1032,7 @@ def inicio():
         #     npc.dialogo.coisa()
 
         pygame.display.flip()
+    Game_over(inicio)
 
 if __name__ == "__main__":
     inicio()

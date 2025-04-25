@@ -18,6 +18,10 @@ from boss_fight.main_luta import inicio as boss_fight
 # chama ultimo nivel
 from ultimo_nivel.ultimo import inicio as ultimo_nivel
 
+from antes_ligeiro.luta_antes_ligeiro import inicio as mapa_antes_ligeiro
+
+from antes_ultimo.antes_ultimo import inicio as mapa_antes_final
+
 # Chamando a função importada
 
 from spritesheet_explicada import SpriteSheet
@@ -30,11 +34,14 @@ from inventario1 import Inventario
 from itens import Item
 from boss import Boss1
 from bau import Bau
+from game_over import Game_over
 
 from XP import XP
 from menu_status import Menu
 
 from cutscenes.tocar_cutscene import tocar_cutscene_cv2
+
+from menu_opcoes import MenuOpcoes
 
 pause = False
 
@@ -109,8 +116,8 @@ def inicio():
             "ataque": 6.25,
             "defesa": 5.0,
             "vida_max": 20,
-            "vida_atual": 10,
-            "stamina": 6.25,
+            "vida_atual": 20,
+            "stamina": 96.25,
             "velocidade": 10
     }
 
@@ -241,13 +248,15 @@ def inicio():
     lista_4 = [13 for j in range(4)]
     lista_5 = [7 for k in range(14)]
 
-    with open('save.json', 'r') as f:
-        try:
-            save_carregado = json.load(f)
-            print(save_carregado)
-        except:
-            save_carregado = False
-            print("ERRO AO CARREGAR SAVE")
+    # with open('save.json', 'r') as f:
+    #     try:
+    #         save_carregado = json.load(f)
+    #         print(save_carregado)
+    #     except:
+    #         save_carregado = False
+    #         print("ERRO AO CARREGAR SAVE")
+
+    save_carregado = False
 
     #print(save_carregado)
 
@@ -282,6 +291,7 @@ def inicio():
     xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
     menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
 
+
     # Posicionar o jogador em uma posição válida no mapa
     player.rect.x = 33 * TILE_SIZE
     player.rect.y = 36 * TILE_SIZE
@@ -292,6 +302,7 @@ def inicio():
     # Game loop
     clock = pygame.time.Clock()
     running = True
+    menu_opcoes = MenuOpcoes(SCREEN_WIDTH, SCREEN_HEIGHT, screen, running)
 
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
@@ -461,7 +472,14 @@ def inicio():
 
     inimigos_spawnados = False
 
-    while running:
+    tocar_cutscene_cv2('cutscenes/cutscene_inicio.mp4', 'cutscenes/cutscene_inicio.mp3', screen)
+
+    while menu_opcoes.rodando:
+        if player.HP == 0:
+            running = False
+
+        if len(inimigos) == 0 and player.rect.y < 64:
+            mapa_antes_ligeiro()
         menu.update()
         player.atualizar_stamina()
 
@@ -517,22 +535,12 @@ def inicio():
             npcs.add(npc0)
 
         if missao_3 == True:
-            pygame.mixer.music.stop()
-            pygame.mixer.music.load("musicas/sfx-menu12.mp3")
-            pygame.mixer.music.play(1)  # -1 significa que a música vai tocar em loop
-            pygame.mixer.music.set_volume(0.2)  # 50% do volume máximo
-            # ULTIMO NIVEL!
-            running = False
-            screen.fill((0, 0, 0))
-            pygame.display.flip()
-            pygame.time.delay(500)
-            print('ok')
-            tocar_cutscene_cv2('cutscenes/cutscene_bossFinal.mp4', 'cutscenes/cutscene_bossFinal.mp3', screen)
+            mapa_antes_final()
             ultimo_nivel() # AQUI É MELHOR
         if missao_2 == True and chave_entrada == True:
             pygame.mixer.music.stop()
             pygame.mixer.music.load("musicas/sfx-menu12.mp3")
-            pygame.mixer.music.play(1)  # -1 significa que a música vai tocar em loop
+            pygame.mixer.music.play(-1)  # -1 significa que a música vai tocar em loop
             pygame.mixer.music.set_volume(0.2)  # 50% do volume máximo
             ####################
             #
@@ -687,7 +695,7 @@ def inicio():
                     #COMANDOS INVENTARIO
                 elif event.key in (pygame.K_LALT, pygame.K_RALT):
                     inventario1.inventory_open = not inventario1.inventory_open
-                elif event.key == pygame.K_DOWN and inventario1.scroll_index < len(inventario1.items) - inventario1.visible_items:
+                elif event.key == pygame.K_DOWN and inventario1.scroll_index < len(inventario1.items) - inventario1.visible_items and not menu_opcoes.pausado:
                     inventario1.item_index +=1
                     inventario1.scroll_index += 1
                 elif event.key == pygame.K_UP and inventario1.scroll_index > 0:
@@ -696,7 +704,7 @@ def inicio():
                         print(inventario1.item_index,inventario1.visible_items + 2)
                         inventario1.scroll_index -= 1
 
-                elif event.key == pygame.K_DOWN and inventario1.item_index < len(inventario1.items)-1:
+                elif event.key == pygame.K_DOWN and inventario1.item_index < len(inventario1.items)-1 and not menu_opcoes.pausado:
                     inventario1.item_index +=1
                 elif event.key == pygame.K_UP and inventario1.item_index > 0:
                     inventario1.item_index -=1
@@ -710,8 +718,8 @@ def inicio():
                             inventario1.remove(inventario1.items[inventario1.item_index])
 
 
-                elif event.key == pygame.K_ESCAPE:
-                    running = False
+                
+                menu_opcoes.processar_eventos(event)
 
                 if event.key == pygame.K_m:
                     xp.show_menu = not xp.show_menu
@@ -905,7 +913,7 @@ def inicio():
         # Atualizar jogador
         #all_sprites.update(pause) ######## pause maroto
 
-        if inventario1.inventory_open or xp.show_menu:
+        if inventario1.inventory_open or xp.show_menu or menu_opcoes.pausado:
             all_sprites.update(True)
         elif dialogo_a_abrir:
             all_sprites.update(dialogo_a_abrir.texto_open)
@@ -1095,7 +1103,9 @@ def inicio():
             if menu.tamanho_menu_img_x > 0 and menu.tamanho_menu_img_y > 0:
                 menu.menu_img = pygame.transform.scale(menu.menu_img_original, (menu.tamanho_menu_img_x, menu.tamanho_menu_img_y))
 
-
+        if menu_opcoes.pausado:
+            menu_opcoes.atualizar()
+            menu_opcoes.desenhar()
                 
         # Atualiza o jogo se o menu NÃO estiver aberto
         if xp.show_menu:
@@ -1108,13 +1118,14 @@ def inicio():
                 menu.desenhar_botoes(screen)
                 menu.resetar_botoes()
 
-        player.draw_health(screen)
-        player.draw_stamina(screen)
-        if not dialogo_a_abrir:
-            xp.render()
-        else:
-            if dialogo_a_abrir.texto_open == False:
+        if not menu_opcoes.pausado:
+            player.draw_health(screen)
+            player.draw_stamina(screen)
+            if not dialogo_a_abrir:
                 xp.render()
+            else:
+                if dialogo_a_abrir.texto_open == False:
+                    xp.render()
 
 
         #print(menu.atributos,menu.valores)
@@ -1123,7 +1134,8 @@ def inicio():
             npc.dialogo.coisa()
 
         pygame.display.flip()
+    
+    Game_over(inicio)
 
 if __name__ == "__main__":
-    tocar_cutscene_cv2('cutscenes/cutscene_inicio.mp4', 'cutscenes/cutscene_inicio.mp3', screen)
     inicio()

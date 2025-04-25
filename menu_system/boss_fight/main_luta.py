@@ -15,6 +15,7 @@ from inventario1 import Inventario
 from boss import Boss1
 from bau import Bau
 from itens import Item
+from game_over import Game_over
 
 from XP import XP
 from menu_status import Menu
@@ -271,6 +272,9 @@ def inicio():
 
     while running:
 
+        if player.HP == 0:
+            running = False
+            
         #print("LEN = ",len([player.sheet.action]),"NUM = ",player.sheet.index % len(player.sheet.cells[player.sheet.action]))
         # print(player.sheet.action)
         # print(player.sheet.cells[0])
@@ -637,8 +641,7 @@ def inicio():
             npc.dialogo.coisa()
         pygame.display.flip()
 
-    pygame.quit()
-    sys.exit()
+    Game_over(inicio)
 
 if __name__ == "__main__":
     inicio()
