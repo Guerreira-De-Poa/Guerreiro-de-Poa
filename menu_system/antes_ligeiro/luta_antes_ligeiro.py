@@ -453,7 +453,7 @@ def inicio():
             running = False
             Game_over(inicio)
 
-        if len(inimigos) == 0 and player.rect.y < 100:
+        if len(inimigos) == 0 and player.rect.y < 64:
             screen.fill((0, 0, 0))
             fundo_loading = pygame.image.load('tela_loading_ligeiro.png').convert_alpha()
             fundo_loading = pygame.transform.scale(fundo_loading, (1152, 648))
@@ -463,6 +463,8 @@ def inicio():
             print('ok')
             tocar_cutscene_cv2('cutscenes/cutscene_boss1.mp4', 'cutscenes/cutscene_boss1.mp3', screen)
             boss_fight() # AQUI É MELHOR
+        elif player.rect.y > 1300:
+            player.rect.y -= player.speed
 
         menu.update()
         player.atualizar_stamina()
@@ -991,8 +993,8 @@ def inicio():
             else:
                 bau_perto.image = bau_perto.bau_fechado
 
-        if botao_ativo:
-            inventario1.draw_button(screen)  # Agora o método `draw_button` é da classe Inventario1
+        # if botao_ativo:
+        #     inventario1.draw_button(screen)  # Agora o método `draw_button` é da classe Inventario1
 
         if dragging_item:
             inventario1.draw_dragging_item(screen, dragging_item)  # Agora o método `draw_dragging_item` é da classe Inventario1

@@ -435,6 +435,7 @@ def inicio():
         if player.HP <= 0:
             running = False
             Game_over(inicio)
+        print(player.rect.y)
 
         if len(inimigos) == 0 and player.rect.y < 135:
             if player.rect.x > 930 and player.rect.x < 1109:
@@ -450,6 +451,11 @@ def inicio():
                 print('ok')
                 tocar_cutscene_cv2('cutscenes/cutscene_bossFinal.mp4', 'cutscenes/cutscene_bossFinal.mp3', screen)
                 ultimo_nivel() # AQUI É MELHOR
+        elif player.rect.y >= 1040:
+            player.rect.y -= player.speed
+        # else:
+        #     if player.rect.x > 930 and player.rect.x < 1109 and player.rect.y <=135:
+        #         player.rect.y = 150
 
         menu.update()
         player.atualizar_stamina()
@@ -976,8 +982,8 @@ def inicio():
             else:
                 bau_perto.image = bau_perto.bau_fechado
 
-        if botao_ativo:
-            inventario1.draw_button(screen)  # Agora o método `draw_button` é da classe Inventario1
+        # if botao_ativo:
+        #     inventario1.draw_button(screen)  # Agora o método `draw_button` é da classe Inventario1
 
         if dragging_item:
             inventario1.draw_dragging_item(screen, dragging_item)  # Agora o método `draw_dragging_item` é da classe Inventario1

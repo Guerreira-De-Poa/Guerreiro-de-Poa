@@ -423,6 +423,14 @@ def inicio(matou_ligeiro=False):
 
     baus = pygame.sprite.Group()
 
+    espada = Item('arma', 'Espada',{'dano': 5},False,player)
+    armadura = Item('armadura', 'Armadura',{'defesa': 0.5},False,player)
+    pocao = Item('consumivel', 'Poção', {'vida': 10},False,player)
+
+    bau_saida = Bau(screen,900,300,[espada,armadura,pocao])
+
+    baus.add(bau_saida)
+
     iterado_teste = 0
 
     contador_ataque_melee = 0
@@ -473,7 +481,7 @@ def inicio(matou_ligeiro=False):
             salvar_game()
             mapa_antes_ligeiro()
         elif player.rect.y <=64:
-            player.rect.y = 64
+            player.rect.y +=player.speed
         menu.update()
         player.atualizar_stamina()
 
@@ -496,7 +504,7 @@ def inicio(matou_ligeiro=False):
             #print("DMSALDML")
             if inventario1.inventory_open or bau_perto:
                 if bau_perto:
-                    bau_perto.pressed_counter +=1
+                    bau_perto.inventario.pressed_counter +=1
                 else:
                     inventario1.pressed_counter +=1
 
@@ -660,8 +668,14 @@ def inicio(matou_ligeiro=False):
                         dialogo_a_abrir.trocar_texto()
                     elif botao_ativo:
                         if bau_perto:
+                            if bau_perto.inventario.inventory_open == True:
+                                if inventario1.inventory_open == False:
+                                    pass
+                                else:
+                                    inventario1.inventory_open = not inventario1.inventory_open
+                            else:
+                                inventario1.inventory_open = True
                             bau_perto.inventario.inventory_open = not bau_perto.inventario.inventory_open
-                            inventario1.inventory_open = True
                 elif keys[pygame.K_z]:
                     DEBUG_MODE = not DEBUG_MODE
                 elif event.key == pygame.K_p:
@@ -804,15 +818,15 @@ def inicio(matou_ligeiro=False):
                             elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory2":
                                 bau_perto.inventario.remove(dragging_item)
                                 inventario1.items.append(dragging_item)
-                            elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory1":
-                                inventario1.items.append(dragging_item)
+                            # elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory1":
+                            #     inventario1.items.append(dragging_item)
                             dragging_item = None
                             dragging_from = None
                             if bau_perto.inventario.inventory_open and inventario1.pressed_counter <= 10:
                                 if inventario1.get_item_at(event.pos) == None:
-                                    inventario1.inventory_open = False
+                                    pass
                                 else:
-                                    bau_perto.remove(inventario1.get_item_at(event.pos))
+                                    bau_perto.inventario.remove(inventario1.get_item_at(event.pos))
 
                     elif inventario1.inventory_open and inventario1.pressed_counter < 10:
                         if inventario1.get_item_at(event.pos) == None:
@@ -1058,8 +1072,8 @@ def inicio(matou_ligeiro=False):
             else:
                 bau_perto.image = bau_perto.bau_fechado
 
-        if botao_ativo:
-            inventario1.draw_button(screen)  # Agora o método `draw_button` é da classe Inventario1
+        # if botao_ativo:
+        #     inventario1.draw_button(screen)  # Agora o método `draw_button` é da classe Inventario1
 
         if dragging_item:
             inventario1.draw_dragging_item(screen, dragging_item)  # Agora o método `draw_dragging_item` é da classe Inventario1

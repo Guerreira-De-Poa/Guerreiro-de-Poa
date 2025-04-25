@@ -97,11 +97,11 @@ class Inventario:
                 return self.items[self.scroll_index + i]
         return None
 
-    def draw_button(self, screen):
-        button_rect = pygame.Rect(screen.get_width() - 150, screen.get_height() - 100, 140, 60)
-        pygame.draw.rect(screen, (200, 0, 0), button_rect, border_radius=10)
-        text = self.font.render("Abrir", True, self.WHITE)
-        screen.blit(text, (button_rect.x + 20, button_rect.y + 10))
+    # def draw_button(self, screen):
+    #     button_rect = pygame.Rect(screen.get_width() - 150, screen.get_height() - 100, 140, 60)
+    #     pygame.draw.rect(screen, (200, 0, 0), button_rect, border_radius=10)
+    #     text = self.font.render("Abrir", True, self.WHITE)
+    #     screen.blit(text, (button_rect.x + 20, button_rect.y + 10))
 
     def draw_dragging_item(self, screen, dragging_item):
         text = self.font.render(dragging_item.nome, True, self.WHITE)

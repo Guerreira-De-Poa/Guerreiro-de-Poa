@@ -537,15 +537,15 @@ def inicio():
             screen.blit(render, (325, 457))
 
         if boss.HP > 0:
-            pygame.draw.rect(screen, (0, 0, 0), (200, 45, 400, 25))
-            pygame.draw.rect(screen, (255, 0, 0), (200, 45, 80 * (boss.HP/2), 25))
-            fonte = pygame.font.Font('8-BIT WONDER.TTF', 30)
-            text_surface = fonte.render("O Professor", True, (255, 255, 255))
-            screen.blit(text_surface, (288, 68, 400, 100))
+            pygame.draw.rect(screen,(0,0,0),(280,45,700,25))
+            pygame.draw.rect(screen,(255,0,0),(280,45,75*boss.HP,25))
+            fonte = pygame.font.Font('8-BIT WONDER.TTF',30)
+            text_surface = fonte.render("O Professor", True, (0,0,0))
+            screen.blit(text_surface, (508,68,400,100))
 
-            fonte2 = pygame.font.Font('8-BIT WONDER.TTF', 30)
-            text_surface = fonte2.render("O Professor", True, (0, 0, 0))
-            screen.blit(text_surface, (290, 70, 400, 100))
+            fonte2 = pygame.font.Font('8-BIT WONDER.TTF',30)
+            text_surface = fonte2.render("O Professor", True, (255,255,255))
+            screen.blit(text_surface, (510,70,400,100))
 
         else:
             if not cutscene_final_rodada:
@@ -561,8 +561,8 @@ def inicio():
             else:
                 bau_perto.image = bau_perto.bau_fechado
 
-        if botao_ativo:
-            inventario1.draw_button(screen)
+        # if botao_ativo:
+        #     inventario1.draw_button(screen)
 
         if dragging_item:
             inventario1.draw_dragging_item(screen, dragging_item)

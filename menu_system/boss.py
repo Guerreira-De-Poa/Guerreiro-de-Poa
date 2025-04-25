@@ -53,6 +53,9 @@ class Boss1(Inimigo):
         self.iframes = 30
         self.contador_iframes = 0
 
+        self.morto = False
+        self.morte_counter = 0
+
     def gerar_local_a_mover(self):
         self.local_a_mover = [randint(1200,1600),randint(400,1000)]
 
@@ -86,7 +89,7 @@ class Boss1(Inimigo):
 
     def update(self ,dialogo_open):
         self.old_pos_x, self.old_pos_y = self.rect.topleft[0], self.rect.topleft[1]
-        if dialogo_open:
+        if dialogo_open or self.morto:
             return
         self.frame_count+=1
         # Atualiza as balas

@@ -453,10 +453,11 @@ def inicio():
         for inimigo in inimigos:
             xp.atualizar_xp(inimigo, 300)
             if inimigo.HP <= 0:
-                inimigo.image = pygame.Surface((32, 32), pygame.SRCALPHA)
-                inimigo.remover_todas_balas()
-                inimigos.remove(inimigo)
-                all_sprites.remove(inimigo)
+                inimigo.morto = True
+                # inimigo.image = pygame.Surface((32, 32), pygame.SRCALPHA)
+                # inimigo.remover_todas_balas()
+                # inimigos.remove(inimigo)
+                # all_sprites.remove(inimigo)
             if inimigo.rect.colliderect(player.range_melee) and player.atacando_melee:
                 if player.sheet_sec.tile_rect in [player.sheet_sec.cells[player.sheet_sec.action][-3],player.sheet_sec.cells[player.sheet_sec.action][-2],player.sheet_sec.cells[player.sheet_sec.action][-1]]:
                     print(True)
@@ -555,8 +556,8 @@ def inicio():
 
         for inimigo in inimigos:
             if inimigo.rect.colliderect(player.rect):
-                player.get_hit(30)
                 if not player.ivuln:
+                    player.get_hit(1)
                     inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
                     player.rect.topleft = (old_x,old_y)
                 inimigo.atacando_melee = True
@@ -573,7 +574,21 @@ def inicio():
         player.draw_balas(screen,camera)
 
         for inimigo in inimigos:
-            inimigo.sheet.draw(screen, inimigo.rect.x - camera.left, inimigo.rect.y - camera.top)
+            if not inimigo.morto:
+                inimigo.sheet.draw(screen, inimigo.rect.x - camera.left, inimigo.rect.y - camera.top)
+            else:
+                inimigo.sheet.action = 2
+                inimigo.morte_counter += 1
+                if inimigo.morte_counter % 4 == 0:
+                    inimigo.sheet.draw(screen, (inimigo.rect.x - camera.left)-5, inimigo.rect.y - camera.top)
+                else:
+                    inimigo.sheet.draw(screen, inimigo.rect.x - camera.left, inimigo.rect.y - camera.top)
+            if inimigo.morte_counter == 100:
+                inimigo.image = pygame.Surface((32, 32), pygame.SRCALPHA)
+                inimigo.remover_todas_balas()
+                inimigos.remove(inimigo)
+                all_sprites.remove(inimigo)
+            
 
         # for vida in range(player.HP):
         #     screen.blit(vida_imagem,(18 + 32*vida,0))
@@ -588,7 +603,7 @@ def inicio():
             screen.blit(interagir_bg,(300,450))
             screen.blit(render,(325,457))
 
-        if boss.HP > 0:
+        if boss.morte_counter < 100:
             pygame.draw.rect(screen,(0,0,0),(280,45,700,25))
             pygame.draw.rect(screen,(255,0,0),(280,45,140*boss.HP,25))
             fonte = pygame.font.Font('8-BIT WONDER.TTF',30)
@@ -631,8 +646,8 @@ def inicio():
             else:
                 bau_perto.image = bau_perto.bau_fechado
 
-        if botao_ativo:
-            inventario1.draw_button(screen)  # Agora o método `draw_button` é da classe Inventario1
+        # if botao_ativo:
+        #     inventario1.draw_button(screen)  # Agora o método `draw_button` é da classe Inventario1
 
         if dragging_item:
             inventario1.draw_dragging_item(screen, dragging_item)  # Agora o método `draw_dragging_item` é da classe Inventario1
