@@ -891,6 +891,9 @@ def inicio():
                 click_hold = 0
                 player.atacando = False
                 player.atacando_melee = False
+            elif click_hold <=30:
+                player.atacando = False
+                click_hold = 0
         else:
             if contador_melee == 0:
                 cooldown_som_balançar_espada = pygame.time.get_ticks()

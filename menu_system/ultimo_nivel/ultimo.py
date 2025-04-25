@@ -483,6 +483,9 @@ def inicio():
                 click_hold = 0
                 player.atacando = False
                 player.atacando_melee = False
+            elif click_hold <=30:
+                player.atacando = False
+                click_hold = 0
         else:
             contador_melee += 1
             if contador_melee != 7*7:

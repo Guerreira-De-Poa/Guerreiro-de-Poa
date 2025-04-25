@@ -96,6 +96,8 @@ def inicio(matou_ligeiro=False):
     map_path = os.path.join(current_dir, 'map.json')
     spritesheet_path = os.path.join(current_dir, 'spritesheet.png')  # Nome correto da sua spritesheet
 
+    Bau
+
     # Carregar o arquivo JSON do mapa
     try:
         with open(map_path, 'r') as f:
@@ -954,6 +956,9 @@ def inicio(matou_ligeiro=False):
                 click_hold = 0
                 player.atacando = False
                 player.atacando_melee = False
+            elif click_hold <=30:
+                player.atacando = False
+                click_hold = 0
         else:
             if contador_melee == 0:
                 cooldown_som_balançar_espada = pygame.time.get_ticks()
@@ -984,6 +989,8 @@ def inicio(matou_ligeiro=False):
                 else:
                     player.atacando_melee = True
                     player.hold_arrow(mouse_pos,camera)
+
+        print(click_hold)
 
         # print(contador_melee)
         
