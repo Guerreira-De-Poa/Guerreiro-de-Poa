@@ -1,118 +1,13 @@
 {
     "atributos": [
-        16.25,
-        8.0,
-        20,
-        13.0,
         6.25,
+        5.0,
+        20,
+        20,
+        96.25,
         10
     ],
-    "itens": [
-        [
-            "arma",
-            "Espada",
-            {
-                "dano": 10
-            },
-            true
-        ],
-        [
-            "consumivel",
-            "Po\u00c3\u00a7\u00c3\u00a3o",
-            {
-                "dano": 10
-            },
-            false
-        ],
-        [
-            "consumivel",
-            "Po\u00c3\u0192\u00c2\u00a7\u00c3\u0192\u00c2\u00a3o",
-            {
-                "dano": 10
-            },
-            false
-        ],
-        [
-            "consumivel",
-            "Po\u00c3\u0192\u00c2\u00a7\u00c3\u0192\u00c2\u00a3o",
-            {
-                "dano": 10
-            },
-            false
-        ],
-        [
-            "consumivel",
-            "Po\u00c3\u0192\u00c2\u00a7\u00c3\u0192\u00c2\u00a3o",
-            {
-                "dano": 10
-            },
-            false
-        ],
-        [
-            "consumivel",
-            "Po\u00c3\u0192\u00c2\u00a7\u00c3\u0192\u00c2\u00a3o",
-            {
-                "dano": 10
-            },
-            false
-        ],
-        [
-            "consumivel",
-            "Po\u00c3\u0192\u00c2\u00a7\u00c3\u0192\u00c2\u00a3o",
-            {
-                "dano": 10
-            },
-            true
-        ],
-        [
-            "arma",
-            "Espada 2",
-            {
-                "dano": 10
-            },
-            false
-        ],
-        [
-            "armadura",
-            "Escudo",
-            {
-                "defesa": 3
-            },
-            false
-        ],
-        [
-            "armadura",
-            "Capacete",
-            {
-                "defesa": 1
-            },
-            false
-        ],
-        [
-            "arma",
-            "Adaga",
-            {
-                "dano": 3
-            },
-            false
-        ],
-        [
-            "armadura",
-            "Botas",
-            {
-                "defesa": 1
-            },
-            false
-        ],
-        [
-            "armadura",
-            "Armadura",
-            {
-                "defesa": 10
-            },
-            true
-        ]
-    ],
+    "itens": [],
     "menu_valores": {
         "ataque": 5,
         "defesa": 5,
@@ -121,10 +16,10 @@
         "velocidade": 5
     },
     "menu_atributos": {
-        "ataque": 16.25,
-        "defesa": 8.0,
+        "ataque": 6.25,
+        "defesa": 5.0,
         "vida": 20,
-        "stamina": 6.25,
+        "stamina": 96.25,
         "velocidade": 10
     }
 }

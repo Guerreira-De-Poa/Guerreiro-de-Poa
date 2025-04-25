@@ -55,7 +55,7 @@ SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-def inicio():
+def inicio(matou_ligeiro=False):
     ####
     # PRA MUSICA FUNCIONAR: ANTES DO LOOP, QUEBRE O SOM, COMEÇOU? PEGA A MUSICA
     pygame.mixer.music.load("musicas/The Four Seasons, Winter - Vivaldi.mp3")
@@ -461,11 +461,17 @@ def inicio():
     tocar_cutscene_cv2('cutscenes/cutscene_inicio.mp4', 'cutscenes/cutscene_inicio.mp3', screen)
 
     while menu_opcoes.rodando:
-        if player.HP == 0:
+        if player.HP <= 0:
             running = False
+            Game_over(inicio)
+        #print(inimigos_spawnados)
 
-        if len(inimigos) == 0 and player.rect.y < 64:
+        if len(inimigos) == 0 and inimigos_spawnados==True and player.rect.y < 64:
+            running = False
+            salvar_game()
             mapa_antes_ligeiro()
+        elif player.rect.y <=64:
+            player.rect.y = 64
         menu.update()
         player.atualizar_stamina()
 
@@ -513,8 +519,10 @@ def inicio():
         missao_3 = npc2.dialogo.missao_ativada
 
         if missao_3 == True:
+            running = False
+            salvar_game()
             mapa_antes_final()
-            ultimo_nivel() # AQUI É MELHOR
+            #ultimo_nivel() # AQUI É MELHOR
         if missao_2 == True:
             pygame.mixer.music.stop()
             pygame.mixer.music.load("musicas/sfx-menu12.mp3")
@@ -853,7 +861,7 @@ def inicio():
                 for item in inimigos:
                     if value[0] == item:
                         item.get_hit(player.dano)
-                        print(item.HP)
+                        #print(item.HP)
             i = 0
             for inimigo in inimigos:
                 i+=1
@@ -1092,7 +1100,6 @@ def inicio():
 
         pygame.display.flip()
     
-    Game_over(inicio)
 
 if __name__ == "__main__":
     inicio()
