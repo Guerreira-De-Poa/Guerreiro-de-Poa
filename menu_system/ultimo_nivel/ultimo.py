@@ -269,8 +269,9 @@ def inicio():
     running = True
 
     while running:
-        if player.HP == 0:
+        if player.HP <= 0:
             running = False
+            Game_over(inicio)
         player.atualizar_stamina()
         bau_perto = False
 
@@ -570,8 +571,6 @@ def inicio():
         for npc in npcs:
             npc.dialogo.coisa()
         pygame.display.flip()
-
-    Game_over(inicio)
 
 if __name__ == "__main__":
     inicio()

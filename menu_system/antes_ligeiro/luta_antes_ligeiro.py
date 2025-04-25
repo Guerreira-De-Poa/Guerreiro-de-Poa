@@ -449,8 +449,9 @@ def inicio():
     inimigos_spawnados = False
 
     while running:
-        if player.HP == 0:
+        if player.HP <= 0:
             running = False
+            Game_over(inicio)
 
         if len(inimigos) == 0 and player.rect.y < 100:
             screen.fill((0, 0, 0))
@@ -1032,7 +1033,6 @@ def inicio():
         #     npc.dialogo.coisa()
 
         pygame.display.flip()
-    Game_over(inicio)
 
 if __name__ == "__main__":
     inicio()
