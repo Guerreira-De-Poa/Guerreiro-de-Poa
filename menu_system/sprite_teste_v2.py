@@ -90,7 +90,9 @@ class Personagem(pygame.sprite.Sprite):
         self.usando_sprite2 = False
 
         self.arma_equipada = False
-        self.armadura_equipada = False 
+        self.armadura_equipada = False
+
+        self.empurrado = False
 
     def update(self, dialogo_open):
         self.image2 = self.image
@@ -222,6 +224,15 @@ class Personagem(pygame.sprite.Sprite):
             self.contador_iframes +=1
             if self.contador_iframes == self.iframes:
                 self.ivuln = False
+
+        if self.empurrado == True:
+            if self.knock_steps > 0:
+                dx, dy = self.knock_dir
+                self.rect.x += dx * self.KNOCKBACK_STEP
+                self.rect.y += dy * self.KNOCKBACK_STEP
+                self.knock_steps -= 1
+            else:
+                self.empurrado = False
 
     def get_angle(self,mouse_pos, camera):
         #print(mouse_pos)
@@ -411,3 +422,18 @@ class Personagem(pygame.sprite.Sprite):
         x = self.rect.x - camera.left
         y = self.rect.y - camera.top
         self.sheet.draw(screen, x, y-10)
+
+    def knockbacked(self, dx, dy):
+        self.KNOCKBACK_DIST = 64      # distância total em pixels
+        self.KNOCKBACK_STEP = 8       # pixels por frame de recuo
+        """Inicia um recuo ordinal de KNOCKBACK_DIST na direção de (dx,dy)."""
+        # escolhe eixo dominante
+        if abs(dx) >= abs(dy):
+            self.knock_dir = (1 if dx > 0 else -1, 0)
+        else:
+            self.knock_dir = (0, 1 if dy > 0 else -1)
+        # quantos passos ainda faltam
+        total_steps = self.KNOCKBACK_DIST // self.KNOCKBACK_STEP
+        self.knock_steps = total_steps
+        # suspende qualquer outro movimento neste ciclo
+        self.empurrado = True
