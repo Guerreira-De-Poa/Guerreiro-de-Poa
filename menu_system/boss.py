@@ -216,7 +216,7 @@ class Boss2(Inimigo):
         self.HP = vida
         self.player = player
         self.player_rect = player_rect
-        self.speed = 2
+        self.speed = 3
         self.pulo_speed = self.speed * 3
 
         self.raios = pygame.sprite.Group()
@@ -269,6 +269,9 @@ class Boss2(Inimigo):
             if self.local_a_mover[0] % self.speed == 0 and self.local_a_mover[1] % self.speed == 0:
                 break
         self.local_a_mover_x, self.local_a_mover_y = self.local_a_mover
+
+        self.prioridade = random.choice(['x', 'y'])
+
 
     def pulo_inicio(self, player_rect):
         self.player_rect = player_rect
@@ -351,6 +354,7 @@ class Boss2(Inimigo):
             self.mover = False
             self.ataque = True
             self.contagem_ataques = 0
+            self.acumulo_pulos += 1
             self.pulo_inicio(self.player_rect)
             return  # só no próximo frame o pulo será executado
 
@@ -358,19 +362,23 @@ class Boss2(Inimigo):
             self.dx = self.local_a_mover_x - self.rect.centerx
             self.dy = self.local_a_mover_y - self.rect.centery
 
-            # calc probabilidades e escolhe eixo
-            total = abs(self.dx) + abs(self.dy)
-            if total != 0:
-                if random.random() < abs(self.dx) / total:
-                    # anda em X
-                    step = self.speed if self.dx > 0 else -self.speed
-                    self.rect.x += step
-                    self.sheet.action = 3 if self.dx > 0 else 1
+            if self.rect.centerx != self.local_a_mover_x:
+                distancia_x = self.local_a_mover_x - self.rect.centerx
+                if abs(distancia_x) <= self.speed:
+                    self.rect.centerx = self.local_a_mover_x
                 else:
-                    # anda em Y
-                    step = self.speed if self.dy > 0 else -self.speed
-                    self.rect.y += step
-                    self.sheet.action = 2 if self.dy > 0 else 0
+                    step = self.speed if distancia_x > 0 else -self.speed
+                    self.rect.centerx += step
+                self.sheet.action = 3 if distancia_x > 0 else 1
+
+            elif self.rect.centery != self.local_a_mover_y:
+                distancia_y = self.local_a_mover_y - self.rect.centery
+                if abs(distancia_y) <= self.speed:
+                    self.rect.centery = self.local_a_mover_y
+                else:
+                    step = self.speed if distancia_y > 0 else -self.speed
+                    self.rect.centery += step
+                self.sheet.action = 2 if distancia_y > 0 else 0
             
             if pygame.math.Vector2(self.rect.center).distance_to((self.local_a_mover_x, self.local_a_mover_y)) <= self.speed:
                 self.rect.center = (self.local_a_mover_x, self.local_a_mover_y)
