@@ -186,15 +186,11 @@ def inicio():
     # Processar o mapa
     walls = process_map_for_collision(map_data)
     map_tiles = process_map_for_rendering(map_data)
-    lista_1 = [7 for i in range(4)]
-    lista_2 = [4 for i in range(4)]
-    lista_3 = [6 for i in range(8)]
-    lista_3_alt = [5 for i in range(8)]
-    lista_3_alt_2 = [5 for i in range(9)]
-    lista_4 = [13 for j in range(4)]
-    lista_5 = [5 for k in range(14)]
-
-    #18-21 = 5
+    lista_1 = [9 for i in range(4)]
+    lista_2 = [6 for i in range(8)]
+    lista_3 = [6 for i in range(6)]
+    lista_4 = [5 for j in range(4)]
+    lista_5 = [7 for k in range(14)]
 
     # Criar o jogador
     try:
@@ -232,8 +228,8 @@ def inicio():
     # Configuração da câmera
     camera = pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 
-    spritesheet_gabriel = SpriteSheet('gabrielFase2.png', 0, 522, 64, 64, 4, lista_1+lista_2+lista_3_alt+lista_4+lista_5, (0, 0, 0))
-    boss = Boss2(player.rect, player, 1220, 1000, True, spritesheet_gabriel, 30, 300, 200)
+    spritesheet_gabriel = SpriteSheet('gabrielFase2.png', 0, 522, 64, 64, 4, lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    boss = Boss2(player.rect, player, 1200, 400, True, spritesheet_gabriel, 30, 300, 20)
 
     inimigos = pygame.sprite.Group()
     player_group = pygame.sprite.Group()
@@ -512,9 +508,10 @@ def inicio():
 
         for inimigo in inimigos:
             if inimigo.rect.colliderect(player.rect):
-                player.get_hit(30)
-                inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
-                player.rect.topleft = (old_x, old_y)
+                player.get_hit(10)
+                player.knockbacked(inimigo.dx, inimigo.dy)
+                # inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
+                # player.rect.topleft = (old_x, old_y)
                 inimigo.atacando_melee = True
                 inimigo.frame_change = 4
             else:
@@ -529,7 +526,7 @@ def inicio():
         player.draw_balas(screen, camera)
 
         for inimigo in inimigos:
-            inimigo.sheet.draw(screen, inimigo.rect.x - camera.left, inimigo.rect.y - camera.top, scale=1.3)
+            inimigo.sheet.draw(screen, inimigo.rect.x - camera.left, inimigo.rect.y - camera.top)
 
         for bau in baus:
             screen.blit(bau.image, (bau.rect.x - camera.left, bau.rect.y - camera.top))
