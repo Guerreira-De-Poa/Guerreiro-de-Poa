@@ -25,6 +25,7 @@ from inimigo_teste import *
 from inventario1 import Inventario
 from boss import Boss1
 from bau import Bau
+from menu_som import Som
 
 from XP import XP
 from menu_status import Menu
@@ -33,12 +34,12 @@ pause = False
 
 pygame.mixer.music.stop()
 
+som = Som()
+
 def inicio():
     ####
     # PRA MUSICA FUNCIONAR: ANTES DO LOOP, QUEBRE O SOM, COMEÇOU? PEGA A MUSICA
-    pygame.mixer.music.load("musicas/The Four Seasons, Winter - Vivaldi.mp3")
-    pygame.mixer.music.play(-1)  # -1 significa que a música vai tocar em loop
-    pygame.mixer.music.set_volume(0.05)  # 50% do volume máximo
+    som.musica()
 
     # Efeitos Sonoros
     som_andar = pygame.mixer.Sound("musicas/Efeitos sonoros/Passos.mp3")
@@ -760,8 +761,7 @@ def inicio():
             if click:
                 click_hold += 1
                 if not canal_carregar_arco.get_busy() and click_hold <= 30:
-                    som_carregar_arco.set_volume(1)
-                    canal_carregar_arco.play(som_carregar_arco, loops=0)
+                    som.som_arco()
                 elif click_hold > 30:
                     canal_carregar_arco.stop()
                 player.atacando = True
@@ -774,8 +774,9 @@ def inicio():
             elif click_hold > 30:
                 player.shoot(mouse_pos)
                 if not canal_atirar_flecha.get_busy():
-                    som_atirar_flecha.set_volume(0.05)
-                    canal_atirar_flecha.play(som_atirar_flecha, loops=0)
+                    som.atirar()
+                    # som_atirar_flecha.set_volume(0.05)
+                    # canal_atirar_flecha.play(som_atirar_flecha, loops=0)
                 click_hold = 0
                 player.atacando = False
                 player.atacando_melee = False
