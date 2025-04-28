@@ -37,6 +37,8 @@ from menu_status import Menu
 
 from cutscenes.tocar_cutscene import tocar_cutscene_cv2
 
+from menu_opcoes import MenuOpcoes
+
 pause = False
 
 pygame.mixer.music.stop()
@@ -291,6 +293,7 @@ def inicio():
     # Game loop
     clock = pygame.time.Clock()
     running = True
+    menu_opcoes = MenuOpcoes(SCREEN_WIDTH, SCREEN_HEIGHT, screen, running)
 
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
@@ -448,7 +451,7 @@ def inicio():
 
     inimigos_spawnados = False
 
-    while running:
+    while menu_opcoes.rodando:
         if player.HP <= 0:
             running = False
             Game_over(inicio)
@@ -607,18 +610,18 @@ def inicio():
                     #COMANDOS INVENTARIO
                 elif event.key in (pygame.K_LALT, pygame.K_RALT):
                     inventario1.inventory_open = not inventario1.inventory_open
-                elif event.key == pygame.K_DOWN and inventario1.scroll_index < len(inventario1.items) - inventario1.visible_items:
+                elif event.key == pygame.K_DOWN and inventario1.scroll_index < len(inventario1.items) - inventario1.visible_items and not menu_opcoes.pausado:
                     inventario1.item_index +=1
                     inventario1.scroll_index += 1
-                elif event.key == pygame.K_UP and inventario1.scroll_index > 0:
+                elif event.key == pygame.K_UP and inventario1.scroll_index > 0 and not menu_opcoes.pausado:
                     inventario1.item_index -=1
                     if inventario1.item_index < inventario1.visible_items-1:
                         print(inventario1.item_index,inventario1.visible_items + 2)
                         inventario1.scroll_index -= 1
 
-                elif event.key == pygame.K_DOWN and inventario1.item_index < len(inventario1.items)-1:
+                elif event.key == pygame.K_DOWN and inventario1.item_index < len(inventario1.items)-1 and not menu_opcoes.pausado:
                     inventario1.item_index +=1
-                elif event.key == pygame.K_UP and inventario1.item_index > 0:
+                elif event.key == pygame.K_UP and inventario1.item_index > 0 and not menu_opcoes.pausado:
                     inventario1.item_index -=1
 
                 elif event.key == pygame.K_RETURN:
@@ -630,8 +633,9 @@ def inicio():
                             inventario1.remove(inventario1.items[inventario1.item_index])
 
 
-                elif event.key == pygame.K_ESCAPE:
-                    running = False
+                # elif event.key == pygame.K_ESCAPE:
+                #     running = False
+                menu_opcoes.processar_eventos(event)
 
                 if event.key == pygame.K_m:
                     xp.show_menu = not xp.show_menu
@@ -825,7 +829,7 @@ def inicio():
         # Atualizar jogador
         #all_sprites.update(pause) ######## pause maroto
 
-        if inventario1.inventory_open or xp.show_menu:
+        if inventario1.inventory_open or xp.show_menu or menu_opcoes.pausado:
             all_sprites.update(True)
         elif dialogo_a_abrir:
             all_sprites.update(dialogo_a_abrir.texto_open)
@@ -1010,7 +1014,9 @@ def inicio():
             if menu.tamanho_menu_img_x > 0 and menu.tamanho_menu_img_y > 0:
                 menu.menu_img = pygame.transform.scale(menu.menu_img_original, (menu.tamanho_menu_img_x, menu.tamanho_menu_img_y))
 
-
+        if menu_opcoes.pausado:
+            menu_opcoes.atualizar()
+            menu_opcoes.desenhar()
                 
         # Atualiza o jogo se o menu NÃO estiver aberto
         if xp.show_menu:
@@ -1023,13 +1029,14 @@ def inicio():
                 menu.desenhar_botoes(screen)
                 menu.resetar_botoes()
 
-        player.draw_health(screen)
-        player.draw_stamina(screen)
-        if not dialogo_a_abrir:
-            xp.render()
-        else:
-            if dialogo_a_abrir.texto_open == False:
+        if not menu_opcoes.pausado:
+            player.draw_health(screen)
+            player.draw_stamina(screen)
+            if not dialogo_a_abrir:
                 xp.render()
+            else:
+                if dialogo_a_abrir.texto_open == False:
+                    xp.render()
 
 
         #print(menu.atributos,menu.valores)

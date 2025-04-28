@@ -20,6 +20,7 @@ from XP import XP
 from menu_status import Menu
 from itens import Item
 from game_over import Game_over
+from menu_opcoes import MenuOpcoes
 
 from cutscenes.tocar_cutscene import tocar_cutscene_cv2
 
@@ -267,8 +268,9 @@ def inicio():
     # Game loop
     clock = pygame.time.Clock()
     running = True
+    menu_opcoes = MenuOpcoes(SCREEN_WIDTH, SCREEN_HEIGHT, screen, running)
 
-    while running:
+    while menu_opcoes.rodando:
         if player.HP <= 0:
             running = False
             Game_over(inicio)
@@ -352,8 +354,9 @@ def inicio():
                     pause = not pause
                 elif event.key in (pygame.K_LALT, pygame.K_RALT):
                     inventario1.inventory_open = not inventario1.inventory_open
-                elif event.key == pygame.K_ESCAPE:
-                    running = False
+                # elif event.key == pygame.K_ESCAPE:
+                #     running = False
+                menu_opcoes.processar_eventos(event)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if button_rect.collidepoint(event.pos) and botao_ativo == True:
@@ -564,12 +567,21 @@ def inicio():
         # if botao_ativo:
         #     inventario1.draw_button(screen)
 
+        if menu_opcoes.pausado:
+            menu_opcoes.atualizar()
+            menu_opcoes.desenhar()
+
         if dragging_item:
             inventario1.draw_dragging_item(screen, dragging_item)
 
-        player.draw_health(screen)
-        player.draw_stamina(screen)
-        xp.render()
+        if not menu_opcoes.pausado:
+            player.draw_health(screen)
+            player.draw_stamina(screen)
+            if not dialogo_a_abrir:
+                xp.render()
+            else:
+                if dialogo_a_abrir.texto_open == False:
+                    xp.render()
 
         for npc in npcs:
             npc.dialogo.coisa()
