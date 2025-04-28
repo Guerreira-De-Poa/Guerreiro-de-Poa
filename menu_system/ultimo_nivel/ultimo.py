@@ -539,7 +539,7 @@ def inicio():
 
         if boss.HP > 0:
             pygame.draw.rect(screen,(0,0,0),(280,45,700,25))
-            pygame.draw.rect(screen,(255,0,0),(280,45,75*boss.HP,25))
+            pygame.draw.rect(screen,(255,0,0),(280,45,35*boss.HP,25))
             fonte = pygame.font.Font('8-BIT WONDER.TTF',30)
             text_surface = fonte.render("O Professor", True, (0,0,0))
             screen.blit(text_surface, (508,68,400,100))
