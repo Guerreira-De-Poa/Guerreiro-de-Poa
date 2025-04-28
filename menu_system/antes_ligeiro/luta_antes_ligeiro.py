@@ -414,6 +414,14 @@ def inicio():
 
     baus = pygame.sprite.Group()
 
+    espada = Item('arma', 'Espada',{'dano': 5},False,player)
+    armadura = Item('armadura', 'Armadura',{'defesa': 0.5},False,player)
+    pocao = Item('consumivel', 'Poção', {'vida': 10},False,player)
+
+    bau_saida = Bau(screen,1000,100,[espada,armadura,pocao])
+
+    baus.add(bau_saida)
+
     iterado_teste = 0
 
     contador_ataque_melee = 0
@@ -450,6 +458,10 @@ def inicio():
             json.dump(Dicionario_para_save, f, indent=4)
 
     inimigos_spawnados = False
+
+    dash = 0
+    cooldown_dash = 0
+    velocidade_anterior = 0
 
     while menu_opcoes.rodando:
         if player.HP <= 0:
@@ -592,6 +604,11 @@ def inicio():
                     player.nova_direcao = True
                 elif event.key == pygame.K_d:
                     player.nova_direcao = True
+                elif event.key == pygame.K_q:
+                    if cooldown_dash == 0:
+                        velocidade_anterior = player.speed
+                        player.dash = True
+                        cooldown_dash = 1
                 elif event.key == pygame.K_LSHIFT:
                     player.correr()
                 elif event.key == pygame.K_t:
@@ -601,8 +618,14 @@ def inicio():
                         dialogo_a_abrir.trocar_texto()
                     elif botao_ativo:
                         if bau_perto:
+                            if bau_perto.inventario.inventory_open == True:
+                                if inventario1.inventory_open == False:
+                                    pass
+                                else:
+                                    inventario1.inventory_open = not inventario1.inventory_open
+                            else:
+                                inventario1.inventory_open = True
                             bau_perto.inventario.inventory_open = not bau_perto.inventario.inventory_open
-                            inventario1.inventory_open = True
                 elif keys[pygame.K_z]:
                     DEBUG_MODE = not DEBUG_MODE
                 elif event.key == pygame.K_p:
@@ -776,6 +799,20 @@ def inicio():
                 inventario1.pressed_counter = 0
 
         #print(inventario1.item_index)
+
+        if cooldown_dash>0:
+            cooldown_dash+=1
+            if cooldown_dash == 90:
+                cooldown_dash = 0
+
+        if player.dash == True:
+            print(cooldown_dash)
+            player.speed = 15
+            dash+=1
+            if dash == 10:
+                player.dash = False
+                player.speed = velocidade_anterior
+                dash=0
 
         contador+=1
 

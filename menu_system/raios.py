@@ -135,7 +135,9 @@ class Raios:
         self.min_spacing = min_spacing
         self.next_wave = pygame.time.get_ticks() + self.cooldown
 
-    def update(self):
+    def update(self,f):
+        if f:
+            return
         now = pygame.time.get_ticks()
         if now >= self.next_wave:
             self._spawn_wave()

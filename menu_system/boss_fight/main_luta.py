@@ -260,8 +260,6 @@ def inicio():
     dragging_from = None
 
     # Criar as instâncias dos inventários
-    inventario1 = Inventario((50, 50, 50), 50, ["Espada", "Poção", "Escudo"])
-    inventario2 = Inventario((0, 100, 0), 400)
 
     print(boss.local_a_mover)
 
@@ -355,7 +353,7 @@ def inicio():
                     player.nova_direcao = True
                 elif event.key == pygame.K_d:
                     player.nova_direcao = True
-                elif event.key == pygame.K_r:
+                elif event.key == pygame.K_q:
                     if cooldown_dash == 0:
                         velocidade_anterior = player.speed
                         player.dash = True
@@ -367,6 +365,13 @@ def inicio():
                         dialogo_a_abrir.trocar_texto()
                     elif botao_ativo:
                         if bau_perto:
+                            if bau_perto.inventario.inventory_open == True:
+                                if inventario1.inventory_open == False:
+                                    pass
+                                else:
+                                    inventario1.inventory_open = not inventario1.inventory_open
+                            else:
+                                inventario1.inventory_open = True
                             bau_perto.inventario.inventory_open = not bau_perto.inventario.inventory_open
                 elif keys[pygame.K_z]:
                     DEBUG_MODE = not DEBUG_MODE
@@ -476,7 +481,9 @@ def inicio():
         # Atualizar jogador
         #all_sprites.update(pause) ######## pause maroto
 
-        if dialogo_a_abrir:
+        if inventario1.inventory_open or xp.show_menu or menu_opcoes.pausado:
+            all_sprites.update(True)
+        elif dialogo_a_abrir:
             all_sprites.update(dialogo_a_abrir.texto_open)
         else:
             all_sprites.update(False)
@@ -618,8 +625,16 @@ def inicio():
             fonte2 = pygame.font.Font('8-BIT WONDER.TTF',30)
             text_surface = fonte2.render("O Ligeiro", True, (0, 0, 0))
             screen.blit(text_surface, (510,70,400,100))
-        else:
-            pass
+        elif boss.morte_counter == 100:
+            boss.morte_counter+=1
+
+            espada = Item('arma', 'Espada',{'dano': 5},False,player)
+            armadura = Item('armadura', 'Armadura',{'defesa': 0.5},False,player)
+            pocao = Item('consumivel', 'Poção', {'vida': 10},False,player)
+
+            bau_saida = Bau(screen,1220,800,[espada,armadura,pocao])
+
+            baus.add(bau_saida)
             ##############
 
             # ADICIONAMOS A FUNÇÃO DE FIM DE JOGO, O BOSS MORREU

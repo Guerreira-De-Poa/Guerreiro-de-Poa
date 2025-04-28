@@ -304,7 +304,7 @@ class Boss2(Inimigo):
     
     def update(self, dialogo_open):
 
-        self.raios_controller.update()
+        self.raios_controller.update(dialogo_open)
         if dialogo_open:
             return
         

@@ -476,6 +476,10 @@ def inicio(matou_ligeiro=False):
 
     tocar_cutscene_cv2('cutscenes/cutscene_inicio.mp4', 'cutscenes/cutscene_inicio.mp3', screen)
 
+    dash = 0
+    cooldown_dash = 0
+    velocidade_anterior = 0
+
     while menu_opcoes.rodando:
         if player.HP <= 0:
             running = False
@@ -666,6 +670,11 @@ def inicio(matou_ligeiro=False):
                     player.nova_direcao = True
                 elif event.key == pygame.K_d:
                     player.nova_direcao = True
+                elif event.key == pygame.K_q:
+                    if cooldown_dash == 0:
+                        velocidade_anterior = player.speed
+                        player.dash = True
+                        cooldown_dash = 1
                 elif event.key == pygame.K_LSHIFT:
                     player.correr()
                 elif event.key == pygame.K_t:
@@ -863,6 +872,20 @@ def inicio(matou_ligeiro=False):
                 if inimigo.ataque:
                     inimigo.atacar()
                 pass
+
+        if cooldown_dash>0:
+            cooldown_dash+=1
+            if cooldown_dash == 90:
+                cooldown_dash = 0
+
+        if player.dash == True:
+            print(cooldown_dash)
+            player.speed = 15
+            dash+=1
+            if dash == 10:
+                player.dash = False
+                player.speed = velocidade_anterior
+                dash=0
 
         player_hits =  pygame.sprite.groupcollide(player.balas,inimigos, False, False)
         

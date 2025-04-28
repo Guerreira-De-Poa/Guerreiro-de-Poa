@@ -252,9 +252,6 @@ def inicio():
     dragging_item = None
     dragging_from = None
 
-    inventario1 = Inventario((50, 50, 50), 50, ["Espada", "Poção", "Escudo"])
-    inventario2 = Inventario((0, 100, 0), 400)
-
     contador_ataque_melee = 0
     dash = 0
     cooldown_dash = 0
@@ -265,6 +262,10 @@ def inicio():
     clock = pygame.time.Clock()
     running = True
     menu_opcoes = MenuOpcoes(SCREEN_WIDTH, SCREEN_HEIGHT, screen, running)
+
+    dash = 0
+    cooldown_dash = 0
+    velocidade_anterior = 0
 
     while menu_opcoes.rodando:
         if player.HP <= 0:
@@ -332,7 +333,7 @@ def inicio():
                     player.nova_direcao = True
                 elif event.key == pygame.K_d:
                     player.nova_direcao = True
-                elif event.key == pygame.K_r:
+                elif event.key == pygame.K_q:
                     if cooldown_dash == 0:
                         velocidade_anterior = player.speed
                         player.dash = True
@@ -344,6 +345,13 @@ def inicio():
                         dialogo_a_abrir.trocar_texto()
                     elif botao_ativo:
                         if bau_perto:
+                            if bau_perto.inventario.inventory_open == True:
+                                if inventario1.inventory_open == False:
+                                    pass
+                                else:
+                                    inventario1.inventory_open = not inventario1.inventory_open
+                            else:
+                                inventario1.inventory_open = True
                             bau_perto.inventario.inventory_open = not bau_perto.inventario.inventory_open
                 elif event.key == pygame.K_z:
                     DEBUG_MODE = not DEBUG_MODE
@@ -436,7 +444,9 @@ def inicio():
 
         old_x, old_y = player.rect.x, player.rect.y
 
-        if dialogo_a_abrir:
+        if inventario1.inventory_open or xp.show_menu or menu_opcoes.pausado:
+            all_sprites.update(True)
+        elif dialogo_a_abrir:
             all_sprites.update(dialogo_a_abrir.texto_open)
         else:
             all_sprites.update(False)
