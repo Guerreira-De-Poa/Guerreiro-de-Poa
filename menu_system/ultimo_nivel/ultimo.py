@@ -436,7 +436,9 @@ def inicio():
 
         old_x, old_y = player.rect.x, player.rect.y
 
-        if dialogo_a_abrir:
+        if menu_opcoes.pausado:
+            all_sprites.update(True)
+        elif dialogo_a_abrir:
             all_sprites.update(dialogo_a_abrir.texto_open)
         else:
             all_sprites.update(False)
