@@ -29,7 +29,7 @@ class XP():
         self.xp_max = 100
         self.nivel = 1
         self.nivel_anterior = self.nivel
-        self.nivel_max = 3
+        self.nivel_max = 30
         self.tamanho_nivel = 40
         self.dano = 15
         self.multiplicador_xp = 1.1
@@ -85,7 +85,7 @@ class XP():
                 self.temporizador_mensagem = pygame.time.get_ticks()
 
                 self.nivel += 1
-                self.pontos_disponiveis += 5
+                self.pontos_disponiveis += 3
                 print(self.pontos_disponiveis)
                 self.pontos_disponiveis_copy = self.pontos_disponiveis
                 print(self.pontos_disponiveis_copy)

@@ -113,12 +113,12 @@ def inicio(matou_ligeiro=False):
     MAP_HEIGHT = map_data['mapHeight']
 
     atributos = {
-            "ataque": 6.25,
+            "ataque": 5.0,
             "defesa": 5.0,
             "vida_max": 20,
             "vida_atual": 20,
-            "stamina": 96.25,
-            "velocidade": 10
+            "stamina": 10.0,
+            "velocidade": 5.5
     }
 
     # Classe para carregar a spritesheet do mapa
@@ -289,7 +289,7 @@ def inicio(matou_ligeiro=False):
         sys.exit()
 
     xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
-    menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
+    menu = Menu(1, 1, 1, 1, 1, 5.0, 2.0, 20, 10.0, 5.5, player)
 
 
     # Posicionar o jogador em uma posição válida no mapa
@@ -754,20 +754,20 @@ def inicio(matou_ligeiro=False):
                                 xp.pontos_disponiveis += 1  # Devolve um ponto
 
                                 if atributo == "ataque":
-                                    menu.atributos[atributo] -= 1.25
+                                    menu.atributos[atributo] -= 1.5
                                     player.dano = menu.atributos[atributo]
                                 if atributo == "defesa":
-                                    menu.atributos[atributo] -= 1
+                                    menu.atributos[atributo] -= 0.5
                                     player.defesa = menu.atributos[atributo]
                                 if atributo == "vida":
-                                    menu.atributos[atributo] -= 3
+                                    menu.atributos[atributo] -= 1
                                     player.MAX_HP = menu.atributos[atributo]
-                                    player.HP -= 3
+                                    player.HP -= 1
                                 if atributo == "stamina":
-                                    menu.atributos[atributo] -= 1.25
+                                    menu.atributos[atributo] -= 1.5
                                     player.stamina = menu.atributos[atributo]
                                 if atributo == "velocidade":
-                                    menu.atributos[atributo] -= 2
+                                    menu.atributos[atributo] -= 0.5
                                     player.velocidade_corrida = menu.atributos[atributo]
 
                         # Botão de aumentar
@@ -782,23 +782,23 @@ def inicio(matou_ligeiro=False):
                             else:
                                 xp.pontos_disponiveis -= 1  # Gasta um ponto
 
-                            if atributo == "ataque":
-                                menu.atributos[atributo] += 1.25
-                                player.dano = menu.atributos[atributo]
-                            if atributo == "defesa":
-                                menu.atributos[atributo] += 1
-                                player.defesa = menu.atributos[atributo]
-                            if atributo == "vida":
-                                menu.atributos[atributo] += 3
-                                player.MAX_HP = menu.atributos[atributo]
-                                player.HP += 3
-                            if atributo == "stamina":
-                                menu.atributos[atributo] += 1.25
-                                player.max_stamina = menu.atributos[atributo]
-                            if atributo == "velocidade" and menu.valores["velocidade"] <= 6:
-                                menu.atributos[atributo] += 2
-                                player.velocidade_corrida = menu.atributos[atributo]
-                            # else:
+                                if atributo == "ataque":
+                                    menu.atributos[atributo] += 1.5
+                                    player.dano = menu.atributos[atributo]
+                                if atributo == "defesa":
+                                    menu.atributos[atributo] += 0.5
+                                    player.defesa = menu.atributos[atributo]
+                                if atributo == "vida":
+                                    menu.atributos[atributo] += 1
+                                    player.MAX_HP = menu.atributos[atributo]
+                                    player.HP += 1
+                                if atributo == "stamina":
+                                    menu.atributos[atributo] += 1.5
+                                    player.max_stamina = menu.atributos[atributo]
+                                if atributo == "velocidade":
+                                    menu.atributos[atributo] += 0.5
+                                    player.velocidade_corrida = menu.atributos[atributo]
+                                # else:
                                 # menu.valores[atributo] = menu.valores_max[atributo]
                                 # xp.pontos_disponiveis = xp.pontos_disponiveis
 
