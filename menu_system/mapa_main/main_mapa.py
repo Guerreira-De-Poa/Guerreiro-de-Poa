@@ -377,6 +377,11 @@ def inicio(matou_ligeiro=False):
         'texto_2':['Me leve até lá']
         }
     
+    texto_4 = {
+        'personagem':'Morador de Poá',
+        'texto':['Os inimigos a frente são fortes','Leve esses itens para lhe ajudar','Boa sorte guerreiro!']
+    }
+    
     ########### 
     # de alguma forma, agora te que deixar o dicionario texto...
     ###########
@@ -385,10 +390,11 @@ def inicio(matou_ligeiro=False):
     npc0 = NPC(omori1,screen,1151,845,texto_2, 2) # npc ligeiro
     npc1 = NPC(omori,screen,1955, 2150,texto, 3) # npc inicio
     npc2 = NPC(omori2,screen,1954, 744,texto_3, 4) # npc gabriel
+    npc3 = NPC(omori,screen,1030,300,texto_4)
 
     all_sprites.add(npc0,npc1)
     npcs = pygame.sprite.Group()
-    npcs.add(npc0,npc1,npc2 ) 
+    npcs.add(npc0,npc1,npc2,npc3) 
 
     dialogo_group = []
 
@@ -474,6 +480,7 @@ def inicio(matou_ligeiro=False):
         if player.HP <= 0:
             running = False
             Game_over(inicio)
+            menu_opcoes.rodando = False
         #print(inimigos_spawnados)
 
         if len(inimigos) == 0 and inimigos_spawnados==True and player.rect.y < 64:

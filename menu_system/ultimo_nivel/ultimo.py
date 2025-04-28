@@ -274,6 +274,7 @@ def inicio():
         if player.HP <= 0:
             running = False
             Game_over(inicio)
+            menu_opcoes.rodando = False
         player.atualizar_stamina()
         bau_perto = False
 

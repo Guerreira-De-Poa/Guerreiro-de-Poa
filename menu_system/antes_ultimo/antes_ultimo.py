@@ -438,6 +438,7 @@ def inicio():
         if player.HP <= 0:
             running = False
             Game_over(inicio)
+            menu_opcoes.rodando = False
         print(player.rect.y)
 
         if len(inimigos) == 0 and player.rect.y < 135:
