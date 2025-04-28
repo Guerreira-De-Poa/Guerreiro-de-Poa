@@ -96,7 +96,18 @@ def inicio():
     '18': (128, 128), '19': (192, 128), '20': (256, 128),
     '21': (320, 128), '22': (384, 128), '23': (448, 128),
     '24': (0, 192), '25': (64, 192), '26': (128, 192),
-    '27': (192, 192),
+    '27': (192, 192), '28': (256, 192), '29': (320, 192),
+    '30': (384, 192), '31': (448, 192), '32': (0, 256),
+    '33': (64, 256), '34': (128, 256), '35': (192, 256),
+    '36': (256, 256), '37': (320, 256), '38': (384, 256),
+    '39': (448, 256), '40': (0, 320), '41': (64, 320),
+    '42': (128, 320), '43': (192, 320), '44': (256, 320),
+    '45': (320, 320), '46': (384, 320), '47': (448, 320),
+    '48': (0, 384), '49': (64, 384), '50': (128, 384),
+    '51': (192, 384), '52': (256, 384), '53': (320, 384),
+    '54': (384, 384), '55': (448, 384), '56': (0, 448),
+    '57': (64, 448), '58': (128, 448), '59': (192, 448),
+    '60': (256, 448),
     }
 
     def process_map_for_collision(map_data):
@@ -111,7 +122,7 @@ def inicio():
 
     def process_map_for_rendering(map_data):
         tiles = []
-        layer_order = ['Background', 'Sand', 'Cliff', 'Rocks', 'Grass']
+        layer_order = ['Background', 'colisao', 'Sand', 'Cliff', 'Rocks', 'Grass', 'Miscs']
         
         layer_dict = {layer_name: [] for layer_name in layer_order}
         
@@ -196,7 +207,7 @@ def inicio():
 
     # Posicionar o jogador em uma posição válida no mapa
 
-    player.rect.x,player.rect.y = 1220,1300
+    player.rect.x,player.rect.y = 1535,1320
 
     # Configuração da câmera
     camera = pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)

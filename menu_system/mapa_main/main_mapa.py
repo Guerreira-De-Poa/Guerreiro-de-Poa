@@ -343,6 +343,7 @@ def inicio(matou_ligeiro=False):
     omori = pygame.image.load('npc_amarelo.png')
     omori1 = pygame.image.load('npc_cinza.png')
     omori2 = pygame.image.load('npc_vermelho1.png')
+    plaquinha = pygame.transform.scale(pygame.image.load('npc.png'), (1,1))
 
     # DIALOGO NPC QUE APARECE DE PRIMEIRA
     texto = {
@@ -360,13 +361,27 @@ def inicio(matou_ligeiro=False):
         'texto_2':['Não se preocupe senhor', 'Eu irei ajuda-los']
         }
 
+    # PLACA
+
+    textoplaca = {
+        'personagem': "Placa de Informações",
+        'texto_1': ["""(<)OESTE - LIGEIRO | (^)NORTE - CASTELO"""]
+    }
+
     # NPC ANTES DO LIGEIRO
+
+    texto_2_antes = {
+        'personagem':'Morador de Poá',
+        'texto_1':['Essa cidade está cada vez mais doida!', 'Derrepente, surgiu alguns invasores!', 'Fale com o morador perto da praia', 'Ele vai te ajudar'],
+        'personagem_1': "Guerreiro de Poá",
+        'texto_2':['Eu irei ajudar!']
+        }
 
     texto_2 = {
         'personagem':'Morador de Poá',
-        'texto_1':['Você foi o guerreiro que nos salvou certo?', 'Muito obrigado', 'Eu posso te levar ao chefe deles', 'Isso fará com que eles desistam'],
+        'texto_1':['Ih Rapaiz!', 'Tu nos ajudou né? Valeu! mas...', 'Tem um bixo estranho que apareceu', 'Fale com o carinha logo ali'],
         'personagem_1': "Guerreiro de Poá",
-        'texto_2':['Me leve até lá']
+        'texto_2':['Eita peste!']
         }
     
     # NPC ANTES DO GABRIEL
@@ -379,7 +394,7 @@ def inicio(matou_ligeiro=False):
     
     texto_4 = {
         'personagem':'Morador de Poá',
-        'texto':['Os inimigos a frente são fortes','Leve esses itens para lhe ajudar','Boa sorte guerreiro!']
+        'texto':['O Ligeiro à frente é forte!','Leve esses itens para lhe ajudar','Boa sorte guerreiro!']
     }
     
     ########### 
@@ -387,14 +402,16 @@ def inicio(matou_ligeiro=False):
     ###########
  
     # posição dos npcs
-    npc0 = NPC(omori1,screen,1151,845,texto_2, 2) # npc ligeiro
+    npc0 = NPC(omori1,screen,1151,845,texto_2, 2) # npc ligeiro # MECHE NESSE
     npc1 = NPC(omori,screen,1955, 2150,texto, 3) # npc inicio
     npc2 = NPC(omori2,screen,1954, 744,texto_3, 4) # npc gabriel
     npc3 = NPC(omori,screen,1030,300,texto_4)
+    npcplaquinha = NPC(plaquinha,screen,1805, 1330,textoplaca)
+    npcteste = NPC(omori1,screen,1151, 845,texto_2_antes) # npc inicio 
 
-    all_sprites.add(npc0,npc1)
+    all_sprites.add(npc0,npc1, npc3)
     npcs = pygame.sprite.Group()
-    npcs.add(npc0,npc1,npc2,npc3) 
+    npcs.add(npc0,npc1,npc2,npc3, npcplaquinha, npcteste) 
 
     dialogo_group = []
 
@@ -403,6 +420,9 @@ def inicio(matou_ligeiro=False):
             dialogo_group.append(npc.dialogo)
 
     #################
+
+    ### chave entrada ligeiro
+    chave_entrada = False
 
     # TEORICAMENTE, caso for true, começa a missão
     # for npc in npcs:
@@ -539,12 +559,20 @@ def inicio(matou_ligeiro=False):
         missao_2 = npc0.dialogo.missao_ativada
         missao_3 = npc2.dialogo.missao_ativada
 
+        # Remover o NPC do ligeiro (e adiciona caso necessário)
+        if inimigos_spawnados == False:
+            all_sprites.remove(npc0)
+            npcs.remove(npc0)
+        elif inimigos_spawnados == True:
+            all_sprites.add(npc0)
+            npcs.add(npc0)
+
         if missao_3 == True:
             running = False
             salvar_game()
             mapa_antes_final()
             #ultimo_nivel() # AQUI É MELHOR
-        if missao_2 == True:
+        if missao_2 == True and chave_entrada == True:
             pygame.mixer.music.stop()
             pygame.mixer.music.load("musicas/sfx-menu12.mp3")
             pygame.mixer.music.play(-1)  # -1 significa que a música vai tocar em loop
@@ -562,7 +590,7 @@ def inicio(matou_ligeiro=False):
             ####################
             screen.fill((0, 0, 0))
             fundo_loading = pygame.image.load('tela_loading_ligeiro.png').convert_alpha()
-            fundo_loading = pygame.transform.scale(fundo_loading, (1152, 648))
+            fundo_loading = pygame.transform.scale(fundo_loading, (1200, 800))
             screen.blit(fundo_loading, (0, 0))
             pygame.display.flip()
             pygame.time.delay(1500)
@@ -587,6 +615,18 @@ def inicio(matou_ligeiro=False):
                 enemy3 = Inimigo(player.rect, player, 2650,2266, False,spritesheet_inimigo_arco3, 9, 600, 40)
                 all_sprites.add(enemy0, enemy1, enemy2, enemy3)
                 inimigos.add(enemy0, enemy1, enemy2, enemy3)
+
+                # Remover o NPC teste
+                all_sprites.remove(npcteste)
+                npcs.remove(npcteste)
+                
+                # Adicionar o NPC do Ligeiro se ainda não estiver no grupo
+                if npc0 not in npcs:
+                    all_sprites.add(npc0)
+                    npcs.add(npc0)
+                    
+                # Atualizar o grupo de diálogos
+                dialogo_group = [npc.dialogo for npc in npcs if npc.dialogo]
             
 
         bau_perto = False
@@ -1068,6 +1108,16 @@ def inicio(matou_ligeiro=False):
 
         # Desenhar o jogador
         player.draw(screen, camera)
+
+        ####
+        # paramantro para passaor de fase pro ligeiro
+        ####
+
+        if player.rect.y <= 150:
+            chave_entrada = True
+            print("teste")
+        elif player.rect.y > 150:
+            chave_entrada = False
 
         for npc in npcs:
             screen.blit(npc.image,(npc.rect.x - camera.left, npc.rect.y - camera.top))
