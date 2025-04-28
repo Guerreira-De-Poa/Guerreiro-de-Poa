@@ -294,6 +294,7 @@ def inicio():
     spritesheet_inimigo_arco4 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
     inimigos = pygame.sprite.Group()
 
+
     player_group = pygame.sprite.Group()
 
     # Grupo de sprites
@@ -301,6 +302,13 @@ def inicio():
     all_sprites.add(player)
     player_group.add(player)
 
+    enemy0 = Inimigo(player.rect, player, 566,322, False,spritesheet_inimigo_arco, 10, 750, 50)
+    enemy1 = Inimigo(player.rect, player, 150,754, False,spritesheet_inimigo_arco1, 13, 500, 20)
+    enemy2 = Inimigo(player.rect, player, 1170,152, True,spritesheet_inimigo_arco2, 8, 650, 30)
+    enemy4 = Inimigo(player.rect, player, 870,152, True,spritesheet_inimigo_arco2, 8, 650, 30)
+    enemy3 = Inimigo(player.rect, player, 650,266, False,spritesheet_inimigo_arco3, 9, 600, 40)
+    all_sprites.add(enemy0, enemy1, enemy2, enemy3,enemy4)
+    inimigos.add(enemy0, enemy1, enemy2, enemy3,enemy4)
     #all_sprites.add(enemy0, enemy1, enemy2, enemy3)
     #inimigos.add(enemy0, enemy1, enemy2, enemy3)
 
@@ -401,7 +409,7 @@ def inicio():
     armadura = Item('armadura', 'Armadura',{'defesa': 0.5},False,player)
     pocao = Item('consumivel', 'Poção', {'vida': 10},False,player)
 
-    bau_saida = Bau(screen,1200,140,[espada,armadura,pocao])
+    bau_saida = Bau(screen,1500,140,[espada,armadura,pocao])
 
     baus.add(bau_saida)
 
@@ -793,7 +801,7 @@ def inicio():
 
         contador+=1
 
-        if contador % 70 == 0:
+        if contador % 62 == 0:
             for inimigo in inimigos:
                 if inimigo.ataque:
                     inimigo.atacar()

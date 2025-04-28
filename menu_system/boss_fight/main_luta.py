@@ -608,6 +608,15 @@ def inicio():
         for bau in baus:
             screen.blit(bau.image, (bau.rect.x - camera.left, bau.rect.y - camera.top))
 
+        if player.rect.y > 1300:
+            if boss.HP > 0:
+                player.rect.y = 1300
+            else:
+                running = False
+                from mapa_main.main_mapa import inicio as VilaInicio
+                VilaInicio(True)
+
+
         if dialogo_a_abrir and dialogo_a_abrir.texto_open == False:
             
             font = pygame.font.Font('8bitOperatorPlus8-Regular.ttf',48)

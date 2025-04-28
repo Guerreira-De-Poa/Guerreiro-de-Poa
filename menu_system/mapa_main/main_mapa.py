@@ -385,12 +385,21 @@ def inicio(matou_ligeiro=False):
     ########### 
     # de alguma forma, agora te que deixar o dicionario texto...
     ###########
+
+    texto_alt = {'personagem':"EU",'texto':['FUNFOU']}
+
+    if matou_ligeiro:
+        npc0 = NPC(omori1,screen,1151,845,texto_alt, 2) # npc ligeiro
+        npc1 = NPC(omori,screen,1955, 2150,texto_alt, 3) # npc inicio
+        npc2 = NPC(omori2,screen,1954, 744,texto_alt, 4) # npc gabriel
+        npc3 = NPC(omori,screen,1030,300,texto_alt)
  
     # posição dos npcs
-    npc0 = NPC(omori1,screen,1151,845,texto_2, 2) # npc ligeiro
-    npc1 = NPC(omori,screen,1955, 2150,texto, 3) # npc inicio
-    npc2 = NPC(omori2,screen,1954, 744,texto_3, 4) # npc gabriel
-    npc3 = NPC(omori,screen,1030,300,texto_4)
+    else:
+        npc0 = NPC(omori1,screen,1151,845,texto_2, 2) # npc ligeiro
+        npc1 = NPC(omori,screen,1955, 2150,texto, 3) # npc inicio
+        npc2 = NPC(omori2,screen,1954, 744,texto_3, 4) # npc gabriel
+        npc3 = NPC(omori,screen,1030,300,texto_4)
 
     all_sprites.add(npc0,npc1)
     npcs = pygame.sprite.Group()
@@ -474,13 +483,15 @@ def inicio(matou_ligeiro=False):
 
     inimigos_spawnados = False
 
-    tocar_cutscene_cv2('cutscenes/cutscene_inicio.mp4', 'cutscenes/cutscene_inicio.mp3', screen)
+    if not matou_ligeiro:
+        tocar_cutscene_cv2('cutscenes/cutscene_inicio.mp4', 'cutscenes/cutscene_inicio.mp3', screen)
 
     dash = 0
     cooldown_dash = 0
     velocidade_anterior = 0
 
     while menu_opcoes.rodando:
+        print(player.dano)
         if player.HP <= 0:
             running = False
             Game_over(inicio)
@@ -867,7 +878,7 @@ def inicio(matou_ligeiro=False):
 
         contador+=1
 
-        if contador % 70 == 0:
+        if contador % 62 == 0:
             for inimigo in inimigos:
                 if inimigo.ataque:
                     inimigo.atacar()
