@@ -25,7 +25,7 @@ from inimigo_teste import *
 from inventario1 import Inventario
 from boss import Boss1
 from bau import Bau
-from menu_som import Som
+# from menu_som import Som
 
 from XP import XP
 from menu_status import Menu
@@ -34,12 +34,12 @@ pause = False
 
 pygame.mixer.music.stop()
 
-som = Som()
+# som = Som()
 
 def inicio():
     ####
     # PRA MUSICA FUNCIONAR: ANTES DO LOOP, QUEBRE O SOM, COMEÇOU? PEGA A MUSICA
-    som.musica()
+    # som.musica()
 
     # Efeitos Sonoros
     som_andar = pygame.mixer.Sound("musicas/Efeitos sonoros/Passos.mp3")
@@ -390,7 +390,7 @@ def inicio():
             pygame.mixer.music.stop()
             pygame.mixer.music.load("musicas/sfx-menu12.mp3")
             pygame.mixer.music.play(1)  # -1 significa que a música vai tocar em loop
-            pygame.mixer.music.set_volume(0.2)  # 50% do volume máximo
+            pygame.mixer.music.set_volume(1)  # 50% do volume máximo
             # ULTIMO NIVEL!
             running = False
             screen.fill((0, 0, 0))
@@ -504,7 +504,7 @@ def inicio():
                     teclas_pressionadas.add(event.key)
                     
                     if not canal_andar.get_busy():
-                        som_andar.set_volume(0.5)
+                        som_andar.set_volume(1)
                         canal_andar.play(som_andar, loops=-1)
 
                 # if event.key in [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d] and event.key == pygame.K_LSHIFT:
@@ -760,9 +760,9 @@ def inicio():
         if not player.atacando_melee:
             if click:
                 click_hold += 1
-                if not canal_carregar_arco.get_busy() and click_hold <= 30:
-                    som.som_arco()
-                elif click_hold > 30:
+                # if not canal_carregar_arco.get_busy() and click_hold <= 30:
+                #     # som.som_arco()
+                if click_hold > 30:
                     canal_carregar_arco.stop()
                 player.atacando = True
                 player.hold_arrow(mouse_pos,camera)
@@ -774,9 +774,9 @@ def inicio():
             elif click_hold > 30:
                 player.shoot(mouse_pos)
                 if not canal_atirar_flecha.get_busy():
-                    som.atirar()
-                    # som_atirar_flecha.set_volume(0.05)
-                    # canal_atirar_flecha.play(som_atirar_flecha, loops=0)
+                    # som.atirar()
+                    som_atirar_flecha.set_volume(0.05)
+                    canal_atirar_flecha.play(som_atirar_flecha, loops=0)
                 click_hold = 0
                 player.atacando = False
                 player.atacando_melee = False
