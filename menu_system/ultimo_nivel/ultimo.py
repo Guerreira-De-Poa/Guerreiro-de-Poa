@@ -211,10 +211,14 @@ def inicio():
                 itens_carregados.append(novo_item)
             inventario1 = Inventario((50, 50, 50), 50, [itens_carregados[i] for i in range(len(itens_carregados))])
             
+            xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT,save_carregado['nivel'],save_carregado['pontos_disponiveis'])
+            menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
         else:
             print("SAVE NAO CARREGADO")
             player = Personagem(player_sprite, atributos["ataque"], atributos["defesa"], atributos["vida_max"],atributos['vida_atual'], atributos["stamina"], atributos["velocidade"],player_sprite_ataques)
             inventario1 = Inventario((50, 50, 50), 50, [])
+            xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+            menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
     except Exception as e:
         print(f"Erro ao carregar sprite do jogador: {e}")
         pygame.quit()

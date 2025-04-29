@@ -279,10 +279,14 @@ def inicio(matou_ligeiro=False):
                 itens_carregados.append(novo_item)
             inventario1 = Inventario((50, 50, 50), 50, [itens_carregados[i] for i in range(len(itens_carregados))])
             
+            xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT,save_carregado['nivel'],save_carregado['pontos_disponiveis'])
+            menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
         else:
             print("SAVE NAO CARREGADO")
             player = Personagem(player_sprite, atributos["ataque"], atributos["defesa"], atributos["vida_max"],atributos['vida_atual'], atributos["stamina"], atributos["velocidade"],player_sprite_ataques)
             inventario1 = Inventario((50, 50, 50), 50, [])
+            xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+            menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
     except Exception as e:
         print(f"Erro ao carregar sprite do jogador: {e}")
         pygame.quit()
@@ -387,34 +391,47 @@ def inicio(matou_ligeiro=False):
     # NPC ANTES DO GABRIEL
     texto_3 = {
         'personagem':'Morador de Poá',
-        'texto_1':['Muito obrigado por nos salvar!', 'Mas agora, é a sua hora de brilhar...', 'Gabriel está neste castelo', 'pronto para aniquilar Poá', 'Apenas você pode derrotá-lo', 'Boa sorte'],
+        'texto_1':['Muito obrigado por nos salvar!', 'Mas agora, é a sua hora de brilhar...', 'Gabriel está neste castelo', 'Pronto para aniquilar Poá', 'Apenas você pode derrotá-lo', 'Boa sorte'],
         'personagem_1': "Guerreiro de Poá",
         'texto_2':['Me leve até lá']
         }
     
     texto_4 = {
         'personagem':'Morador de Poá',
-        'texto':['O Ligeiro à frente é forte!','Leve esses itens para lhe ajudar','Boa sorte guerreiro!']
+        'texto':['O Ligeiro à frente é forte!','O baú ao meu lado tem alguns itens','Leve eles para lhe ajudar','Boa sorte guerreiro!']
     }
+
     
     ########### 
     # de alguma forma, agora te que deixar o dicionario texto...
     ###########
 
-    texto_alt = {'personagem':"EU",'texto':['FUNFOU'],
-                 'personagem2':'EU DNV', 'texto2':['Brabo']}
+    texto_alt = {'personagem':"Morador de Poá",
+                 'texto': ['Acho que os invasores vieram do norte.','Fale com os outros moradores.', 'Talvez eles saibam mais.']
+                 }
+    
+    texto_alt_2 = {'personagem':"Morador de Poá",
+                 'texto': ['Você não é capaz de lidar com ele','Cuide dos invasores para se melhorar suas habilidades']
+                 }
+    
+    texto_alt_3 = {'personagem':"Morador de Poá",
+                 'texto': ['Ouvi dizer que você cuidou dos invasores','Muito obrigado!','Mas algo ainda mais terrivel está aqui...','Fale com o morador no centro da cidade']
+                 }
+    texto_alt_4 = {'personagem':"Morador de Poá",
+                 'texto': ['Você lidou bem com os invasores','Mas não há tempo para comemorar', 'Algo ainda pior assola nossa vila',]
+                 }
 
     if matou_ligeiro:
-        npc0 = NPC(omori1,screen,1151,845,texto_alt, 2) # npc ligeiro
-        npc1 = NPC(omori,screen,1955, 2150,texto_alt, 3) # npc inicio
-        npc2 = NPC(omori2,screen,1954, 744,texto_alt, 4) # npc gabriel
-        npc3 = NPC(omori,screen,1030,300,texto_alt)
+        npc0 = NPC(omori1,screen,1151,845,texto_1) # npc ligeiro
+        npc1 = NPC(omori,screen,1955, 2150,texto_alt_3) # npc inicio
+        npc2 = NPC(omori2,screen,1954, 744,texto_3, 4) # npc gabriel
+        npc3 = NPC(omori,screen,1030,300,texto_alt_4)
  
     # posição dos npcs
     else:
         npc0 = NPC(omori1,screen,1151,845,texto_2, 2) # npc ligeiro
         npc1 = NPC(omori,screen,1955, 2150,texto, 3) # npc inicio
-        npc2 = NPC(omori2,screen,1954, 744,texto_3, 4) # npc gabriel
+        npc2 = NPC(omori2,screen,1954, 744,texto_alt) # npc gabriel
         npc3 = NPC(omori,screen,1030,300,texto_4)
 
     npcplaquinha = NPC(plaquinha,screen,1805, 1330,textoplaca)
@@ -498,6 +515,10 @@ def inicio(matou_ligeiro=False):
 
             'menu_atributos': menu.atributos,
 
+            'nivel': xp.nivel,
+
+            'pontos_disponiveis': xp.pontos_disponiveis
+
         }
             # Salvar
         with open("save.json", "w") as f:
@@ -513,18 +534,15 @@ def inicio(matou_ligeiro=False):
     velocidade_anterior = 0
 
     while menu_opcoes.rodando:
-        print(player.dano)
+        #1466
+        print(camera.top)
         if player.HP <= 0:
             running = False
             Game_over(inicio)
             menu_opcoes.rodando = False
         #print(inimigos_spawnados)
 
-        if len(inimigos) == 0 and inimigos_spawnados==True and player.rect.y < 64:
-            running = False
-            salvar_game()
-            mapa_antes_ligeiro()
-        elif player.rect.y <=64:
+        if player.rect.y <=64:
             player.rect.y +=player.speed
         menu.update()
         player.atualizar_stamina()
@@ -568,7 +586,7 @@ def inicio(matou_ligeiro=False):
                                 dragging_from = "inventory2"
             
 
-        missao_1 = npc1.dialogo.missao_ativada
+        missao_1 = npc1.dialogo.missao_ativada #SPAWNA INIMIGOS
         missao_2 = npc0.dialogo.missao_ativada
         missao_3 = npc2.dialogo.missao_ativada
 
@@ -602,14 +620,9 @@ def inicio(matou_ligeiro=False):
             #
             ####################
             screen.fill((0, 0, 0))
-            fundo_loading = pygame.image.load('tela_loading_ligeiro.png').convert_alpha()
-            fundo_loading = pygame.transform.scale(fundo_loading, (1200, 800))
-            screen.blit(fundo_loading, (0, 0))
-            pygame.display.flip()
-            pygame.time.delay(1500)
-            print('ok')
-            tocar_cutscene_cv2('cutscenes/cutscene_boss1.mp4', 'cutscenes/cutscene_boss1.mp3', screen)
-            boss_fight() # AQUI É MELHOR
+            running = False
+            salvar_game()
+            mapa_antes_ligeiro()
 
         # if missao_1 == True and iterado_teste == 0:
         #     iterado_teste+=1
@@ -619,13 +632,13 @@ def inicio(matou_ligeiro=False):
         #     npc1.dialogo.texto_index = 0
         #     npc1.dialogo.letra_index = 0
 
-        if missao_1 == True and len(inimigos) == 0:
+        if missao_1 == True and len(inimigos) == 0 and matou_ligeiro == False:
             if not inimigos_spawnados:
                 inimigos_spawnados = True
-                enemy0 = Inimigo(player.rect, player, 1566,2322, False,spritesheet_inimigo_arco, 10, 750, 50)
-                enemy1 = Inimigo(player.rect, player, 2150,1754, False,spritesheet_inimigo_arco1, 13, 500, 20)
-                enemy2 = Inimigo(player.rect, player, 1570,2102, True,spritesheet_inimigo_arco2, 8, 650, 30)
-                enemy3 = Inimigo(player.rect, player, 2650,2266, False,spritesheet_inimigo_arco3, 9, 600, 40)
+                enemy0 = Inimigo(player.rect, player, 1566,822, False,spritesheet_inimigo_arco, 8, 750, 50)
+                enemy1 = Inimigo(player.rect, player, 2150,754, False,spritesheet_inimigo_arco1, 8, 500, 20)
+                enemy2 = Inimigo(player.rect, player, 1570,802, True,spritesheet_inimigo_arco2, 8, 650, 30)
+                enemy3 = Inimigo(player.rect, player, 2350,866, False,spritesheet_inimigo_arco3, 8, 600, 40)
                 all_sprites.add(enemy0, enemy1, enemy2, enemy3)
                 inimigos.add(enemy0, enemy1, enemy2, enemy3)
 
@@ -700,7 +713,6 @@ def inicio(matou_ligeiro=False):
         for event in pygame.event.get():
             
             if event.type == pygame.QUIT:
-                salvar_game()
                 pygame.quit()
                 sys.exit()
 
@@ -839,7 +851,7 @@ def inicio(matou_ligeiro=False):
                                 menu.atributos[atributo] += 1.25
                                 player.dano = menu.atributos[atributo]
                             if atributo == "defesa":
-                                menu.atributos[atributo] += 1
+                                menu.atributos[atributo] += 0.15
                                 player.defesa = menu.atributos[atributo]
                             if atributo == "vida":
                                 menu.atributos[atributo] += 3
@@ -1087,8 +1099,6 @@ def inicio(matou_ligeiro=False):
                     player.atacando_melee = True
                     player.hold_arrow(mouse_pos,camera)
 
-        print(click_hold)
-
         # print(contador_melee)
         
         # Renderização
@@ -1106,8 +1116,10 @@ def inicio(matou_ligeiro=False):
                 if inimigo.sheet.tile_rect in [inimigo.sheet.cells[inimigo.sheet.action][-1]]:
                     player.get_hit(inimigo.dano)
 
+                inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
+
                 if not player.ivuln:
-                    inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
+                    player.rect.x,player.rect.y = old_x,old_y
                     
                 inimigo.atacando_melee = True
                 inimigo.frame_change = 10
@@ -1211,6 +1223,9 @@ def inicio(matou_ligeiro=False):
 
         for npc in npcs:
             npc.dialogo.coisa()
+
+        if camera.top<=1466 and matou_ligeiro == False:
+            npc1.dialogo.missao_ativada = True
 
         pygame.display.flip()
     

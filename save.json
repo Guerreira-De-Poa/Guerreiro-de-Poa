@@ -21,5 +21,7 @@
         "vida": 20,
         "stamina": 96.25,
         "velocidade": 10
-    }
+    },
+    "nivel": 1,
+    "pontos_disponiveis": 0
 }

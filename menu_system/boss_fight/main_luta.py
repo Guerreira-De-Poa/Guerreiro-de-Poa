@@ -193,10 +193,14 @@ def inicio():
                 itens_carregados.append(novo_item)
             inventario1 = Inventario((50, 50, 50), 50, [itens_carregados[i] for i in range(len(itens_carregados))])
             
+            xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT,save_carregado['nivel'],save_carregado['pontos_disponiveis'])
+            menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
         else:
             print("SAVE NAO CARREGADO")
             player = Personagem(player_sprite, atributos["ataque"], atributos["defesa"], atributos["vida_max"],atributos['vida_atual'], atributos["stamina"], atributos["velocidade"],player_sprite_ataques)
             inventario1 = Inventario((50, 50, 50), 50, [])
+            xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+            menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
     except Exception as e:
         print(f"Erro ao carregar sprite do jogador: {e}")
         pygame.quit()
@@ -281,6 +285,39 @@ def inicio():
     velocidade_anterior = 0
 
     contador_melee = 0
+
+    def salvar_game():
+        itens = []
+
+        for item in inventario1.items:
+            item_ = [item.tipo,item.nome,item.atributos,item.equipado]
+            itens.append(item_)
+
+        Dicionario_para_save = {
+            
+            'atributos':[
+                player.dano,
+                player.defesa,
+                player.MAX_HP,
+                player.HP,
+                player.max_stamina,
+                player.velocidade_corrida,
+            ],
+
+            'itens': itens,
+
+            'menu_valores': menu.valores,
+
+            'menu_atributos': menu.atributos,
+
+            'nivel': xp.nivel,
+
+            'pontos_disponiveis': xp.pontos_disponiveis
+
+        }
+            # Salvar
+        with open("save.json", "w") as f:
+            json.dump(Dicionario_para_save, f, indent=4)
 
     while menu_opcoes.rodando:
 
@@ -624,6 +661,7 @@ def inicio():
             else:
                 running = False
                 from mapa_main.main_mapa import inicio as VilaInicio
+                salvar_game()
                 VilaInicio(True)
 
 

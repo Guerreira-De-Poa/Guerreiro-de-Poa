@@ -254,10 +254,14 @@ def inicio():
                 itens_carregados.append(novo_item)
             inventario1 = Inventario((50, 50, 50), 50, [itens_carregados[i] for i in range(len(itens_carregados))])
             
+            xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT,save_carregado['nivel'],save_carregado['pontos_disponiveis'])
+            menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
         else:
             print("SAVE NAO CARREGADO")
             player = Personagem(player_sprite, atributos["ataque"], atributos["defesa"], atributos["vida_max"],atributos['vida_atual'], atributos["stamina"], atributos["velocidade"],player_sprite_ataques)
             inventario1 = Inventario((50, 50, 50), 50, [])
+            xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+            menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
     except Exception as e:
         print(f"Erro ao carregar sprite do jogador: {e}")
         pygame.quit()
@@ -443,6 +447,9 @@ def inicio():
 
             'menu_atributos': menu.atributos,
 
+            'nivel': xp.nivel,
+
+            'pontos_disponiveis': xp.pontos_disponiveis
         }
             # Salvar
         with open("save.json", "w") as f:
@@ -463,6 +470,7 @@ def inicio():
 
         if len(inimigos) == 0 and player.rect.y < 135:
             if player.rect.x > 930 and player.rect.x < 1109:
+                salvar_game()
                 pygame.mixer.music.stop()
                 pygame.mixer.music.load("musicas/sfx-menu12.mp3")
                 pygame.mixer.music.play(1)  # -1 significa que a música vai tocar em loop
@@ -580,7 +588,6 @@ def inicio():
         for event in pygame.event.get():
             
             if event.type == pygame.QUIT:
-                salvar_game()
                 pygame.quit()
                 sys.exit()
 
@@ -720,7 +727,7 @@ def inicio():
                                 menu.atributos[atributo] += 1.25
                                 player.dano = menu.atributos[atributo]
                             if atributo == "defesa":
-                                menu.atributos[atributo] += 1
+                                menu.atributos[atributo] += 0.15
                                 player.defesa = menu.atributos[atributo]
                             if atributo == "vida":
                                 menu.atributos[atributo] += 3
@@ -982,8 +989,10 @@ def inicio():
                 if inimigo.sheet.tile_rect in [inimigo.sheet.cells[inimigo.sheet.action][-1]]:
                     player.get_hit(inimigo.dano)
 
+                inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
+
                 if not player.ivuln:
-                    inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
+                    player.rect.x,player.rect.y = old_x,old_y
                     
                 inimigo.atacando_melee = True
                 inimigo.frame_change = 10
