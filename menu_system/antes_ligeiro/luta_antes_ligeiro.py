@@ -427,7 +427,7 @@ def inicio():
     armadura = Item('armadura', 'Armadura',{'defesa': 0.5},False,player)
     pocao = Item('consumivel', 'Poção', {'vida': 10},False,player)
 
-    bau_saida = Bau(screen,1000,100,[espada,armadura,pocao])
+    bau_saida = Bau(screen,1000,100,[pocao,pocao])
 
     baus.add(bau_saida)
 
@@ -486,7 +486,7 @@ def inicio():
             salvar_game()
             screen.fill((0, 0, 0))
             fundo_loading = pygame.image.load('tela_loading_ligeiro.png').convert_alpha()
-            fundo_loading = pygame.transform.scale(fundo_loading, (1152, 648))
+            fundo_loading = pygame.transform.scale(fundo_loading, (1200, 800))
             screen.blit(fundo_loading, (0, 0))
             pygame.display.flip()
             pygame.time.delay(1500)

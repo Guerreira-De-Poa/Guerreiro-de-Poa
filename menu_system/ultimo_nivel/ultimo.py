@@ -420,7 +420,7 @@ def inicio():
             if len(enemy_hits) > 0:
                 a = (enemy_hits.keys())
                 inimigo.balas.remove(a)
-                player.get_hit(2.5)
+                player.get_hit(5.5)
 
         if len(player_hits) > 0:
             a = (player_hits.keys())

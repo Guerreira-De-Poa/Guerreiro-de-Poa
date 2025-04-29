@@ -477,8 +477,8 @@ def inicio(matou_ligeiro=False):
 
     baus = pygame.sprite.Group()
 
-    espada = Item('arma', 'Espada',{'dano': 5},False,player)
-    armadura = Item('armadura', 'Armadura',{'defesa': 0.5},False,player)
+    espada = Item('arma', 'Espada',{'dano': 8},False,player)
+    armadura = Item('armadura', 'Armadura',{'defesa': 1},False,player)
     pocao = Item('consumivel', 'Poção', {'vida': 10},False,player)
 
     bau_saida = Bau(screen,900,300,[espada,armadura,pocao])

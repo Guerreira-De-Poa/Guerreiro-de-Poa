@@ -413,7 +413,7 @@ def inicio():
     armadura = Item('armadura', 'Armadura',{'defesa': 0.5},False,player)
     pocao = Item('consumivel', 'Poção', {'vida': 10},False,player)
 
-    bau_saida = Bau(screen,1500,140,[espada,armadura,pocao])
+    bau_saida = Bau(screen,1500,140,[pocao,pocao])
 
     baus.add(bau_saida)
 

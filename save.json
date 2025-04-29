@@ -3,7 +3,7 @@
         6.25,
         5.0,
         20,
-        20,
+        14.0,
         96.25,
         10
     ],
@@ -22,6 +22,6 @@
         "stamina": 96.25,
         "velocidade": 10
     },
-    "nivel": 1,
-    "pontos_disponiveis": 0
+    "nivel": 3,
+    "pontos_disponiveis": 10
 }
