@@ -1,7 +1,7 @@
 import pygame
 from menu import *
 from mapa_main.main_mapa import inicio as inicio_real
-fundo_historia = pygame.image.load('fundo_historia.png')
+fundo_historia = pygame.image.load('fundo_historia (1).png')
     
 class Game():
     def __init__(self):
