@@ -599,7 +599,18 @@ def inicio(matou_ligeiro=False):
             npcs.add(npc0)
 
         if missao_3 == True:
+            pygame.mixer.music.stop()
+            pygame.mixer.music.load("musicas/sfx-menu12.mp3")
+            pygame.mixer.music.play(-1)  # -1 significa que a música vai tocar em loop
+            pygame.mixer.music.set_volume(0.2)  # 50% do volume máximo
+            # ADICIONA CUTSCENE
             running = False
+            screen.fill((0, 0, 0))
+            fundo_loading = pygame.image.load('loading_gabriel.png').convert_alpha()
+            fundo_loading = pygame.transform.scale(fundo_loading, (1200, 800))
+            screen.blit(fundo_loading, (0, 0))
+            pygame.display.flip()
+            pygame.time.delay(1500)
             salvar_game()
             mapa_antes_final()
             #ultimo_nivel() # AQUI É MELHOR
