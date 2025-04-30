@@ -1,10 +1,16 @@
 import pygame
 from game import *
-fundo_menu = pygame.image.load('fundo_menu.png')
-fundo_creditos = pygame.image.load('fundo_creditos.png')
+import os
+import sys
 import cv2
 import numpy as np
-fundo_historia = pygame.image.load('fundo_historia.png')
+
+pasta_pai = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", 'assets'))
+sys.path.append(pasta_pai)
+
+fundo_menu = pygame.image.load(os.path.join(pasta_pai, 'fundo_menu.png'))
+fundo_creditos = pygame.image.load(os.path.join(pasta_pai, 'fundo_creditos.png'))
+fundo_historia = pygame.image.load(os.path.join(pasta_pai, 'fundo_historia.png'))
 
 class VideoBackground:
     def __init__(self, video_path, size):
@@ -62,7 +68,7 @@ class MainMenu(Menu):
         self.creditsx, self.creditsy = self.mid_w, self.mid_h + 150
         self.cursor_rect.midtop = (self.startx + self.offset, self.starty)
         # Cria o background de vídeo com o tamanho da tela
-        self.video_bg = VideoBackground("fundo_menu_animado.mp4", (self.game.DISPLAY_W, self.game.DISPLAY_H))
+        self.video_bg = VideoBackground(os.path.join(pasta_pai, 'fundo_menu_animado.mp4'), (self.game.DISPLAY_W, self.game.DISPLAY_H))
 
     def display_menu(self):
         self.run_display = True
@@ -128,7 +134,7 @@ class OptionsMenu(Menu):
         self.volx, self.voly = self.mid_w, self.mid_h + 30
         self.controlsx, self.controlsy = self.mid_w, self.mid_h + 90
         self.cursor_rect.midtop = (self.volx + self.offset, self.voly)
-        self.video_bg = VideoBackground("fundo_menu_animado.mp4", (self.game.DISPLAY_W, self.game.DISPLAY_H))
+        self.video_bg = VideoBackground(os.path.join(pasta_pai, "fundo_menu_animado.mp4"), (self.game.DISPLAY_W, self.game.DISPLAY_H))
 
     def display_menu(self):
         self.run_display = True
@@ -165,7 +171,7 @@ class OptionsMenu(Menu):
 class CreditsMenu(Menu):
     def __init__(self, game): # pelo que eu entendi, essa "função dunder, com dois '_'" é pra chamar funções, variaveis, que estão em outras artes, como a de créditos não tem muita coisa, só precisamos dela!
         Menu.__init__(self, game)
-        self.video_bg = VideoBackground("fundo_creditos.mp4", (self.game.DISPLAY_W, self.game.DISPLAY_H))
+        self.video_bg = VideoBackground(os.path.join(pasta_pai, 'fundo_creditos.mp4'), (self.game.DISPLAY_W, self.game.DISPLAY_H))
     
     def display_menu(self):
         self.run_display = True

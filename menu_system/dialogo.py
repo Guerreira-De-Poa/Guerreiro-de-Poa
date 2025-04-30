@@ -2,15 +2,17 @@ import pygame
 import sys
 import os
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+assets = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", 'assets'))
+sys.path.append(assets)
+
 class Dialogo():
     def __init__(self,texto,screen,missao):
-        self.font = pygame.font.Font('8bitOperatorPlus8-Regular.ttf',27)
-        self.font_secundaria = pygame.font.Font('8bitOperatorPlus8-Regular.ttf',30)
+        self.font = pygame.font.Font(os.path.join(assets, '8bitOperatorPlus8-Regular.ttf'),27)
+        self.font_secundaria = pygame.font.Font(os.path.join(assets, '8bitOperatorPlus8-Regular.ttf'),30)
         #text = (font.render(texto.get('texto_1')[iter_texto], True, (100,100,100)))
         self.screen = screen
 
-        self.text_bg = pygame.image.load("caixa_dialogo2.jpg")
+        self.text_bg = pygame.image.load(os.path.join(assets, 'caixa_dialogo2.jpg'))
 
         self.texto = texto
 

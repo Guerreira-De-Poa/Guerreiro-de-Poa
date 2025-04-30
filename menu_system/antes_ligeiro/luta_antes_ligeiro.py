@@ -18,6 +18,10 @@ from boss_fight.main_luta import inicio as boss_fight
 # chama ultimo nivel
 from ultimo_nivel.ultimo import inicio as ultimo_nivel
 
+assets = os.path.abspath(os.path.join(os.path.dirname(__file__), "..","..","assets"))
+
+# Adicionando o diretório pai ao sys.path
+sys.path.append(assets)
 # Chamando a função importada
 
 from spritesheet_explicada import SpriteSheet
@@ -253,15 +257,16 @@ def inicio():
 
     # Criar o jogador
     try:
-        player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha(2).png')
-        player_sprite_path2 = os.path.join(current_dir, '..', '..', 'sprites_ataque_espada.png')
+        player_sprite_path = os.path.join(assets, 'personagem_carcoflecha(2).png')
+        player_sprite_path2 = os.path.join(assets, 'sprites_ataque_espada.png')
+        print(player_sprite_path)
         
         player_sprite = SpriteSheet(player_sprite_path, 0, 514, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
         player_sprite_ataques = SpriteSheet(player_sprite_path2, 18, 38, 128, 128, 12,[6,6,6,6], (255,255,255))
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ
         if save_carregado:
-            print("SAVE CARREGADO")
+            # print("SAVE CARREGADO")
             player = Personagem(player_sprite, save_carregado['atributos'][0], save_carregado['atributos'][1], save_carregado['atributos'][2], save_carregado['atributos'][3], save_carregado['atributos'][4],save_carregado['atributos'][5],player_sprite_ataques)
 
             itens_carregados = []
@@ -271,13 +276,7 @@ def inicio():
             inventario1 = Inventario((50, 50, 50), 50, [itens_carregados[i] for i in range(len(itens_carregados))])
             
             xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT,save_carregado['nivel'],save_carregado['pontos_disponiveis'])
-            menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
-        else:
-            print("SAVE NAO CARREGADO")
-            player = Personagem(player_sprite, atributos["ataque"], atributos["defesa"], atributos["vida_max"],atributos['vida_atual'], atributos["stamina"], atributos["velocidade"],player_sprite_ataques)
-            inventario1 = Inventario((50, 50, 50), 50, [])
-            xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
-            menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
+            menu = Menu(save_carregado['menu_valores']['ataque'],save_carregado['menu_valores']['defesa'],save_carregado['menu_valores']['vida'],save_carregado['menu_valores']['stamina'],save_carregado['menu_valores']['velocidade'],save_carregado['menu_atributos']['ataque'],save_carregado['menu_atributos']['defesa'],save_carregado['menu_atributos']['vida'],save_carregado['menu_atributos']['stamina'],save_carregado['menu_atributos']['velocidade'], player)
     except Exception as e:
         print(f"Erro ao carregar sprite do jogador: {e}")
         pygame.quit()
@@ -298,18 +297,10 @@ def inicio():
 
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
-    imagem_inimigo = pygame.image.load('Biomech Dragon Splice.png')
-
-    vida_imagem = pygame.image.load('love-always-wins(1).png')
-
-
-    spritesheet_inimigo_arco_png = pygame.image.load("inimigo_com_arco.png")
     spritesheet_inimigo_arco = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco0 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
     spritesheet_inimigo_arco1 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
     spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
     spritesheet_inimigo_arco3 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco4 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
     inimigos = pygame.sprite.Group()
 
 
@@ -337,7 +328,7 @@ def inicio():
 
     click_hold = 0
 
-    interagir_bg = pygame.image.load("caixa_dialogo_pequena2.png")
+    interagir_bg = pygame.image.load(os.path.join(assets, "caixa_dialogo_pequena2.png"))
 
     # omori = pygame.image.load('npc_amarelo.png')
     # omori1 = pygame.image.load('npc_cinza.png')
@@ -425,8 +416,9 @@ def inicio():
     espada = Item('arma', 'Espada',{'dano': 5},False,player)
     armadura = Item('armadura', 'Armadura',{'defesa': 0.5},False,player)
     pocao = Item('consumivel', 'Poção', {'vida': 10},False,player)
+    pocao1 = Item('consumivel', 'Poção', {'vida': 10},False,player)
 
-    bau_saida = Bau(screen,1000,100,[pocao,pocao])
+    bau_saida = Bau(screen,1000,100,[pocao,pocao1])
 
     baus.add(bau_saida)
 
@@ -475,6 +467,7 @@ def inicio():
     velocidade_anterior = 0
 
     while menu_opcoes.rodando:
+        print(save_carregado['menu_atributos'])
         pygame.mixer.music.set_volume(menu_opcoes.volume_musica)  # 50% do volume máximo
         print(save_carregado['pontos_disponiveis'])
         if player.HP <= 0:
@@ -485,7 +478,7 @@ def inicio():
         if len(inimigos) == 0 and player.rect.y < 64:
             salvar_game()
             screen.fill((0, 0, 0))
-            fundo_loading = pygame.image.load('tela_loading_ligeiro.png').convert_alpha()
+            fundo_loading = pygame.image.load(os.path.join(assets,'tela_loading_ligeiro.png')).convert_alpha()
             fundo_loading = pygame.transform.scale(fundo_loading, (1200, 800))
             screen.blit(fundo_loading, (0, 0))
             pygame.display.flip()
@@ -518,7 +511,7 @@ def inicio():
             #print("DMSALDML")
             if inventario1.inventory_open or bau_perto:
                 if bau_perto:
-                    bau_perto.pressed_counter +=1
+                    bau_perto.inventario.pressed_counter +=1
                 else:
                     inventario1.pressed_counter +=1
 
@@ -784,15 +777,15 @@ def inicio():
                             elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory2":
                                 bau_perto.inventario.remove(dragging_item)
                                 inventario1.items.append(dragging_item)
-                            elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory1":
-                                inventario1.items.append(dragging_item)
+                            # elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory1":
+                            #     inventario1.items.append(dragging_item)
                             dragging_item = None
                             dragging_from = None
                             if bau_perto.inventario.inventory_open and inventario1.pressed_counter <= 10:
                                 if inventario1.get_item_at(event.pos) == None:
-                                    inventario1.inventory_open = False
+                                    pass
                                 else:
-                                    bau_perto.remove(inventario1.get_item_at(event.pos))
+                                    bau_perto.inventario.remove(inventario1.get_item_at(event.pos))
 
                     elif inventario1.inventory_open and inventario1.pressed_counter < 10:
                         if inventario1.get_item_at(event.pos) == None:
@@ -833,7 +826,7 @@ def inicio():
 
         if contador % 62 == 0:
             for inimigo in inimigos:
-                if inimigo.ataque:
+                if inimigo.ataque and not xp.show_menu and not menu_opcoes.pausado and not inventario1.inventory_open:
                     inimigo.atacar()
                 pass
 

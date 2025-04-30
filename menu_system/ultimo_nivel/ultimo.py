@@ -29,6 +29,11 @@ from cutscenes.tocar_cutscene import tocar_cutscene_cv2
 pause = False
 
 def inicio():
+    assets = os.path.abspath(os.path.join(os.path.dirname(__file__), "..","..","assets"))
+
+    # Adicionando o diretório pai ao sys.path
+    sys.path.append(assets)
+
     som_andar = pygame.mixer.Sound("musicas/Efeitos sonoros/Passos.mp3")
     canal_andar = pygame.mixer.Channel(0)
     teclas_movimento = {pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d}
@@ -211,15 +216,16 @@ def inicio():
 
     # Criar o jogador
     try:
-        player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha(2).png')
-        player_sprite_path2 = os.path.join(current_dir, '..', '..', 'sprites_ataque_espada.png')
+        player_sprite_path = os.path.join(assets, 'personagem_carcoflecha(2).png')
+        player_sprite_path2 = os.path.join(assets, 'sprites_ataque_espada.png')
+        print(player_sprite_path)
         
         player_sprite = SpriteSheet(player_sprite_path, 0, 514, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
         player_sprite_ataques = SpriteSheet(player_sprite_path2, 18, 38, 128, 128, 12,[6,6,6,6], (255,255,255))
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ
         if save_carregado:
-            print("SAVE CARREGADO")
+            # print("SAVE CARREGADO")
             player = Personagem(player_sprite, save_carregado['atributos'][0], save_carregado['atributos'][1], save_carregado['atributos'][2], save_carregado['atributos'][3], save_carregado['atributos'][4],save_carregado['atributos'][5],player_sprite_ataques)
 
             itens_carregados = []
@@ -229,13 +235,7 @@ def inicio():
             inventario1 = Inventario((50, 50, 50), 50, [itens_carregados[i] for i in range(len(itens_carregados))])
             
             xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT,save_carregado['nivel'],save_carregado['pontos_disponiveis'])
-            menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
-        else:
-            print("SAVE NAO CARREGADO")
-            player = Personagem(player_sprite, atributos["ataque"], atributos["defesa"], atributos["vida_max"],atributos['vida_atual'], atributos["stamina"], atributos["velocidade"],player_sprite_ataques)
-            inventario1 = Inventario((50, 50, 50), 50, [])
-            xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
-            menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
+            menu = Menu(save_carregado['menu_valores']['ataque'],save_carregado['menu_valores']['defesa'],save_carregado['menu_valores']['vida'],save_carregado['menu_valores']['stamina'],save_carregado['menu_valores']['velocidade'],save_carregado['menu_atributos']['ataque'],save_carregado['menu_atributos']['defesa'],save_carregado['menu_atributos']['vida'],save_carregado['menu_atributos']['stamina'],save_carregado['menu_atributos']['velocidade'], player)
     except Exception as e:
         print(f"Erro ao carregar sprite do jogador: {e}")
         pygame.quit()
@@ -262,7 +262,7 @@ def inicio():
 
     contador = 0
     click_hold = 0
-    interagir_bg = pygame.image.load("caixa_dialogo_pequena.jpg")
+    interagir_bg = pygame.image.load(os.path.join(assets, "caixa_dialogo_pequena2.png"))
     npcs = pygame.sprite.Group()
     baus = pygame.sprite.Group()
     dialogo_group = []
@@ -289,6 +289,7 @@ def inicio():
     velocidade_anterior = 0
 
     while menu_opcoes.rodando:
+        print(save_carregado['nivel'])
         if player.HP <= 0:
             running = False
             Game_over(inicio)
@@ -415,16 +416,47 @@ def inicio():
                             dragging_from = "inventory2"
 
             if event.type == pygame.MOUSEBUTTONUP:
-                if bau_perto:
+                # Handle mouse button release
+
+                #print(inventario1.pressed_counter)
+                
+                if event.button == 1:
+                    if bau_perto:
+                        if dragging_item:
+                            if bau_perto.inventario.inventory_open and bau_perto.inventario.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory1":
+                                inventario1.remove(dragging_item)
+                                bau_perto.inventario.items.append(dragging_item)
+                            elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory2":
+                                bau_perto.inventario.remove(dragging_item)
+                                inventario1.items.append(dragging_item)
+                            # elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory1":
+                            #     inventario1.items.append(dragging_item)
+                            dragging_item = None
+                            dragging_from = None
+                            if bau_perto.inventario.inventory_open and inventario1.pressed_counter <= 10:
+                                if inventario1.get_item_at(event.pos) == None:
+                                    pass
+                                else:
+                                    bau_perto.inventario.remove(inventario1.get_item_at(event.pos))
+
+                    elif inventario1.inventory_open and inventario1.pressed_counter < 10:
+                        if inventario1.get_item_at(event.pos) == None:
+                            inventario1.inventory_open = False
+                        elif inventario1.get_item_at(event.pos).tipo != 'consumivel':
+                            inventario1.get_item_at(event.pos).equipar()
+                        else:
+                            inventario1.get_item_at(event.pos).utilizar()
+                            inventario1.remove(inventario1.get_item_at(event.pos))
+
                     if dragging_item:
-                        if bau_perto.inventario.inventory_open and bau_perto.inventario.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory1":
-                            inventario1.items.remove(dragging_item)
-                            bau_perto.inventario.items.append(dragging_item)
-                        elif inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos) and dragging_from == "inventory2":
-                            bau_perto.inventario.items.remove(dragging_item)
-                            inventario1.items.append(dragging_item)
                         dragging_item = None
-                        dragging_from = None
+
+                elif event.button == 3:
+                    if inventario1.inventory_open and inventario1.inventory_rect.collidepoint(event.pos):
+                        inventario1.remove(inventario1.get_item_at(event.pos))
+                    dragging_item = None
+                #print("DNSKLANDKLSANDLKASNDKLSANKLDNSAKL")
+                inventario1.pressed_counter = 0
 
         contador += 1
 
@@ -602,20 +634,20 @@ def inicio():
             screen.blit(bau.image, (bau.rect.x - camera.left, bau.rect.y - camera.top))
 
         if dialogo_a_abrir and dialogo_a_abrir.texto_open == False:
-            font = pygame.font.Font('8bitOperatorPlus8-Regular.ttf', 48)
-            render = font.render("Interagir", True, (0, 0, 0))
-            screen.blit(interagir_bg, (300, 450))
-            screen.blit(render, (325, 457))
+            font = pygame.font.Font(os.path.join(assets, '8bitOperatorPlus8-Regular.ttf'),27)
+            render = font.render("Interagir", True, (0,0,0))
+            screen.blit(interagir_bg,(300,450))
+            screen.blit(render,(325,457))
 
         if boss.HP > 0:
             pygame.draw.rect(screen,(0,0,0),(280,45,700,25))
             pygame.draw.rect(screen,(255,0,0),(280,45,35*boss.HP,25))
-            fonte = pygame.font.Font('8-BIT WONDER.TTF',30)
-            text_surface = fonte.render("O Professor", True, (0,0,0))
+            fonte = pygame.font.Font(os.path.join(assets, '8-BIT WONDER.TTF'),30)
+            text_surface = fonte.render("O Professor", True, (255, 255, 255))
             screen.blit(text_surface, (508,68,400,100))
 
-            fonte2 = pygame.font.Font('8-BIT WONDER.TTF',30)
-            text_surface = fonte2.render("O Professor", True, (255,255,255))
+            fonte2 = pygame.font.Font(os.path.join(assets, '8-BIT WONDER.TTF'),30)
+            text_surface = fonte2.render("O Professor", True, (0, 0, 0))
             screen.blit(text_surface, (510,70,400,100))
 
         else:

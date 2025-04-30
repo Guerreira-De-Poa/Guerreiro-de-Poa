@@ -4,9 +4,10 @@ import os
 
 def Game_over(funcao):
 
-    sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+    pasta_pai = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", 'assets'))
+    sys.path.append(pasta_pai)
 
-    imagem = pygame.image.load('game_over.png')
+    imagem = pygame.image.load(os.path.join(pasta_pai, 'game_over.png'))
     pygame.init()
 
     # Configurações da tela
@@ -18,9 +19,7 @@ def Game_over(funcao):
 
     running = True
 
-    sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
-
-    font = pygame.font.Font('8bitOperatorPlus8-Regular.ttf',48)
+    font = pygame.font.Font(os.path.join(pasta_pai,'8bitOperatorPlus8-Regular.ttf'),48)
 
     text = font.render('x', True,(255,255,255))
 

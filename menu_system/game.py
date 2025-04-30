@@ -1,7 +1,12 @@
 import pygame
 from menu import *
+import os
+import sys
+
+pasta_pai = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", 'assets'))
+sys.path.append(pasta_pai)
 from mapa_main.main_mapa import inicio as inicio_real
-fundo_historia = pygame.image.load('fundo_historia (1).png')
+fundo_historia = pygame.image.load(os.path.join(pasta_pai, 'fundo_historia (1).png'))
     
 class Game():
     def __init__(self):
@@ -11,7 +16,7 @@ class Game():
         self.DISPLAY_W, self.DISPLAY_H = 1200, 800 # Largura e altura da tela uai
         self.display = pygame.Surface((self.DISPLAY_W, self.DISPLAY_H)) # A TELA EM SI, só não conhecia este surface ->
         self.window = pygame.display.set_mode((self.DISPLAY_W, self.DISPLAY_H)) # a janela...
-        self.font_file = '8-BIT WONDER.TTF' # caso instalarmos, usa o nome do arquivo, tipo 'fonte.tif'
+        self.font_file = os.path.join(pasta_pai, '8-BIT WONDER.TTF') # caso instalarmos, usa o nome do arquivo, tipo 'fonte.tif'
         self.BLACK, self.WHITE = (0, 0, 0), (255, 255, 255) # cores uai (r,g,b)
         self.main_menu = MainMenu(self) # menu principal
         self.options = OptionsMenu(self) # menu de opções
@@ -34,7 +39,9 @@ class Game():
                 # PARAR A MUSICA
                 ###
                 pygame.mixer.music.stop()
+                print("NSDNADKSLANDLKSAJDKLSAJDLK")
                 inicio_real()
+                
 
             self.display.blit(fundo_historia, (0,0)) # ATUALIZAMOS A TELA, pra que não fica tudo junto na mesma tela
             self.window.blit(self.display, (0,0)) # manda o display, MANDA PRA WINDOW (0,0) É PRA ALINHA DISPLAY COM WINDOW

@@ -1,27 +1,60 @@
 {
     "atributos": [
-        6.25,
-        5.0,
+        26.75,
+        6.0,
         20,
-        14.0,
+        20.0,
         96.25,
         10
     ],
-    "itens": [],
+    "itens": [
+        [
+            "arma",
+            "Espada",
+            {
+                "dano": 8
+            },
+            true
+        ],
+        [
+            "armadura",
+            "Armadura",
+            {
+                "defesa": 1
+            },
+            true
+        ],
+        [
+            "consumivel",
+            "Po\u00e7\u00e3o",
+            {
+                "vida": 10
+            },
+            false
+        ],
+        [
+            "consumivel",
+            "Po\u00e7\u00e3o",
+            {
+                "vida": 10
+            },
+            false
+        ]
+    ],
     "menu_valores": {
-        "ataque": 5,
+        "ataque": 15,
         "defesa": 5,
         "vida": 5,
         "stamina": 5,
         "velocidade": 5
     },
     "menu_atributos": {
-        "ataque": 6.25,
-        "defesa": 5.0,
+        "ataque": 26.75,
+        "defesa": 6.0,
         "vida": 20,
         "stamina": 96.25,
         "velocidade": 10
     },
     "nivel": 3,
-    "pontos_disponiveis": 10
+    "pontos_disponiveis": 0
 }

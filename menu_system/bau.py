@@ -1,11 +1,16 @@
 import pygame
 from inventario1 import Inventario
+import os
+import sys
+
+pasta_pai = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", 'assets'))
+sys.path.append(pasta_pai)
 
 class Bau(pygame.sprite.Sprite):
     def __init__(self,screen,pos_x,pos_y,loot=[]):
         super().__init__()  # Chama o inicializador da classe pai
-        self.bau_fechado = pygame.image.load("chest_closed.png")
-        self.bau_aberto = pygame.image.load("chest_opened.png")
+        self.bau_fechado = pygame.image.load(os.path.join(pasta_pai, 'chest_closed.png'))
+        self.bau_aberto = pygame.image.load(os.path.join(pasta_pai, 'chest_opened.png'))
 
         self.image = self.bau_fechado
         self.rect = self.image.get_rect()

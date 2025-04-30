@@ -1,4 +1,8 @@
 import pygame
+import os
+import sys
+assets = os.path.join(os.path.dirname(__file__), '..', 'assets')
+sys.path.append(assets)
 
 class SpriteSheet:
     def __init__(self, filename, pos_x, pos_y, largura_sprite, altura_sprite, m, lista_acoes, color_key=None, multiplas_linhas = True):
@@ -15,7 +19,7 @@ class SpriteSheet:
         total_sprites (int): Número total de total_sprites na animação.
         color_key (tuple, opcional): Cor de transparência a ser definida (R, G, B).
         """
-        self.sheet = pygame.image.load(filename)  # Carrega a imagem da spritesheet
+        self.sheet = pygame.image.load(os.path.join(assets, filename))  # Carrega a imagem da spritesheet
         self.lista_acoes = lista_acoes
         self.action = 0
         self.cells = []

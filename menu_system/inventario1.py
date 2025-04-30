@@ -3,7 +3,8 @@ import pygame
 import sys
 import os
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+assets = os.path.join(os.path.dirname(__file__), '..', 'assets')
+sys.path.append(assets)
 
 class Inventario:
     def __init__(self, cor_fundo, pos_x, items=[]):
@@ -25,10 +26,10 @@ class Inventario:
 
         self.item_index = 0
 
-        self.imagem_espada = pygame.image.load('sword.png')
-        self.imagem_armadura = pygame.image.load('icons8-peitoral-blindado-24(1).png')
-        self.imagem_pocao = pygame.image.load('icons8-poção-24.png')
-        self.imagem_fundo = pygame.image.load("My ChatGPT image_MAIOR.png")
+        self.imagem_espada = pygame.image.load(os.path.join(assets, 'sword.png'))
+        self.imagem_armadura = pygame.image.load(os.path.join(assets, 'icons8-peitoral-blindado-24(1).png'))
+        self.imagem_pocao = pygame.image.load(os.path.join(assets, 'icons8-poção-24.png'))
+        self.imagem_fundo = pygame.image.load(os.path.join(assets, "My ChatGPT image_MAIOR.png"))
 
     def draw_inventory(self, screen):
         #pygame.draw.rect(screen, self.Cor_fundo, self.inventory_rect, border_radius=15)

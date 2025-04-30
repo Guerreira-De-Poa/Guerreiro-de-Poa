@@ -2,6 +2,12 @@ import pygame
 import math
 from balas import Bala
 
+import os
+import sys
+
+pasta_pai = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", 'assets'))
+sys.path.append(pasta_pai)
+
 # Classe que herda de pygame.sprite.Sprite
 class Personagem(pygame.sprite.Sprite):
     def __init__(self, sprite_sheet, ataque, defesa, vida_max,vida_atual, stamina, velocidade,sheet_sec):
@@ -12,7 +18,7 @@ class Personagem(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()  # Obtém o retângulo da imagem para movimentação
         # print(self.rect)
         
-        self.bullet_img = pygame.image.load('bullet.png').convert_alpha()
+        self.bullet_img = pygame.image.load(os.path.join(pasta_pai, 'bullet.png')).convert_alpha()
         self.bullet_speed = 5
 
         #self.hitbox = pygame.image.load("hitbox.png")

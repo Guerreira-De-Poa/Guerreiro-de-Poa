@@ -5,13 +5,19 @@ from raios import *
 from spritesheet_explicada import SpriteSheet
 from random import randint
 
+import os
+import sys
+
+pasta_pai = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", 'assets'))
+sys.path.append(pasta_pai)
+
 class Boss1(Inimigo):
     def __init__(self, player_rect, player, x, y, ataque, sprite_sheet, dano, xp, vida):
         super().__init__(player_rect, player, x, y, ataque, sprite_sheet, dano, xp, vida)
         self.sheet = sprite_sheet
         self.image = pygame.Surface((64, 64), pygame.SRCALPHA)  # A imagem inicial
         self.rect = self.image.get_rect()  # Obtém o retângulo da imagem para movimentação
-        self.bullet_img = pygame.image.load('boss_agua(Slash).png').convert_alpha()
+        self.bullet_img = pygame.image.load(os.path.join(pasta_pai, 'boss_agua(Slash).png')).convert_alpha()
 
         self.HP = 5
 

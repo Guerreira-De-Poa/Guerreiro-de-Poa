@@ -1,3 +1,4 @@
+print('dnsakldnskla')
 import pygame
 import sys
 import json
@@ -11,12 +12,6 @@ pasta_pai = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 # Adicionando o diretório pai ao sys.path
 sys.path.append(pasta_pai)
-
-# Agora podemos importar diretamente a função 'inicio' do arquivo 'main_luta.py'
-from boss_fight.main_luta import inicio as boss_fight
-
-# chama ultimo nivel
-from ultimo_nivel.ultimo import inicio as ultimo_nivel
 
 from antes_ligeiro.luta_antes_ligeiro import inicio as mapa_antes_ligeiro
 
@@ -60,7 +55,10 @@ SCREEN_HEIGHT = 800
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 def inicio(matou_ligeiro=False):
+    assets = os.path.abspath(os.path.join(os.path.dirname(__file__), "..","..","assets"))
 
+    # Adicionando o diretório pai ao sys.path
+    sys.path.append(assets)
     # print(menu_opcoes.volume_musica)
     ####
     # PRA MUSICA FUNCIONAR: ANTES DO LOOP, QUEBRE O SOM, COMEÇOU? PEGA A MUSICA
@@ -208,7 +206,6 @@ def inicio(matou_ligeiro=False):
                     y = int(tile['y']) * TILE_SIZE
                     walls.append(pygame.Rect(x, y, TILE_SIZE, TILE_SIZE))
         return walls
-
     def process_map_for_rendering(map_data):
         tiles = []
         layer_order = ['Background', 'Background-colisoes',  'Sand', 'Layer_18', 'Cliff', 'Rocks', 'Grass', 'Miscs (Copy)', 'placas', 'Buildings (Copy)', 'torres', 'Miscs', 'detalinhos', 'pedra_mar', 'casas', 'arvores']
@@ -262,48 +259,49 @@ def inicio(matou_ligeiro=False):
     #         print("ERRO AO CARREGAR SAVE")
 
     save_carregado = False
-
     #print(save_carregado)
 
-    # Criar o jogador
-    try:
-        player_sprite_path = os.path.join(current_dir, '..', '..', 'personagem_carcoflecha(2).png')
-        player_sprite_path2 = os.path.join(current_dir, '..', '..', 'sprites_ataque_espada.png')
-        
-        player_sprite = SpriteSheet(player_sprite_path, 0, 514, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
-        player_sprite_ataques = SpriteSheet(player_sprite_path2, 18, 38, 128, 128, 12,[6,6,6,6], (255,255,255))
-        #######
-        # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ
-        if save_carregado:
-            # print("SAVE CARREGADO")
-            player = Personagem(player_sprite, save_carregado['atributos'][0], save_carregado['atributos'][1], save_carregado['atributos'][2], save_carregado['atributos'][3], save_carregado['atributos'][4],save_carregado['atributos'][5],player_sprite_ataques)
 
-            itens_carregados = []
-            for item in save_carregado['itens']:
-                novo_item = Item(item[0],item[1],item[2],item[3],player)
-                itens_carregados.append(novo_item)
-            inventario1 = Inventario((50, 50, 50), 50, [itens_carregados[i] for i in range(len(itens_carregados))])
-            
-            xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT,save_carregado['nivel'],save_carregado['pontos_disponiveis'])
-            menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
-        else:
-            # print("SAVE NAO CARREGADO")
-            player = Personagem(player_sprite, atributos["ataque"], atributos["defesa"], atributos["vida_max"],atributos['vida_atual'], atributos["stamina"], atributos["velocidade"],player_sprite_ataques)
-            inventario1 = Inventario((50, 50, 50), 50, [])
-            xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
-            menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
-    except Exception as e:
-        # print(f"Erro ao carregar sprite do jogador: {e}")
-        pygame.quit()
-        sys.exit()
+
+    # Criar o jogador
+    player_sprite_path = os.path.join(assets, 'personagem_carcoflecha(2).png')
+    player_sprite_path2 = os.path.join(assets, 'sprites_ataque_espada.png')
+    print(player_sprite_path)
+    
+    player_sprite = SpriteSheet(player_sprite_path, 0, 514, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
+    player_sprite_ataques = SpriteSheet(player_sprite_path2, 18, 38, 128, 128, 12,[6,6,6,6], (255,255,255))
+    #######
+    # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ
+    if save_carregado:
+        # print("SAVE CARREGADO")
+        player = Personagem(player_sprite, save_carregado['atributos'][0], save_carregado['atributos'][1], save_carregado['atributos'][2], save_carregado['atributos'][3], save_carregado['atributos'][4],save_carregado['atributos'][5],player_sprite_ataques)
+
+        itens_carregados = []
+        for item in save_carregado['itens']:
+            novo_item = Item(item[0],item[1],item[2],item[3],player)
+            itens_carregados.append(novo_item)
+        inventario1 = Inventario((50, 50, 50), 50, [itens_carregados[i] for i in range(len(itens_carregados))])
+        
+        xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT,save_carregado['nivel'],save_carregado['pontos_disponiveis'])
+        menu = Menu(save_carregado['menu_valores']['ataque'],save_carregado['menu_valores']['defesa'],save_carregado['menu_valores']['vida'],save_carregado['menu_valores']['stamina'],save_carregado['menu_valores']['velocidade'],save_carregado['menu_atributos']['ataque'],save_carregado['menu_atributos']['defesa'],save_carregado['menu_atributos']['vida'],save_carregado['menu_atributos']['stamina'],save_carregado['menu_atributos']['velocidade'], player)
+    else:
+        # print("SAVE NAO CARREGADO")
+        player = Personagem(player_sprite, atributos["ataque"], atributos["defesa"], atributos["vida_max"],atributos['vida_atual'], atributos["stamina"], atributos["velocidade"],player_sprite_ataques)
+        print("PLAYER FOI")
+        inventario1 = Inventario((50, 50, 50), 50, [])
+        xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+        menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
 
     xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
     menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
 
 
     # Posicionar o jogador em uma posição válida no mapa
-    player.rect.x = 33 * TILE_SIZE
-    player.rect.y = 36 * TILE_SIZE
+    if not matou_ligeiro:
+        player.rect.x = 33 * TILE_SIZE
+        player.rect.y = 36 * TILE_SIZE
+    else:
+        player.rect.x,player.rect.y = 1150,70
 
     # Configuração da câmera
     camera = pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -315,18 +313,12 @@ def inicio(matou_ligeiro=False):
 
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
-    imagem_inimigo = pygame.image.load('Biomech Dragon Splice.png')
+    print(menu_opcoes.rodando)
 
-    vida_imagem = pygame.image.load('love-always-wins(1).png')
-
-
-    spritesheet_inimigo_arco_png = pygame.image.load("inimigo_com_arco.png")
     spritesheet_inimigo_arco = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco0 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
     spritesheet_inimigo_arco1 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
     spritesheet_inimigo_arco2 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
     spritesheet_inimigo_arco3 = SpriteSheet('inimigo_com_adaga.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
-    spritesheet_inimigo_arco4 = SpriteSheet('inimigo_com_arco.png', 0, 522, 64, 64, 4,lista_1+lista_2_alt+lista_3+lista_4+lista_5, (0, 0, 0))
     inimigos = pygame.sprite.Group()
 
     player_group = pygame.sprite.Group()
@@ -346,13 +338,14 @@ def inicio(matou_ligeiro=False):
     contador = 0
 
     click_hold = 0
+    print(menu_opcoes.rodando)
+    interagir_bg = pygame.image.load(os.path.join(assets, "caixa_dialogo_pequena2.png"))
+    #os.path.join(assets, 'sword.png')
 
-    interagir_bg = pygame.image.load("caixa_dialogo_pequena2.png")
-
-    omori = pygame.image.load('npc_amarelo.png')
-    omori1 = pygame.image.load('npc_cinza.png')
-    omori2 = pygame.image.load('npc_vermelho1.png')
-    plaquinha = pygame.transform.scale(pygame.image.load('npc.png'), (1,1))
+    omori = pygame.image.load(os.path.join(assets, 'npc_amarelo.png'))
+    omori1 = pygame.image.load(os.path.join(assets, 'npc_cinza.png'))
+    omori2 = pygame.image.load(os.path.join(assets, 'npc_vermelho1.png'))
+    plaquinha = pygame.transform.scale(pygame.image.load(os.path.join(assets, 'npc.png')), (1,1))
 
     # DIALOGO NPC QUE APARECE DE PRIMEIRA
     texto = {
@@ -425,13 +418,12 @@ def inicio(matou_ligeiro=False):
     texto_alt_4 = {'personagem':"Morador de Poá",
                  'texto': ['Você lidou bem com os invasores','Mas não há tempo para comemorar', 'Algo ainda pior assola nossa vila',]
                  }
-
     if matou_ligeiro:
         npc0 = NPC(omori1,screen,1151,845,texto_1) # npc ligeiro
         npc1 = NPC(omori,screen,1955, 2150,texto_alt_3) # npc inicio
         npc2 = NPC(omori2,screen,1954, 744,texto_3, 4) # npc gabriel
         npc3 = NPC(omori,screen,1030,300,texto_alt_4)
- 
+
     # posição dos npcs
     else:
         npc0 = NPC(omori1,screen,1151,845,texto_2, 2) # npc ligeiro
@@ -463,7 +455,7 @@ def inicio(matou_ligeiro=False):
     #         print("ok")
 
     #################
-
+    print(menu_opcoes.rodando)
     # print(dialogo_group)
     # print(f"Total de tiles carregados: {len(map_tiles)}")
 
@@ -493,8 +485,10 @@ def inicio(matou_ligeiro=False):
     iterado_teste = 0
 
     contador_ataque_melee = 0
-
+    print(menu_opcoes.rodando)
     contador_melee = 0
+
+    #save_carregado['menu_valores']['ataque'],save_carregado['menu_valores']['defesa'],save_carregado['menu_valores']['vida'],save_carregado['menu_valores']['stamina'],save_carregado['menu_valores']['velocidade'],save_carregado['menu_atributos']['ataque'],save_carregado['menu_atributos']['defesa'],save_carregado['menu_atributos']['vida'],save_carregado['menu_atributos']['stamina'],save_carregado['menu_atributos']['velocidade']
 
     def salvar_game():
         itens = []
@@ -537,6 +531,8 @@ def inicio(matou_ligeiro=False):
     dash = 0
     cooldown_dash = 0
     velocidade_anterior = 0
+
+    print(menu_opcoes.rodando)
 
     while menu_opcoes.rodando:
         #1466
@@ -611,7 +607,7 @@ def inicio(matou_ligeiro=False):
             # ULTIMO NIVEL!
             running = False
             screen.fill((0, 0, 0))
-            fundo_loading = pygame.image.load('loading_gabriel.png').convert_alpha()
+            fundo_loading = pygame.image.load(os.path.join(assets,'loading_gabriel.png')).convert_alpha()
             fundo_loading = pygame.transform.scale(fundo_loading, (1200, 800))
             screen.blit(fundo_loading, (0, 0))
             pygame.display.flip()
@@ -619,7 +615,7 @@ def inicio(matou_ligeiro=False):
             salvar_game()
             mapa_antes_final()
             #ultimo_nivel() # AQUI É MELHOR
-        if missao_2 == True and chave_entrada == True:
+        if missao_2 == True and chave_entrada == True and matou_ligeiro== False:
             pygame.mixer.music.stop()
             pygame.mixer.music.load("musicas/sfx-menu12.mp3")
             pygame.mixer.music.play(1)  # -1 significa que a música vai tocar em loop
@@ -950,7 +946,7 @@ def inicio(matou_ligeiro=False):
 
         if contador % 62 == 0:
             for inimigo in inimigos:
-                if inimigo.ataque:
+                if inimigo.ataque and not xp.show_menu and not menu_opcoes.pausado and not inventario1.inventory_open:
                     inimigo.atacar()
                 pass
 

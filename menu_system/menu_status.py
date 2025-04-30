@@ -1,6 +1,11 @@
 import pygame
+import sys
+import os
 # import plotly.express as px
 # import pandas as pd
+
+assets = os.path.join(os.path.dirname(__file__), '..', 'assets')
+sys.path.append(assets)
 
 pygame.init()
 
@@ -45,15 +50,15 @@ class Menu():
         self.tamanho_menu_img_x = 0
         self.tamanho_menu_img_y = 0
 
-        self.menu_img_original = pygame.image.load("menu.png")
-        self.menu_img_original = pygame.image.load("menu.png")
+        self.menu_img_original = pygame.image.load(os.path.join(assets, 'menu.png'))
+        self.menu_img_original = pygame.image.load(os.path.join(assets, 'menu.png'))
         self.menu_img = pygame.transform.scale(self.menu_img_original, (self.tamanho_menu_img_x, self.tamanho_menu_img_y))
 
         self.tamanho_fonte = 22
         self.fonte = pygame.font.SysFont(None, self.tamanho_fonte)
 
-        self.botao_mais = pygame.image.load('SpriteSheet_mais.png')
-        self.botao_menos = pygame.image.load('Spritesheet_menos.png')
+        self.botao_mais = pygame.image.load(os.path.join(assets, 'SpriteSheet_mais.png'))
+        self.botao_menos = pygame.image.load(os.path.join(assets, 'SpriteSheet_menos.png'))
 
         self.botoes = {}
 
