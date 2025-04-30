@@ -159,17 +159,25 @@ O guerreiro de Poá retorna à sua cidade natal após anos de treinamento e desc
 - **Linguagem:** Python
 - **Biblioteca:** Pygame  
 
-### Ferramentas de Design
+### Outras Ferramentas
 - **Piskel:** criação de sprites e animações  
 - **Sprite Fusion:** construção de mapas e tilesets  
-- **LPC Character Generator:** criação de personagens  
+- **LPC Character Generator:** criação de personagens
+- **Visual Studio Code:** Editor de código
+- **Trello:** Metodologia Kanban para organizar tarefas.
+- **Figma:** Protótipos visuais.
+- **Canva:** Materiais gráficos.
+- **GitHub:** Versionamento de código.
 
 ### Fluxo de Trabalho
-- Prototipagem rápida de mecânicas  
-- Iterações baseadas em feedback interno  
-- Criação de assets paralela ao desenvolvimento  
-- Testes contínuos de integração  
-- Polimento gradual de todos os sistemas  
+- Desenvolvimento da historia
+- Criação de funcionalidades principais
+- Desenvolvimento de código
+- Implementação de efeitos visuais
+- Criação de mapas
+- Desenvolvimento de efeitos sonoros
+- Finalização e entrega do projeto
+- Configurações de comandos
 
 ---
 
@@ -181,7 +189,15 @@ O guerreiro de Poá retorna à sua cidade natal após anos de treinamento e desc
 
 ### Recomendações para Projetos Futuros
 - Reservar mais tempo para polimento final  
-- Utilizar ferramentas de gerenciamento de projeto desde o começo  
+- Utilizar ferramentas de gerenciamento de projeto desde o começo
+
+---
+
+## Outras informações:
+
+### O que foi reduzido?
+<p> No início do projeto, a idéia seria ter mais níveis, uma das versões tinham 5 npcs no total, com uma mapa e chefe diferente para cada! Mas por conta do tempo, reduzimos para 4, o dos invasores, os do boss ligeiro e do professor, com 3 missões principais. </p>
+<p> Além disso, planejamos um mapa mais imersivo, com colisões mais organicas, mas acabamos focando em outras partes do trabalho. </p>
 
 
 </details>
