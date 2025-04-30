@@ -1059,7 +1059,7 @@ def inicio(matou_ligeiro=False):
         mouse_pos[1] = mouse_errado[1]+camera.top
 
         if not player.atacando_melee:
-            if click:
+            if click and not menu_opcoes.pausado and not inventario1.inventory_open :
                 click_hold += 1
                 if not canal_carregar_arco.get_busy() and click_hold <= 30 and not menu_opcoes.pausado:
                     som_carregar_arco.set_volume(menu_opcoes.volume_efeitos)
