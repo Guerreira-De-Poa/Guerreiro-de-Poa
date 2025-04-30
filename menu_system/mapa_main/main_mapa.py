@@ -29,16 +29,23 @@ from bau import Bau
 from XP import XP
 from menu_status import Menu
 
+from som import Som
+
 pause = False
 
 pygame.mixer.music.stop()
 
+som = Som()
+
 def inicio():
+    # Inicialização do Pygame
+    
+    print(som.volume_musica)
     ####
     # PRA MUSICA FUNCIONAR: ANTES DO LOOP, QUEBRE O SOM, COMEÇOU? PEGA A MUSICA
     pygame.mixer.music.load("musicas/The Four Seasons, Winter - Vivaldi.mp3")
     pygame.mixer.music.play(-1)  # -1 significa que a música vai tocar em loop
-    pygame.mixer.music.set_volume(0.05)  # 50% do volume máximo
+    
 
     # Efeitos Sonoros
     som_andar = pygame.mixer.Sound("musicas/Efeitos sonoros/Passos.mp3")
@@ -60,7 +67,7 @@ def inicio():
     
     boss_parado=False
     global pause
-    # Inicialização do Pygame
+
     pygame.init()
 
     # Configurações da tela
@@ -68,7 +75,6 @@ def inicio():
     SCREEN_HEIGHT = 600
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Jogo com Mapa e Colisões")
-
     # Obter caminhos dos arquivos
     current_dir = os.path.dirname(os.path.abspath(__file__))
     map_path = os.path.join(current_dir, 'map.json')
@@ -380,6 +386,7 @@ def inicio():
 
     while running:
         player.atualizar_stamina()
+        pygame.mixer.music.set_volume(som.volume_musica)  # 50% do volume máximo
 
         missao_1 = npc1.dialogo.missao_ativada
         missao_2 = npc0.dialogo.missao_ativada
@@ -389,7 +396,7 @@ def inicio():
             pygame.mixer.music.stop()
             pygame.mixer.music.load("musicas/sfx-menu12.mp3")
             pygame.mixer.music.play(1)  # -1 significa que a música vai tocar em loop
-            pygame.mixer.music.set_volume(0.2)  # 50% do volume máximo
+            pygame.mixer.music.set_volume(som.volume_musica)  # 50% do volume máximo
             # ULTIMO NIVEL!
             running = False
             screen.fill((0, 0, 0))
@@ -401,7 +408,7 @@ def inicio():
             pygame.mixer.music.stop()
             pygame.mixer.music.load("musicas/sfx-menu12.mp3")
             pygame.mixer.music.play(1)  # -1 significa que a música vai tocar em loop
-            pygame.mixer.music.set_volume(0.2)  # 50% do volume máximo
+            pygame.mixer.music.set_volume(som.volume_musica)  # 50% do volume máximo
             ####################
             #
             # ADICIONA NIVEL 1 - BOSS FIGHT "CHEFE 1"
@@ -534,8 +541,8 @@ def inicio():
                     #COMANDOS INVENTARIO
                 elif event.key in (pygame.K_LALT, pygame.K_RALT):
                     inventario1.inventory_open = not inventario1.inventory_open
-                elif event.key == pygame.K_ESCAPE:
-                    running = False
+                # elif event.key == pygame.K_ESCAPE:
+                #     running = False
 
                 if event.key == pygame.K_m:
                     xp.show_menu = not xp.show_menu
@@ -640,6 +647,8 @@ def inicio():
                             inventario1.items.append(dragging_item)
                         dragging_item = None
                         dragging_from = None
+            
+            som.processar_eventos(event)
 
         contador+=1
 
@@ -903,6 +912,8 @@ def inicio():
 
         for npc in npcs:
             npc.dialogo.coisa()
+
+            som.update(screen)
 
         pygame.display.flip()
 
