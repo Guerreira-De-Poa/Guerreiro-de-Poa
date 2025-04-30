@@ -10,7 +10,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Sistema de Combate Simples")
 
 class XP():
-    def __init__(self, screen, screen_width, screen_height):
+    def __init__(self, screen, screen_width, screen_height, nivel=1,pontos_disponiveis=0):
 
         self.screen = screen
         self.screen_width, self.screen_height = screen_width, screen_height
@@ -27,12 +27,12 @@ class XP():
         self.xp = 0
         self.xp_limitador = 0
         self.xp_max = 100
-        self.nivel = 1
+        self.nivel = nivel
         self.nivel_anterior = self.nivel
-        self.nivel_max = 3
+        self.nivel_max = 100
         self.tamanho_nivel = 40
         self.dano = 15
-        self.multiplicador_xp = 1.1
+        self.multiplicador_xp = 500
         self.temporizador_mensagem = None 
 
         # Variáveis xp
@@ -49,7 +49,7 @@ class XP():
         self.pos_nivel_y = self.pos_xp_y - (self.tamanho_nivel - 10)
 
         # Distribuição de pontos
-        self.pontos_disponiveis = 0
+        self.pontos_disponiveis = pontos_disponiveis
         self.pontos_disponiveis_copy = 0
 
         # Inicializa o Pygame Clock

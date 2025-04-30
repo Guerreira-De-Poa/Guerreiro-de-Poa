@@ -4,7 +4,7 @@ from balas import Bala
 
 # Classe que herda de pygame.sprite.Sprite
 class Personagem(pygame.sprite.Sprite):
-    def __init__(self, sprite_sheet, ataque, defesa, vida, stamina, velocidade,sheet_sec):
+    def __init__(self, sprite_sheet, ataque, defesa, vida_max,vida_atual, stamina, velocidade,sheet_sec):
         super().__init__()  # Chama o inicializador da classe pai
         self.sheet = sprite_sheet
         self.sheet_sec = sheet_sec
@@ -20,6 +20,8 @@ class Personagem(pygame.sprite.Sprite):
 
         self.atacando = False
 
+        self.anim_dash = True
+
         # Atributos para geração de hitbox
         self.attack_cooldown = 1000  # ms entre ataques
         self.attack_duration = 1000  # ms de duração do golpe
@@ -28,8 +30,8 @@ class Personagem(pygame.sprite.Sprite):
         self.attack_hitbox = None
         self.attack_direction_set = False
 
-        self.MAX_HP = vida
-        self.HP = self.MAX_HP
+        self.MAX_HP = vida_max
+        self.HP = vida_atual
         self.velocidade_corrida = velocidade
         self.max_stamina = stamina
         self.dano = ataque
@@ -87,7 +89,14 @@ class Personagem(pygame.sprite.Sprite):
 
         self.usando_sprite2 = False
 
+        self.arma_equipada = False
+        self.armadura_equipada = False
+
+        self.empurrado = False
+
     def update(self, dialogo_open):
+        self.image2 = self.image
+        self.image2.set_alpha(128)
         if dialogo_open:
             return
         self.balas.update(dialogo_open)
@@ -99,6 +108,7 @@ class Personagem(pygame.sprite.Sprite):
         self.range_melee = pygame.Rect(self.rect.left-32, self.rect.top-32, self.rect.width+64, self.rect.height+64)
         self.super_range = pygame.Rect(self.rect.left-40, self.rect.top-40, self.rect.width+80, self.rect.height+80)
 
+        #print(self.anim_dash)
 
         if self.atacando_melee:
             self.usando_sprite2 = True
@@ -215,6 +225,15 @@ class Personagem(pygame.sprite.Sprite):
             if self.contador_iframes == self.iframes:
                 self.ivuln = False
 
+        if self.empurrado == True:
+            if self.knock_steps > 0:
+                dx, dy = self.knock_dir
+                self.rect.x += dx * self.KNOCKBACK_STEP
+                self.rect.y += dy * self.KNOCKBACK_STEP
+                self.knock_steps -= 1
+            else:
+                self.empurrado = False
+
     def get_angle(self,mouse_pos, camera):
         #print(mouse_pos)
         self.mouse_pos = mouse_pos
@@ -276,8 +295,8 @@ class Personagem(pygame.sprite.Sprite):
     
     def draw_stamina(self, screen):
         bar_width = (self.stamina / self.max_stamina) * self.stamina_width
-        pygame.draw.rect(screen, (0, 0, 0), (20, 45, self.stamina_width, self.stamina_height), 0, 3)
-        pygame.draw.rect(screen, (0, 0, 255), (20, 45, bar_width, self.stamina_height), 0, 3)
+        pygame.draw.rect(screen, (0, 0, 0), (20, 40, self.stamina_width, self.stamina_height), 0, 3)
+        pygame.draw.rect(screen, (0, 185, 0), (20, 40, bar_width, self.stamina_height), 0, 3)
 
     def shoot(self,mouse_pos):
         # if len(self.balas) > 0:
@@ -357,10 +376,11 @@ class Personagem(pygame.sprite.Sprite):
         self.health_width = 10
         self.health_height = 20
         self.health_ratio = (self.HP / self.MAX_HP) * self.health_width
-        # print(self.MAX_HP, self.HP)
+        #print(self.MAX_HP, self.HP)
 
-        pygame.draw.rect(screen, (255, 0, 0), (20, 20, self.health_width*self.MAX_HP, self.health_height), 0, 3)
-        pygame.draw.rect(screen, (0, 255, 0), (20, 20, self.health_ratio*self.HP, self.health_height), 0, 3)
+        #pygame.draw.rect(screen, (255, 255, 255), (15, 14, (self.health_width*self.MAX_HP)+15, (self.health_height)+8), 0, 5)
+        pygame.draw.rect(screen, (0, 0, 0), (20, 18, self.health_width*self.MAX_HP, self.health_height), 0, 5)
+        pygame.draw.rect(screen, (255, 0, 0), (20, 18, self.health_ratio*self.HP, self.health_height), 0, 5)
 
     # def generate_attack_hitbox(self):
     #     # distância à frente do player
@@ -398,3 +418,23 @@ class Personagem(pygame.sprite.Sprite):
             self.sheet_sec.draw(screen, x, y)
         else:
             self.sheet.draw(screen, x, y)
+
+    def draw_dash(self, screen, camera):
+        x = self.rect.x - camera.left
+        y = self.rect.y - camera.top
+        self.sheet.draw(screen, x, y-10)
+
+    def knockbacked(self, dx, dy):
+        self.KNOCKBACK_DIST = 64      # distância total em pixels
+        self.KNOCKBACK_STEP = 8       # pixels por frame de recuo
+        """Inicia um recuo ordinal de KNOCKBACK_DIST na direção de (dx,dy)."""
+        # escolhe eixo dominante
+        if abs(dx) >= abs(dy):
+            self.knock_dir = (1 if dx > 0 else -1, 0)
+        else:
+            self.knock_dir = (0, 1 if dy > 0 else -1)
+        # quantos passos ainda faltam
+        total_steps = self.KNOCKBACK_DIST // self.KNOCKBACK_STEP
+        self.knock_steps = total_steps
+        # suspende qualquer outro movimento neste ciclo
+        self.empurrado = True

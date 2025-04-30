@@ -14,7 +14,7 @@ class Bau(pygame.sprite.Sprite):
 
         self.loot = loot
 
-        self.inventario = Inventario((125,125,0),400,self.loot)
+        self.inventario = Inventario((125,125,0),600,self.loot)
     
     def abrir_bau(self):
         self.image = self.bau_aberto
