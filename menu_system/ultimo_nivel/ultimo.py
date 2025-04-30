@@ -29,6 +29,23 @@ from cutscenes.tocar_cutscene import tocar_cutscene_cv2
 pause = False
 
 def inicio():
+    som_andar = pygame.mixer.Sound("musicas/Efeitos sonoros/Passos.mp3")
+    canal_andar = pygame.mixer.Channel(0)
+    teclas_movimento = {pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d}
+    teclas_pressionadas = set()
+    
+    som_balançar_espada = pygame.mixer.Sound("musicas/Efeitos sonoros/Balançar espada.mp3")
+    canal_balançar_espada = pygame.mixer.Channel(1)
+    cooldown_som_balançar_espada = 0
+    delay_som_balançar_espada = 400
+    primeiro_ataque_espada = 0
+
+    som_carregar_arco = pygame.mixer.Sound("musicas/Efeitos sonoros/carregando_arco_flecha.mp3")
+    canal_carregar_arco = pygame.mixer.Channel(2)
+
+    som_atirar_flecha = pygame.mixer.Sound("musicas/Efeitos sonoros/Arco e flecha.mp3")
+    canal_atirar_flecha = pygame.mixer.Channel(3)
+
     boss_parado = False
     global pause
     global cutscene_final_rodada
@@ -329,6 +346,13 @@ def inicio():
                 sys.exit()
 
             if event.type == pygame.KEYDOWN:
+                # ativar efeitos sonoros
+                if event.key in teclas_movimento and not menu_opcoes.pausado:
+                    teclas_pressionadas.add(event.key)
+                    
+                    if not canal_andar.get_busy():
+                        som_andar.set_volume(menu_opcoes.volume_efeitos)
+                        canal_andar.play(som_andar, loops=-1)
                 if event.key == pygame.K_w:
                     player.nova_direcao = True
                 elif event.key == pygame.K_s:
@@ -365,7 +389,12 @@ def inicio():
                     inventario1.inventory_open = not inventario1.inventory_open
                 # elif event.key == pygame.K_ESCAPE:
                 #     running = False
-                menu_opcoes.processar_eventos(event)
+            elif event.type == pygame.KEYUP and not event.type == pygame.KEYDOWN:
+                if event.key in teclas_movimento:
+                    teclas_pressionadas.discard(event.key)
+                    if len(teclas_pressionadas) == 0:
+                        canal_andar.stop()
+            menu_opcoes.processar_eventos(event)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if button_rect.collidepoint(event.pos) and botao_ativo == True:
@@ -486,14 +515,23 @@ def inicio():
         if not player.atacando_melee:
             if click:
                 click_hold += 1
+                if not canal_carregar_arco.get_busy() and click_hold <= 30 and not menu_opcoes.pausado:
+                    som_carregar_arco.set_volume(menu_opcoes.volume_efeitos)
+                    canal_carregar_arco.play(som_carregar_arco, loops=0)
+                elif click_hold > 30:
+                    canal_carregar_arco.stop()
                 player.atacando = True
-                player.hold_arrow(mouse_pos, camera)
+                player.hold_arrow(mouse_pos,camera)
                 player.atacando_melee = False
             elif click_mouse_2:
                 player.atacando_melee = True
-                player.hold_arrow(mouse_pos, camera)
+                player.hold_arrow(mouse_pos,camera)
+                cooldown_som_balançar_espada = pygame.time.get_ticks()
             elif click_hold > 30:
                 player.shoot(mouse_pos)
+                if not canal_atirar_flecha.get_busy() and not menu_opcoes.pausado:
+                    som_atirar_flecha.set_volume(menu_opcoes.volume_efeitos - 0.9)
+                    canal_atirar_flecha.play(som_atirar_flecha, loops=0)
                 click_hold = 0
                 player.atacando = False
                 player.atacando_melee = False
@@ -501,7 +539,24 @@ def inicio():
                 player.atacando = False
                 click_hold = 0
         else:
+            if contador_melee == 0:
+                cooldown_som_balançar_espada = pygame.time.get_ticks()
+                primeiro_ataque_espada = 0
+
             contador_melee += 1
+
+            tempo_atual = pygame.time.get_ticks()
+            if tempo_atual - cooldown_som_balançar_espada >= delay_som_balançar_espada and primeiro_ataque_espada == 0 and not menu_opcoes.pausado:
+                som_balançar_espada.set_volume(menu_opcoes.volume_efeitos)
+                canal_balançar_espada.play(som_balançar_espada, loops=0)
+                cooldown_som_balançar_espada = tempo_atual
+                primeiro_ataque_espada = 1
+
+            elif tempo_atual - cooldown_som_balançar_espada >= delay_som_balançar_espada + 335 and primeiro_ataque_espada == 1 and not menu_opcoes.pausado:
+                som_balançar_espada.set_volume(menu_opcoes.volume_efeitos)
+                canal_balançar_espada.play(som_balançar_espada, loops=0)
+                cooldown_som_balançar_espada = tempo_atual
+
             if contador_melee != 7*7:
                 player.atacando_melee = True
             else:
@@ -509,9 +564,10 @@ def inicio():
                 player.sheet_sec.index = 0
                 if not click_mouse_2:
                     player.atacando_melee = False
+                    primeiro_ataque_espada = 0
                 else:
                     player.atacando_melee = True
-                    player.hold_arrow(mouse_pos, camera)
+                    player.hold_arrow(mouse_pos,camera)
 
         # Renderização
         screen.fill((0, 0, 0))
@@ -581,7 +637,7 @@ def inicio():
 
         if menu_opcoes.pausado:
             menu_opcoes.atualizar()
-            menu_opcoes.desenhar()
+            menu_opcoes.desenhar(screen)
 
         if dragging_item:
             inventario1.draw_dragging_item(screen, dragging_item)

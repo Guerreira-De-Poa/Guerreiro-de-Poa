@@ -86,9 +86,9 @@ class XP():
 
                 self.nivel += 1
                 self.pontos_disponiveis += 5
-                print(self.pontos_disponiveis)
+                # print(self.pontos_disponiveis)
                 self.pontos_disponiveis_copy = self.pontos_disponiveis
-                print(self.pontos_disponiveis_copy)
+                # print(self.pontos_disponiveis_copy)
                 self.xp_excedente = self.xp_limitador - self.xp_max
                 self.xp_max *= self.multiplicador_xp
                 self.xp = 0

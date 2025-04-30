@@ -21,12 +21,12 @@ class Item():
             valor = atributo
         self.personagem.HP += valor
         while self.personagem.HP > self.personagem.MAX_HP:
-            print(self.personagem.HP)
+            # print(self.personagem.HP)
             self.personagem.HP -=1
-        print(f"VOCE RECUPEROU {valor} HP!")
+        # print(f"VOCE RECUPEROU {valor} HP!")
 
     def equipar(self):
-        print(self.equipado)
+        # print(self.equipado)
         if self.equipado == False:
             if self.tipo == 'arma':
                 if self.personagem.arma_equipada:

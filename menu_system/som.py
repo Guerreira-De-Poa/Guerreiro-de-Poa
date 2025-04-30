@@ -21,7 +21,7 @@ class Som:
         # Variáveis de controle de som
         self.volume_musica = 1
         self.volume_efeitos = 1
-        self.menu_ativo = False
+        menu_ativo = False
         self.arrastando_musica = False
         self.arrastando_efeito = False
 
@@ -49,8 +49,8 @@ class Som:
 
         return pygame.Rect(x, y, largura_slider, altura_slider), pygame.Rect(pos - 12, y - 6, 24, 24)  # Ajuste nas dimensões do círculo
 
-    def update(self, tela):
-        if self.menu_ativo:
+    def update(self, tela, menu_ativo):
+        if menu_ativo:
             menu_x, menu_y, menu_l, menu_a = 350, 200, 500, 400  # Ajustei a posição e o tamanho do menu
 
             # Sombra
@@ -63,14 +63,14 @@ class Som:
             pygame.draw.rect(tela, self.COR_BORDA_MENU, (menu_x, menu_y, menu_l, menu_a), 2, border_radius=20)
 
             # Sliders
-            self.slider_bg_musica, self.slider_musica = self.desenhar_slider(menu_x + 50, menu_y + 110, self.volume_musica, "Música", tela)
-            self.slider_bg_efeito, self.slider_efeito = self.desenhar_slider(menu_x + 50, menu_y + 210, self.volume_efeitos, "Efeitos", tela)
+            self.slider_bg_musica, self.slider_musica = self.desenhar_slider(menu_x + 50, menu_y + 135, self.volume_musica, "Música", tela)
+            self.slider_bg_efeito, self.slider_efeito = self.desenhar_slider(menu_x + 50, menu_y + 280, self.volume_efeitos, "Efeitos", tela)
 
-    def processar_eventos(self, evento):
+    def processar_eventos(self, evento, menu_ativo):
         if evento.type == pygame.KEYDOWN:
             if evento.key == pygame.K_ESCAPE:
-                self.menu_ativo = not self.menu_ativo
-                print("a")
+                menu_ativo = not menu_ativo
+                # print("a")
             if evento.key == pygame.K_SPACE and self.efeito_som:
                 self.efeito_som.play()
 
@@ -78,7 +78,8 @@ class Som:
                 self.jogo_iniciado = True  # Marca que o jogo foi iniciado
 
         if evento.type == pygame.MOUSEBUTTONDOWN:
-            if self.menu_ativo:
+            if menu_ativo:
+                # print('a')
                 if self.slider_musica.collidepoint(evento.pos):
                     self.arrastando_musica = True
                 if self.slider_efeito.collidepoint(evento.pos):
@@ -97,3 +98,4 @@ class Som:
             if self.arrastando_efeito:
                 rel_x = evento.pos[0] - self.slider_bg_efeito.x
                 self.volume_efeitos = max(0, min(1, rel_x / self.slider_bg_efeito.width))
+                # print(self.volume_efeitos)

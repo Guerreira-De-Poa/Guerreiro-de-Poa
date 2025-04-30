@@ -44,7 +44,7 @@ class SpriteSheet:
         self.index = 0  # Índice do quadro atual da animação
         self.tile_rect = self.cells[0][1]
 
-        print(len(self.cells))
+        # print(len(self.cells))
     
     def update(self):
         """ Atualiza o quadro atual da animação. """

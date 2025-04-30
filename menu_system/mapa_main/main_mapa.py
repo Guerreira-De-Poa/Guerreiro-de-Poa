@@ -61,7 +61,7 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 def inicio(matou_ligeiro=False):
 
-    print(som.volume_musica)
+    # print(menu_opcoes.volume_musica)
     ####
     # PRA MUSICA FUNCIONAR: ANTES DO LOOP, QUEBRE O SOM, COMEÇOU? PEGA A MUSICA
     pygame.mixer.music.load("musicas/The Four Seasons, Winter - Vivaldi.mp3")
@@ -242,7 +242,7 @@ def inicio(matou_ligeiro=False):
     map_tiles = process_map_for_rendering(map_data)
     
     if not map_tiles:
-        print("Erro: Nenhum tile foi carregado para renderização!")
+        # print("Erro: Nenhum tile foi carregado para renderização!")
         pygame.quit()
         sys.exit()
 
@@ -275,7 +275,7 @@ def inicio(matou_ligeiro=False):
         #######
         # ACIMA ALTERA, MAIS OU MENOS, A POSIÇÃO DO SPRITE DO JOGADOR EM RELAÇÃO NA ONDE ELE ESTÁ
         if save_carregado:
-            print("SAVE CARREGADO")
+            # print("SAVE CARREGADO")
             player = Personagem(player_sprite, save_carregado['atributos'][0], save_carregado['atributos'][1], save_carregado['atributos'][2], save_carregado['atributos'][3], save_carregado['atributos'][4],save_carregado['atributos'][5],player_sprite_ataques)
 
             itens_carregados = []
@@ -287,13 +287,13 @@ def inicio(matou_ligeiro=False):
             xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT,save_carregado['nivel'],save_carregado['pontos_disponiveis'])
             menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
         else:
-            print("SAVE NAO CARREGADO")
+            # print("SAVE NAO CARREGADO")
             player = Personagem(player_sprite, atributos["ataque"], atributos["defesa"], atributos["vida_max"],atributos['vida_atual'], atributos["stamina"], atributos["velocidade"],player_sprite_ataques)
             inventario1 = Inventario((50, 50, 50), 50, [])
             xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
             menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
     except Exception as e:
-        print(f"Erro ao carregar sprite do jogador: {e}")
+        # print(f"Erro ao carregar sprite do jogador: {e}")
         pygame.quit()
         sys.exit()
 
@@ -540,7 +540,7 @@ def inicio(matou_ligeiro=False):
 
     while menu_opcoes.rodando:
         #1466
-        print(camera.top)
+        # print(camera.top)
         if player.HP <= 0:
             running = False
             Game_over(inicio)
@@ -607,7 +607,7 @@ def inicio(matou_ligeiro=False):
             pygame.mixer.music.stop()
             pygame.mixer.music.load("musicas/sfx-menu12.mp3")
             pygame.mixer.music.play(1)  # -1 significa que a música vai tocar em loop
-            pygame.mixer.music.set_volume(som.volume_musica)  # 50% do volume máximo
+            pygame.mixer.music.set_volume(menu_opcoes.volume_musica)  # 50% do volume máximo
             # ULTIMO NIVEL!
             running = False
             screen.fill((0, 0, 0))
@@ -623,7 +623,7 @@ def inicio(matou_ligeiro=False):
             pygame.mixer.music.stop()
             pygame.mixer.music.load("musicas/sfx-menu12.mp3")
             pygame.mixer.music.play(1)  # -1 significa que a música vai tocar em loop
-            pygame.mixer.music.set_volume(som.volume_musica)  # 50% do volume máximo
+            pygame.mixer.music.set_volume(menu_opcoes.volume_musica)  # 50% do volume máximo
             ####################
             #
             # ADICIONA NIVEL 1 - BOSS FIGHT "CHEFE 1"
@@ -734,11 +734,11 @@ def inicio(matou_ligeiro=False):
 
             if event.type == pygame.KEYDOWN:
                 # ativar efeitos sonoros
-                if event.key in teclas_movimento:
+                if event.key in teclas_movimento and not menu_opcoes.pausado:
                     teclas_pressionadas.add(event.key)
                     
                     if not canal_andar.get_busy():
-                        som_andar.set_volume(0.5)
+                        som_andar.set_volume(menu_opcoes.volume_efeitos)
                         canal_andar.play(som_andar, loops=-1)
 
                 # if event.key in [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d] and event.key == pygame.K_LSHIFT:
@@ -787,7 +787,7 @@ def inicio(matou_ligeiro=False):
                 elif event.key == pygame.K_UP and inventario1.scroll_index > 0:
                     inventario1.item_index -=1
                     if inventario1.item_index < inventario1.visible_items-1:
-                        print(inventario1.item_index,inventario1.visible_items + 2)
+                        # print(inventario1.item_index,inventario1.visible_items + 2)
                         inventario1.scroll_index -= 1
 
                 elif event.key == pygame.K_DOWN and inventario1.item_index < len(inventario1.items)-1 and not menu_opcoes.pausado:
@@ -803,10 +803,6 @@ def inicio(matou_ligeiro=False):
                             inventario1.items[inventario1.item_index].utilizar()
                             inventario1.remove(inventario1.items[inventario1.item_index])
 
-
-                
-                menu_opcoes.processar_eventos(event)
-
                 if event.key == pygame.K_m:
                     xp.show_menu = not xp.show_menu
                     if xp.show_menu:
@@ -817,6 +813,10 @@ def inicio(matou_ligeiro=False):
                     teclas_pressionadas.discard(event.key)
                     if len(teclas_pressionadas) == 0:
                         canal_andar.stop()
+
+            menu_opcoes.processar_eventos(event)
+            # if menu_opcoes.som_ligado and menu_opcoes.evento_ativado:
+            #     som.processar_eventos(event, True)
 
             if not player.arcoEquipado:
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -960,7 +960,7 @@ def inicio(matou_ligeiro=False):
                 cooldown_dash = 0
 
         if player.dash == True:
-            print(cooldown_dash)
+            # print(cooldown_dash)
             player.speed = 15
             dash+=1
             if dash == 10:
@@ -1061,8 +1061,8 @@ def inicio(matou_ligeiro=False):
         if not player.atacando_melee:
             if click:
                 click_hold += 1
-                if not canal_carregar_arco.get_busy() and click_hold <= 30:
-                    som_carregar_arco.set_volume(1)
+                if not canal_carregar_arco.get_busy() and click_hold <= 30 and not menu_opcoes.pausado:
+                    som_carregar_arco.set_volume(menu_opcoes.volume_efeitos)
                     canal_carregar_arco.play(som_carregar_arco, loops=0)
                 elif click_hold > 30:
                     canal_carregar_arco.stop()
@@ -1075,8 +1075,8 @@ def inicio(matou_ligeiro=False):
                 cooldown_som_balançar_espada = pygame.time.get_ticks()
             elif click_hold > 30:
                 player.shoot(mouse_pos)
-                if not canal_atirar_flecha.get_busy():
-                    som_atirar_flecha.set_volume(0.05)
+                if not canal_atirar_flecha.get_busy() and not menu_opcoes.pausado:
+                    som_atirar_flecha.set_volume(menu_opcoes.volume_efeitos - 0.9)
                     canal_atirar_flecha.play(som_atirar_flecha, loops=0)
                 click_hold = 0
                 player.atacando = False
@@ -1092,14 +1092,14 @@ def inicio(matou_ligeiro=False):
             contador_melee += 1
 
             tempo_atual = pygame.time.get_ticks()
-            if tempo_atual - cooldown_som_balançar_espada >= delay_som_balançar_espada and primeiro_ataque_espada == 0:
-                som_balançar_espada.set_volume(0.5)
+            if tempo_atual - cooldown_som_balançar_espada >= delay_som_balançar_espada and primeiro_ataque_espada == 0 and not menu_opcoes.pausado:
+                som_balançar_espada.set_volume(menu_opcoes.volume_efeitos)
                 canal_balançar_espada.play(som_balançar_espada, loops=0)
                 cooldown_som_balançar_espada = tempo_atual
                 primeiro_ataque_espada = 1
 
-            elif tempo_atual - cooldown_som_balançar_espada >= delay_som_balançar_espada + 335 and primeiro_ataque_espada == 1:
-                som_balançar_espada.set_volume(0.5)
+            elif tempo_atual - cooldown_som_balançar_espada >= delay_som_balançar_espada + 335 and primeiro_ataque_espada == 1 and not menu_opcoes.pausado:
+                som_balançar_espada.set_volume(menu_opcoes.volume_efeitos)
                 canal_balançar_espada.play(som_balançar_espada, loops=0)
                 cooldown_som_balançar_espada = tempo_atual
 
@@ -1156,7 +1156,7 @@ def inicio(matou_ligeiro=False):
 
         if player.rect.y <= 150:
             chave_entrada = True
-            print("teste")
+            # print("teste")
         elif player.rect.y > 150:
             chave_entrada = False
 
@@ -1212,7 +1212,7 @@ def inicio(matou_ligeiro=False):
 
         if menu_opcoes.pausado:
             menu_opcoes.atualizar()
-            menu_opcoes.desenhar()
+            menu_opcoes.desenhar(screen)
                 
         # Atualiza o jogo se o menu NÃO estiver aberto
         if xp.show_menu:

@@ -10,7 +10,7 @@ class Personagem(pygame.sprite.Sprite):
         self.sheet_sec = sheet_sec
         self.image = pygame.Surface((64, 64), pygame.SRCALPHA)  # A imagem inicial
         self.rect = self.image.get_rect()  # Obtém o retângulo da imagem para movimentação
-        print(self.rect)
+        # print(self.rect)
         
         self.bullet_img = pygame.image.load('bullet.png').convert_alpha()
         self.bullet_speed = 5

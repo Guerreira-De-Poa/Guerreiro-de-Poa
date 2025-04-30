@@ -1,12 +1,16 @@
 import pygame
 import sys
 
+from som import Som
+
 pygame.init()
 
 width, height = 1200, 800
 tela = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Pressione 0 para sair")
 rodando = True
+
+som = Som()
 
 class MenuOpcoes:
     def __init__(self, width, height, tela, rodando):
@@ -18,10 +22,13 @@ class MenuOpcoes:
         self.escurecedor = pygame.Surface((1200, 800), pygame.SRCALPHA)
         self.escurecedor.fill((0, 0, 0, 80))
 
+        self.volume_musica = som.volume_musica
+        self.volume_efeitos = som.volume_efeitos
+
         self.clock = pygame.time.Clock()
         self.rodando = rodando
         self.pausado = False
-        self.som_ligado = True
+        self.som_ligado = False
         self.evento_ativado = False
 
         self.opcao_selecionada = 0
@@ -67,7 +74,8 @@ class MenuOpcoes:
                     if self.opcao_selecionada == 0:
                         self.pausado = False
                     elif self.opcao_selecionada == 1:
-                        self.som_ligado = not self.som_ligado
+                        self.som_ligado = True
+                        self.evento_ativado = True
                     elif self.opcao_selecionada == 2:
                         self.ativar_controles_img = True
                         self.evento_ativado = True
@@ -77,10 +85,16 @@ class MenuOpcoes:
                 elif evento.key == pygame.K_RETURN and self.pausado and self.evento_ativado and self.ativar_controles_img == True:
                     self.ativar_controles_img = False
                     self.evento_ativado = False
+                elif evento.key == pygame.K_RETURN and self.pausado and self.evento_ativado and self.som_ligado == True:
+                    self.som_ligado = False
+                    self.evento_ativado = False
 
                 elif evento.key == pygame.K_ESCAPE:
                     if self.evento_ativado and self.ativar_controles_img:
                         self.ativar_controles_img = False
+                        self.evento_ativado = False
+                    elif self.evento_ativado and self.som_ligado:
+                        self.som_ligado = False
                         self.evento_ativado = False
                     else:
                         self.pausado = not self.pausado
@@ -96,6 +110,12 @@ class MenuOpcoes:
                         self.pos_espadinha_y_final -= 95
                         self.mudar_opcao_cima = True
 
+            if self.som_ligado and self.evento_ativado:
+                som.processar_eventos(evento, True)
+                self.volume_musica = som.volume_musica
+                self.volume_efeitos = som.volume_efeitos
+                print(self.volume_efeitos)
+
     def atualizar(self):
         if self.mudar_opcao_baixo:
             self.pos_espadinha_y += 19
@@ -107,7 +127,7 @@ class MenuOpcoes:
             if self.pos_espadinha_y <= self.pos_espadinha_y_final:
                 self.mudar_opcao_cima = False
 
-    def desenhar(self):
+    def desenhar(self, tela):
         # self.tela.fill(self.branco)
 
         if self.pausado:
@@ -124,6 +144,9 @@ class MenuOpcoes:
 
             if self.ativar_controles_img:
                 self.tela.blit(self.imgs["controles"], (self.width // 2 - 425, self.height // 2 - 284))
+            if self.som_ligado:
+                som.update(tela, self.som_ligado)
+                # print('a')
 
         pygame.display.flip()
 

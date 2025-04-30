@@ -163,7 +163,7 @@ class Inimigo(pygame.sprite.Sprite):
 
     def get_hit(self, dano):
         if self.ivuln == False:
-            print(self.HP)
+            # print(self.HP)
             self.contador_iframes = 0
             self.HP -= dano
             self.ivuln = True

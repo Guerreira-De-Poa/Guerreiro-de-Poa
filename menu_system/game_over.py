@@ -43,11 +43,11 @@ def Game_over(funcao):
                     escolha = not escolha
                 elif event.key == pygame.K_RETURN:
                     if escolha == True:
-                        print("RESTART")
+                        # print("RESTART")
                         running = False
                         funcao()
                     else:
-                        print("GAME OVER")
+                        # print("GAME OVER")
                         running = False
 
         screen.fill((50,20,50))

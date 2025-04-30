@@ -58,7 +58,7 @@ class Dialogo():
                 ##########
                 if self.missao_ativada !=0:
                     self.missao_ativada = True  # <-- Missão ativada aqui!
-                    print("Missão ativada!")  # Teste para ver se está funcionando
+                    # print("Missão ativada!")  # Teste para ver se está funcionando
                 return
 
         self.iter_texto +=1
