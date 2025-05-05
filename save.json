@@ -1,9 +1,9 @@
 {
     "atributos": [
-        5,
+        20.5,
         6.0,
         20,
-        18.0,
+        20.0,
         5,
         10
     ],
@@ -23,38 +23,22 @@
                 "defesa": 1
             },
             true
-        ],
-        [
-            "consumivel",
-            "Po\u00e7\u00e3o",
-            {
-                "vida": 10
-            },
-            false
-        ],
-        [
-            "consumivel",
-            "Po\u00e7\u00e3o",
-            {
-                "vida": 10
-            },
-            false
         ]
     ],
     "menu_valores": {
-        "ataque": 30,
+        "ataque": 10,
         "defesa": 5,
         "vida": 5,
         "stamina": 5,
         "velocidade": 5
     },
     "menu_atributos": {
-        "ataque": 45.5,
+        "ataque": 20.5,
         "defesa": 6.0,
         "vida": 20,
-        "stamina": 96.25,
+        "stamina": 5,
         "velocidade": 10
     },
-    "nivel": 6,
+    "nivel": 2,
     "pontos_disponiveis": 0
 }

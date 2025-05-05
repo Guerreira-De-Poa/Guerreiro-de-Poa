@@ -476,10 +476,6 @@ def inicio(matou_ligeiro=False):
     armadura = Item('armadura', 'Armadura',{'defesa': 1},False,player)
     pocao = Item('consumivel', 'Poção', {'vida': 10},False,player)
 
-    bau_saida = Bau(screen,900,300,[espada,armadura,pocao])
-
-    baus.add(bau_saida)
-
     iterado_teste = 0
 
     contador_ataque_melee = 0
@@ -525,6 +521,12 @@ def inicio(matou_ligeiro=False):
 
     if not matou_ligeiro:
         tocar_cutscene_cv2('cutscenes/cutscene_inicio.mp4', 'cutscenes/cutscene_inicio.mp3', screen)
+        objetivos = ['Fale com os moradores','Cuide dos invasores', 'Va atrás do lider dos invasores']
+        bau_saida = Bau(screen,900,300,[espada,armadura,pocao])
+        baus.add(bau_saida)
+    else:
+        objetivos = ['Fale com os moradores']
+    objetivo_index = 0
 
     dash = 0
     cooldown_dash = 0
@@ -1225,7 +1227,6 @@ def inicio(matou_ligeiro=False):
             else:
                 if dialogo_a_abrir.texto_open == False:
                     xp.render()
-
 
         #print(menu.atributos,menu.valores)
 
