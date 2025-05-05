@@ -1027,7 +1027,12 @@ def inicio(matou_ligeiro=False):
 
                 
         # Atualizar câmera
-        camera.center = player.rect.center
+        # Atualizar câmera com interpolação para suavizar o movimento
+        lerp_factor = 0.1  # ajuste esse valor conforme necessário (0 < lerp_factor < 1)
+        target_center = player.rect.center
+        new_center_x = camera.centerx + (target_center[0] - camera.centerx) * lerp_factor
+        new_center_y = camera.centery + (target_center[1] - camera.centery) * lerp_factor
+        camera.center = (new_center_x, new_center_y)
         
         # Limitar câmera aos limites do mapa
         camera.left = max(0, camera.left)

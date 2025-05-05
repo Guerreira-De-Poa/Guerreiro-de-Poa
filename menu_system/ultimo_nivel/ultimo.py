@@ -545,8 +545,13 @@ def inicio():
             if player.collision_rect.colliderect(npc):
                 player.rect.x, player.rect.y = old_x, old_y
                 break
-                
-        camera.center = player.rect.center
+
+        # CASO NÃO FIQUE LEGAL FUTURAMENTE, TROQUE PARA 1        
+        lerp_factor = 0.1  # ajuste esse valor conforme necessário (0 < lerp_factor < 1)
+        target_center = player.rect.center
+        new_center_x = camera.centerx + (target_center[0] - camera.centerx) * lerp_factor
+        new_center_y = camera.centery + (target_center[1] - camera.centery) * lerp_factor
+        camera.center = (new_center_x, new_center_y)
         camera.left = max(0, camera.left)
         camera.top = max(0, camera.top)
         camera.right = min(MAP_WIDTH * TILE_SIZE, camera.right)
