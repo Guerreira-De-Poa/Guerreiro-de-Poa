@@ -628,7 +628,7 @@ def inicio():
                 a = (enemy_hits.keys())
                 inimigo.balas.remove(a)
                 
-                player.get_hit(1)
+                player.get_hit(3+player.defesa)
 
         if len(player_hits) > 0:
             a = (player_hits.keys())
@@ -785,7 +785,7 @@ def inicio():
         for inimigo in inimigos:
             if inimigo.rect.colliderect(player.rect):
                 if not player.ivuln:
-                    player.get_hit(1)
+                    player.get_hit(5+player.defesa)
                     inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
                     player.rect.topleft = (old_x,old_y)
                 inimigo.atacando_melee = True

@@ -635,7 +635,7 @@ def inicio():
 
         for inimigo in inimigos:
             if inimigo.rect.colliderect(player.rect):
-                player.get_hit(10)
+                player.get_hit(10+player.defesa)
                 player.knockbacked(inimigo.dx, inimigo.dy)
                 # inimigo.rect.topleft = inimigo.old_pos_x, inimigo.old_pos_y
                 # player.rect.topleft = (old_x, old_y)
