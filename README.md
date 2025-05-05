@@ -200,11 +200,6 @@ O guerreiro de Poá retorna à sua cidade natal após anos de treinamento e desc
 <p> Além disso, planejamos um mapa mais imersivo, com colisões mais organicas, mas acabamos focando em outras partes do trabalho. </p>
 
 
-</details>
-
-<hr>
-
-
 ##Como executar:
 
 ###Requisitos:
@@ -217,6 +212,9 @@ O guerreiro de Poá retorna à sua cidade natal após anos de treinamento e desc
 <p>Abra o Prompt de Comando (cmd)</p>
 <p>pip install -r requirements.txt</p>
 <p>python menu_system/main.py</p>
+
+
+</details>
 
 <hr>
 
