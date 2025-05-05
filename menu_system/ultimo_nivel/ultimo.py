@@ -218,7 +218,6 @@ def inicio():
     try:
         player_sprite_path = os.path.join(assets, 'personagem_carcoflecha(2).png')
         player_sprite_path2 = os.path.join(assets, 'sprites_ataque_espada.png')
-        print(player_sprite_path)
         
         player_sprite = SpriteSheet(player_sprite_path, 0, 514, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
         player_sprite_ataques = SpriteSheet(player_sprite_path2, 18, 38, 128, 128, 12,[6,6,6,6], (255,255,255))
@@ -240,9 +239,6 @@ def inicio():
         print(f"Erro ao carregar sprite do jogador: {e}")
         pygame.quit()
         sys.exit()
-
-    xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
-    menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
 
     player.rect.x, player.rect.y = 1072, 1280
 
@@ -289,7 +285,6 @@ def inicio():
     velocidade_anterior = 0
 
     while menu_opcoes.rodando:
-        print(save_carregado['nivel'])
         if player.HP <= 0:
             running = False
             Game_over(inicio)
@@ -386,10 +381,30 @@ def inicio():
                     DEBUG_MODE = not DEBUG_MODE
                 elif event.key == pygame.K_p:
                     pause = not pause
+
+                if event.key == pygame.K_m:
+                    xp.show_menu = not xp.show_menu
+                    if xp.show_menu:
+                        menu.valores_copy = menu.valores.copy()
+
                 elif event.key in (pygame.K_LALT, pygame.K_RALT):
                     inventario1.inventory_open = not inventario1.inventory_open
                 # elif event.key == pygame.K_ESCAPE:
                 #     running = False
+
+                elif event.key == pygame.K_DOWN and inventario1.item_index < len(inventario1.items)-1 and not menu_opcoes.pausado:
+                    inventario1.item_index +=1
+                elif event.key == pygame.K_UP and inventario1.item_index > 0:
+                    inventario1.item_index -=1
+
+                elif event.key == pygame.K_RETURN:
+                    if inventario1.inventory_open:
+                        if inventario1.items[inventario1.item_index].tipo != 'consumivel':
+                            inventario1.items[inventario1.item_index].equipar()
+                        else:
+                            inventario1.items[inventario1.item_index].utilizar()
+                            inventario1.remove(inventario1.items[inventario1.item_index])
+
             elif event.type == pygame.KEYUP and not event.type == pygame.KEYDOWN:
                 if event.key in teclas_movimento:
                     teclas_pressionadas.discard(event.key)
@@ -491,7 +506,12 @@ def inicio():
             for value in b:
                 for item in inimigos:
                     if value[0] == item:
-                        item.get_hit(1)
+                        if player.dano>=20:
+                            item.get_hit(2)
+                        elif player.dano>=10:
+                            item.get_hit(1.5)
+                        else:
+                            item.get_hit(1)
 
         for inimigo in inimigos:
             xp.atualizar_xp(inimigo, 300)
@@ -643,17 +663,21 @@ def inicio():
             pygame.draw.rect(screen,(0,0,0),(280,45,700,25))
             pygame.draw.rect(screen,(255,0,0),(280,45,35*boss.HP,25))
             fonte = pygame.font.Font(os.path.join(assets, '8-BIT WONDER.TTF'),30)
-            text_surface = fonte.render("O Professor", True, (255, 255, 255))
-            screen.blit(text_surface, (508,68,400,100))
+            text_surface = fonte.render("O Professor", True, (0, 0, 0))
+            screen.blit(text_surface, (483,68,400,100))
 
             fonte2 = pygame.font.Font(os.path.join(assets, '8-BIT WONDER.TTF'),30)
-            text_surface = fonte2.render("O Professor", True, (0, 0, 0))
-            screen.blit(text_surface, (510,70,400,100))
+            text_surface = fonte2.render("O Professor", True, (255, 255, 255))
+            screen.blit(text_surface, (485,70,400,100))
 
         else:
             if not cutscene_final_rodada:
                 tocar_cutscene_cv2('cutscenes/cutscene_final.mp4', 'cutscenes/cutscene_boss1.mp3', screen)
                 cutscene_final_rodada = True
+                running = False
+                menu_opcoes.rodando = False
+                from main import g
+                g
 
         if inventario1.inventory_open:
             inventario1.draw_inventory(screen)
@@ -666,6 +690,32 @@ def inicio():
 
         # if botao_ativo:
         #     inventario1.draw_button(screen)
+
+        if xp.show_menu and menu.tamanho_menu_img_x < 600 and menu.tamanho_menu_img_y < 400:
+            menu.tamanho_menu_img_x += 30  # Ajuste a velocidade do zoom
+            menu.tamanho_menu_img_y += 20
+            menu.menu_img = pygame.transform.scale(menu.menu_img_original, (menu.tamanho_menu_img_x, menu.tamanho_menu_img_y))
+        elif not xp.show_menu and menu.tamanho_menu_img_x > 0 and menu.tamanho_menu_img_y > 0:
+            menu.tamanho_menu_img_x = max(0, menu.tamanho_menu_img_x - 30)
+            menu.tamanho_menu_img_y = max(0, menu.tamanho_menu_img_y - 20)
+
+            if menu.tamanho_menu_img_x > 0 and menu.tamanho_menu_img_y > 0:
+                menu.menu_img = pygame.transform.scale(menu.menu_img_original, (menu.tamanho_menu_img_x, menu.tamanho_menu_img_y))
+
+        if menu_opcoes.pausado:
+            menu_opcoes.atualizar()
+            menu_opcoes.desenhar(screen)
+                
+        # Atualiza o jogo se o menu NÃO estiver aberto
+        if xp.show_menu:
+            # Exibe o menu na tela 
+            screen.blit(menu.menu_img,((WIDTH // 2) - (menu.tamanho_menu_img_x // 2),(HEIGHT // 2) - (menu.tamanho_menu_img_y // 2)))
+            if menu.tamanho_menu_img_x > 500 and menu.tamanho_menu_img_y > 333:
+                # Posição do menu
+                menu.desenhar_valores(screen, xp.font_nivel, xp.text_nivel, xp.nivel, xp.pontos_disponiveis)
+                menu.atualizar_sprites()
+                menu.desenhar_botoes(screen)
+                menu.resetar_botoes()
 
         if menu_opcoes.pausado:
             menu_opcoes.atualizar()

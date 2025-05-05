@@ -194,7 +194,8 @@ def inicio():
     walls = process_map_for_collision(map_data)
     map_tiles = process_map_for_rendering(map_data)
     lista_1 = [7 for i in range(4)]
-    lista_2 = [8 for i in range(4)]
+    lista_2 = [4 for i in range(4)]
+    lista_2_alt = [6 for i in range (4)]
     lista_3 = [6 for i in range(8)]
     lista_4 = [13 for j in range(4)]
     lista_5 = [7 for k in range(14)]
@@ -203,7 +204,6 @@ def inicio():
     try:
         player_sprite_path = os.path.join(assets, 'personagem_carcoflecha(2).png')
         player_sprite_path2 = os.path.join(assets, 'sprites_ataque_espada.png')
-        print(player_sprite_path)
         
         player_sprite = SpriteSheet(player_sprite_path, 0, 514, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
         player_sprite_ataques = SpriteSheet(player_sprite_path2, 18, 38, 128, 128, 12,[6,6,6,6], (255,255,255))
@@ -225,9 +225,6 @@ def inicio():
         print(f"Erro ao carregar sprite do jogador: {e}")
         pygame.quit()
         sys.exit()
-
-    xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
-    menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
 
     # Posicionar o jogador em uma posição válida no mapa
 
@@ -296,7 +293,7 @@ def inicio():
 
     # Criar as instâncias dos inventários
 
-    print(boss.local_a_mover)
+    #print(boss.local_a_mover)
 
     contador_ataque_melee = 0
 
@@ -454,6 +451,10 @@ def inicio():
                     DEBUG_MODE = not DEBUG_MODE
                 elif event.key == pygame.K_p:
                     pause = not pause
+                if event.key == pygame.K_m:
+                    xp.show_menu = not xp.show_menu
+                    if xp.show_menu:
+                        menu.valores_copy = menu.valores.copy()
 
                     #COMANDOS INVENTARIO
                 elif event.key in (pygame.K_LALT, pygame.K_RALT):
@@ -461,12 +462,85 @@ def inicio():
                 # elif event.key == pygame.K_ESCAPE:
                 #     running = False
 
+                elif event.key == pygame.K_DOWN and inventario1.item_index < len(inventario1.items)-1 and not menu_opcoes.pausado:
+                    inventario1.item_index +=1
+                elif event.key == pygame.K_UP and inventario1.item_index > 0:
+                    inventario1.item_index -=1
+
+                elif event.key == pygame.K_RETURN:
+                    if inventario1.inventory_open:
+                        if inventario1.items[inventario1.item_index].tipo != 'consumivel':
+                            inventario1.items[inventario1.item_index].equipar()
+                        else:
+                            inventario1.items[inventario1.item_index].utilizar()
+                            inventario1.remove(inventario1.items[inventario1.item_index])
+
+
             elif event.type == pygame.KEYUP and not event.type == pygame.KEYDOWN:
                 if event.key in teclas_movimento:
                     teclas_pressionadas.discard(event.key)
                     if len(teclas_pressionadas) == 0:
                         canal_andar.stop()
             menu_opcoes.processar_eventos(event)
+
+            if xp.show_menu and menu.tamanho_menu_img_x == 600 and menu.tamanho_menu_img_y == 400:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    for atributo, botoes in menu.botoes.items():
+                        # Botão de diminuir
+                        if botoes["diminuir"]["rect"].collidepoint(event.pos) and xp.pontos_disponiveis < xp.pontos_disponiveis_copy:
+                            if menu.valores[atributo] > menu.valores_copy[atributo]:  # Impede de reduzir abaixo do inicial
+                                menu.valores[atributo] -= 1
+                                botoes["diminuir"]["pressionado"] = True
+                                xp.pontos_disponiveis += 1  # Devolve um ponto
+
+                                if atributo == "ataque":
+                                    menu.atributos[atributo] -= 1.25
+                                    player.dano = menu.atributos[atributo]
+                                if atributo == "defesa":
+                                    menu.atributos[atributo] -= 1
+                                    player.defesa = menu.atributos[atributo]
+                                if atributo == "vida":
+                                    menu.atributos[atributo] -= 3
+                                    player.MAX_HP = menu.atributos[atributo]
+                                    player.HP -= 3
+                                if atributo == "stamina":
+                                    menu.atributos[atributo] -= 1.25
+                                    player.stamina = menu.atributos[atributo]
+                                if atributo == "velocidade":
+                                    menu.atributos[atributo] -= 2
+                                    player.velocidade_corrida = menu.atributos[atributo]
+
+                        # Botão de aumentar
+                        if botoes["aumentar"]["rect"].collidepoint(event.pos) and xp.pontos_disponiveis > 0:
+                            menu.valores[atributo] += 1
+                            botoes["aumentar"]["pressionado"] = True
+
+                            if menu.valores[atributo] > menu.valores_max[atributo]:
+                                menu.valores[atributo] = menu.valores_max[atributo]
+                                menu.atributos[atributo] = menu.atributos_max[atributo]
+                                # xp.pontos_disponiveis += 0
+                            else:
+                                xp.pontos_disponiveis -= 1  # Gasta um ponto
+
+                            if atributo == "ataque":
+                                menu.atributos[atributo] += 1.25
+                                player.dano = menu.atributos[atributo]
+                            if atributo == "defesa":
+                                menu.atributos[atributo] += 0.15
+                                player.defesa = menu.atributos[atributo]
+                            if atributo == "vida":
+                                menu.atributos[atributo] += 3
+                                player.MAX_HP = menu.atributos[atributo]
+                                player.HP += 3
+                            if atributo == "stamina":
+                                menu.atributos[atributo] += 1.25
+                                player.max_stamina = menu.atributos[atributo]
+                            if atributo == "velocidade" and menu.valores["velocidade"] <= 6:
+                                menu.atributos[atributo] += 2
+                                player.velocidade_corrida = menu.atributos[atributo]
+                            # else:
+                                # menu.valores[atributo] = menu.valores_max[atributo]
+                                # xp.pontos_disponiveis = xp.pontos_disponiveis
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if button_rect.collidepoint(event.pos) and botao_ativo == True:
@@ -538,7 +612,6 @@ def inicio():
                 cooldown_dash = 0
 
         if player.dash == True:
-            print(cooldown_dash)
             player.speed = 15
             dash+=1
             if dash == 10:
@@ -813,6 +886,28 @@ def inicio():
                 bau_perto.inventario.draw_inventory(screen)
             else:
                 bau_perto.image = bau_perto.bau_fechado
+
+        if xp.show_menu and menu.tamanho_menu_img_x < 600 and menu.tamanho_menu_img_y < 400:
+            menu.tamanho_menu_img_x += 30  # Ajuste a velocidade do zoom
+            menu.tamanho_menu_img_y += 20
+            menu.menu_img = pygame.transform.scale(menu.menu_img_original, (menu.tamanho_menu_img_x, menu.tamanho_menu_img_y))
+        elif not xp.show_menu and menu.tamanho_menu_img_x > 0 and menu.tamanho_menu_img_y > 0:
+            menu.tamanho_menu_img_x = max(0, menu.tamanho_menu_img_x - 30)
+            menu.tamanho_menu_img_y = max(0, menu.tamanho_menu_img_y - 20)
+
+            if menu.tamanho_menu_img_x > 0 and menu.tamanho_menu_img_y > 0:
+                menu.menu_img = pygame.transform.scale(menu.menu_img_original, (menu.tamanho_menu_img_x, menu.tamanho_menu_img_y))
+
+        # Atualiza o jogo se o menu NÃO estiver aberto
+        if xp.show_menu:
+            # Exibe o menu na tela 
+            screen.blit(menu.menu_img,((WIDTH // 2) - (menu.tamanho_menu_img_x // 2),(HEIGHT // 2) - (menu.tamanho_menu_img_y // 2)))
+            if menu.tamanho_menu_img_x > 500 and menu.tamanho_menu_img_y > 333:
+                # Posição do menu
+                menu.desenhar_valores(screen, xp.font_nivel, xp.text_nivel, xp.nivel, xp.pontos_disponiveis)
+                menu.atualizar_sprites()
+                menu.desenhar_botoes(screen)
+                menu.resetar_botoes()
 
         # if botao_ativo:
         #     inventario1.draw_button(screen)  # Agora o método `draw_button` é da classe Inventario1

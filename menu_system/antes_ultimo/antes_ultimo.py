@@ -243,7 +243,6 @@ def inicio():
     try:
         player_sprite_path = os.path.join(assets, 'personagem_carcoflecha(2).png')
         player_sprite_path2 = os.path.join(assets, 'sprites_ataque_espada.png')
-        print(player_sprite_path)
         
         player_sprite = SpriteSheet(player_sprite_path, 0, 514, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
         player_sprite_ataques = SpriteSheet(player_sprite_path2, 18, 38, 128, 128, 12,[6,6,6,6], (255,255,255))
@@ -461,7 +460,6 @@ def inicio():
             running = False
             Game_over(inicio)
             menu_opcoes.rodando = False
-        print(player.rect.y)
 
         if len(inimigos) == 0 and player.rect.y < 135:
             if player.rect.x > 930 and player.rect.x < 1109:
@@ -816,7 +814,6 @@ def inicio():
                 cooldown_dash = 0
 
         if player.dash == True:
-            print(cooldown_dash)
             player.speed = 15
             dash+=1
             if dash == 10:

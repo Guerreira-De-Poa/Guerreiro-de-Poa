@@ -1,10 +1,10 @@
 {
     "atributos": [
-        26.75,
+        5,
         6.0,
         20,
-        20.0,
-        96.25,
+        18.0,
+        5,
         10
     ],
     "itens": [
@@ -42,19 +42,19 @@
         ]
     ],
     "menu_valores": {
-        "ataque": 15,
+        "ataque": 30,
         "defesa": 5,
         "vida": 5,
         "stamina": 5,
         "velocidade": 5
     },
     "menu_atributos": {
-        "ataque": 26.75,
+        "ataque": 45.5,
         "defesa": 6.0,
         "vida": 20,
         "stamina": 96.25,
         "velocidade": 10
     },
-    "nivel": 3,
+    "nivel": 6,
     "pontos_disponiveis": 0
 }

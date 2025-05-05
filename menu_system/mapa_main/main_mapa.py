@@ -120,7 +120,7 @@ def inicio(matou_ligeiro=False):
             "defesa": 5.0,
             "vida_max": 20,
             "vida_atual": 20,
-            "stamina": 96.25,
+            "stamina": 5,
             "velocidade": 10
     }
 
@@ -250,15 +250,16 @@ def inicio(matou_ligeiro=False):
     lista_4 = [13 for j in range(4)]
     lista_5 = [7 for k in range(14)]
 
-    # with open('save.json', 'r') as f:
-    #     try:
-    #         save_carregado = json.load(f)
-    #         print(save_carregado)
-    #     except:
-    #         save_carregado = False
-    #         print("ERRO AO CARREGAR SAVE")
-
-    save_carregado = False
+    if matou_ligeiro:
+        with open('save.json', 'r') as f:
+            try:
+                save_carregado = json.load(f)
+                print(save_carregado)
+            except:
+                save_carregado = False
+                print("ERRO AO CARREGAR SAVE")
+    else:
+        save_carregado = False
     #print(save_carregado)
 
 
@@ -291,9 +292,6 @@ def inicio(matou_ligeiro=False):
         inventario1 = Inventario((50, 50, 50), 50, [])
         xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
         menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
-
-    xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
-    menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
 
 
     # Posicionar o jogador em uma posição válida no mapa
@@ -754,8 +752,6 @@ def inicio(matou_ligeiro=False):
                         cooldown_dash = 1
                 elif event.key == pygame.K_LSHIFT:
                     player.correr()
-                elif event.key == pygame.K_t:
-                    player.arcoEquipado = not player.arcoEquipado
                 elif event.key == pygame.K_SPACE:
                     if dialogo_a_abrir:
                         dialogo_a_abrir.trocar_texto()

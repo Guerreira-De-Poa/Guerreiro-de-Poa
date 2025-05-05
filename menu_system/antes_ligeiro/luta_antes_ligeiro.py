@@ -259,7 +259,6 @@ def inicio():
     try:
         player_sprite_path = os.path.join(assets, 'personagem_carcoflecha(2).png')
         player_sprite_path2 = os.path.join(assets, 'sprites_ataque_espada.png')
-        print(player_sprite_path)
         
         player_sprite = SpriteSheet(player_sprite_path, 0, 514, 64, 64, 4,lista_1+lista_2+lista_3+lista_4+lista_5, (0, 0, 0))
         player_sprite_ataques = SpriteSheet(player_sprite_path2, 18, 38, 128, 128, 12,[6,6,6,6], (255,255,255))
@@ -467,9 +466,7 @@ def inicio():
     velocidade_anterior = 0
 
     while menu_opcoes.rodando:
-        print(save_carregado['menu_atributos'])
         pygame.mixer.music.set_volume(menu_opcoes.volume_musica)  # 50% do volume máximo
-        print(save_carregado['pontos_disponiveis'])
         if player.HP <= 0:
             running = False
             Game_over(inicio)
@@ -814,7 +811,6 @@ def inicio():
                 cooldown_dash = 0
 
         if player.dash == True:
-            print(cooldown_dash)
             player.speed = 15
             dash+=1
             if dash == 10:
@@ -850,7 +846,7 @@ def inicio():
                 for item in inimigos:
                     if value[0] == item:
                         item.get_hit(player.dano)
-                        print(item.HP)
+                        #print(item.HP)
             i = 0
             for inimigo in inimigos:
                 i+=1

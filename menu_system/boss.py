@@ -422,7 +422,7 @@ class Boss2(Inimigo):
             self.contador_iframes = 0
             self.HP -= dano
             self.ivuln = True
-            self.player.HP += dano
+            #self.player.HP += dano
 
     def pulo_durante(self):
         if self.pulo_dist_restante > self.pulo_speed:
