@@ -204,6 +204,22 @@ O guerreiro de Poá retorna à sua cidade natal após anos de treinamento e desc
 
 <hr>
 
+
+##Como executar:
+
+###Requisitos:
+<p>Git</p> 
+<p>Python</p>
+
+###Comandos:
+<p>Git clone “github.com/Guerreira-De-Poa/Guerreiro-de-Poa”</p>
+<p>Abra a pasta</p>
+<p>Abra o Prompt de Comando (cmd)</p>
+<p>pip install -r requirements.txt</p>
+<p>python menu_system/main.py</p>
+
+<hr>
+
 <h3>Pessoas que tornaram este projeto possível: </h3>
 
 | <img src="https://github.com/ArthurCorreia213.png" width="80" height="80"> | <img src="https://github.com/Matt-ags.png" width="80" height="80"> | <img src="https://github.com/oLuizEnr.png" width="80" height="80"> | <img src="https://github.com/Lucas-Beni.png" width="80" height="80"> | <img src="https://github.com/GBTorto.png" width="80" height="80"> | <img src="https://github.com/R-Prates-16.png" width="80" height="80"> | <img src="https://github.com/Lyuuki09.png" width="80" height="80"> |
