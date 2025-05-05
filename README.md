@@ -199,22 +199,23 @@ O guerreiro de Poá retorna à sua cidade natal após anos de treinamento e desc
 <p> No início do projeto, a idéia seria ter mais níveis, uma das versões tinham 5 npcs no total, com uma mapa e chefe diferente para cada! Mas por conta do tempo, reduzimos para 4, o dos invasores, os do boss ligeiro e do professor, com 3 missões principais. </p>
 <p> Além disso, planejamos um mapa mais imersivo, com colisões mais organicas, mas acabamos focando em outras partes do trabalho. </p>
 
+</details>
 
-##Como executar:
+<hr>
 
-###Requisitos:
+
+<h2>Como executar:<h2>
+
+<h3>Requisitos:</h3>
 <p>Git</p> 
 <p>Python</p>
 
-###Comandos:
+<h3>Comandos:</h3>
 <p>Git clone “github.com/Guerreira-De-Poa/Guerreiro-de-Poa”</p>
 <p>Abra a pasta</p>
 <p>Abra o Prompt de Comando (cmd)</p>
 <p>pip install -r requirements.txt</p>
 <p>python menu_system/main.py</p>
-
-
-</details>
 
 <hr>
 
