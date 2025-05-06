@@ -203,12 +203,6 @@ O guerreiro de Poá retorna à sua cidade natal após anos de treinamento e desc
 
 <hr>
 
-# Guerreiro de Poa
-
-**Guerreiro de Poa** é um sistema desenvolvido para fins educacionais e de demonstração. Ele conta com um menu interativo em Python e está disponível para clonagem e execução local.
-
----
-
 ## Como executar
 
 ### Requisitos
