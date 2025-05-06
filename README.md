@@ -203,19 +203,32 @@ O guerreiro de Poá retorna à sua cidade natal após anos de treinamento e desc
 
 <hr>
 
+## Como executar
 
-<h2>Como executar:<h2>
+### Requisitos
 
-<h3>Requisitos:</h3>
-<p>Git</p> 
-<p>Python</p>
+- [Git](https://git-scm.com/)
+- [Python 3.10+](https://www.python.org/)
 
-<h3>Comandos:</h3>
-<p>Git clone “github.com/Guerreira-De-Poa/Guerreiro-de-Poa”</p>
-<p>Abra a pasta</p>
-<p>Abra o Prompt de Comando (cmd)</p>
-<p>pip install -r requirements.txt</p>
-<p>python menu_system/main.py</p>
+### Passos
+
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/Guerreira-De-Poa/Guerreiro-de-Poa
+
+2. Acesse a pasta do projeto:
+   ```bash
+   cd Guerreiro-de-Poa
+
+3. Abra o terminal (Prompt de Comando, PowerShell ou outro de sua preferência).
+
+4. Instale as dependências:
+   ```bash
+   pip install -r requirements.txt
+
+5. Execute o sistema:
+   ```bash
+   python menu_system/main.py
 
 <hr>
 
