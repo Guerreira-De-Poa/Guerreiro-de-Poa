@@ -265,9 +265,6 @@ def inicio():
         pygame.quit()
         sys.exit()
 
-    xp = XP(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
-    menu = Menu(5, 5, 5, 5, 5, 6.25, 5.0, 20, 6.25, 10.0, player)
-
     # Posicionar o jogador em uma posição válida no mapa
     player.rect.x = 1025
     player.rect.y = 1080
